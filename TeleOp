@@ -1,0 +1,48 @@
+//Made by Sam Orta
+//Last Edited 4/316
+package com.qualcomm.ftcrobotcontroller.opmodes;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
+/**
+ * Created by Sam on 4/3/2016.
+ */
+public class OpTest extends OpMode {
+    DcMotor ryan;
+    DcMotor louis;
+    Servo toby;
+    float rightJoystickVal;
+    float leftJoystickVal;
+    float servoVal;
+    public void init() {
+        //tells everything to start at what power
+        ryan = hardwareMap.dcMotor.get("rightDrive"); //Ryan is the right motor
+        louis = hardwareMap.dcMotor.get("leftDrive"); //Louis is the left
+        ryan.setDirection(DcMotor.Direction.REVERSE); //Tells ryan to be different from Louis, so we can drive
+        toby = hardwareMap.servo.get("testServo");
+    }
+    public void loop() {
+        //Has the drive and servos loop
+        rightJoystickVal = gamepad1.right_stick_y;
+        leftJoystickVal = gamepad2.left_stick_y;
+        ryan.setPower(rightJoystickVal);
+        louis.setPower(leftJoystickVal);
+        //servos don't use power, go to a position
+        //continous .5 is neutral, 1 is forward, 0 is backwards
+        //continous servo
+        if(gamepad1.dpad_right) {
+            toby.setPosition(1.0);
+        } else if(gamepad1.dpad_down) {
+            toby.setPosition(0);
+        } else {
+            toby.setPosition(0.5);
+        }
+    }
+    public void stop() {
+        //tells all power to cut to 0, shouldn't be neccessary
+        ryan.setPower(0);
+        louis.setPower(0);
+        toby.setPosition(0.5);
+    }
+}
