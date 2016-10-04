@@ -1,0 +1,23 @@
+task main() { int threshold = 20;
+//waitForStart();
+
+while(true)
+{
+    getJoystickSettings(joystick);
+
+    if(abs(joystick.joy1_y1) > threshold || abs(joystick.joy1_x1) > threshold)
+    {
+        motor[FR] = (joystick.joy1_y1 - joystick.joy1_x1)/2;
+        motor[FL] = (-joystick.joy1_y1 - joystick.joy1_x1)/2;
+        motor[BR] = (-joystick.joy1_y1 - joystick.joy1_x1)/2;
+        motor[BL] = (joystick.joy1_y1 - joystick.joy1_x1)/2;
+    }
+    if(abs(joystick.joy1_x2) > threshold)
+    {
+        //rotate
+        motor[FR] = (-joystick.joy1_x2)/2;
+        motor[FL] = (-joystick.joy1_x2)/2;
+        motor[BR] = (joystick.joy1_x2)/2;
+        motor[BL] = (joystick.joy1_x2)/2;
+    }
+    }
