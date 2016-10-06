@@ -1,10 +1,11 @@
+//package needed for all code at least in 2016-2016 (Vortex Velocity) season
 package org.firstinspires.ftc.teamcode;
 
 /**
  * Created by Sam on 10/5/2016.
  */
-
-//Last Edited 10/5/16
+//Last Edited 10/6/16
+        All the imports needed for anything that might be needed, not all are used but just put into every new program for safety's sake.
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
         import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -18,12 +19,15 @@ package org.firstinspires.ftc.teamcode;
         import com.qualcomm.robotcore.hardware.DcMotor;
         import com.qualcomm.robotcore.hardware.DcMotorController;
         import com.qualcomm.robotcore.hardware.Servo;
+//class extends either OpMode, LinearOpMode and some other mode for autonomous that is new this year.
 public class MechanumTest extends OpMode {
-    DcMotor ryan; //frontright
+    //Mechanum requires all 4 wheels to be coded, not just the two for tank drive. 
+    DcMotor parker; //frontright
     DcMotor louis; //frontleft
     DcMotor maria; //backleft
     DcMotor matthew; //backright
     Servo toby;
+    //The values of the joysticks used by the drivers, x and y are self-explanetory
     float rightJoystickValy;
     float rightJoystickValx;
     float leftJoystickValx;
@@ -34,7 +38,8 @@ public class MechanumTest extends OpMode {
     float servoVal;
     public void init() {
         //tells everything to start at what power
-        ryan = hardwareMap.dcMotor.get("frontRightDrive"); //Ryan is the right motor
+        //tells the hardware to connect to the software. Name of motor (ex. frontRightDrive) comes from the setup done on the robot controller phone)
+        parker = hardwareMap.dcMotor.get("frontRightDrive"); //Ryan is the right motor
         louis = hardwareMap.dcMotor.get("frontLeftDrive"); //Louis is the left
         maria = hardwareMap.dcMotor.get("backRightDrive"); //Ryan is the right motor
         matthew = hardwareMap.dcMotor.get("backLeftDrive"); //Louis is the left
@@ -42,20 +47,23 @@ public class MechanumTest extends OpMode {
         toby = hardwareMap.servo.get("testServo");
     }
     public void loop() {
+        //connects the joystickvalue varibles to the actual joystick values
         rightJoystickValy = gamepad1.right_stick_y;
         rightJoystickValx = gamepad1.right_stick_x;
         leftJoystickValy = gamepad2.left_stick_y;
         leftJoystickValx = gamepad2.left_stick_x;
+        //If the wheel pover is above zero, I think....
         if((gamepad2.left_stick_y) > threshold || (leftJoystickValx = gamepad2.left_stick_x) > threshold)
         {
-            ryan.setpower(( leftJoystickValy -  leftJoystickValx)/2);
+            //Rotate the wheels with this combinations. Due to how to mechanum wheels work, two spin backwards and two spin forwards moving it the side. I give this version 10% chance the working
+            parker.setpower(( leftJoystickValy -  leftJoystickValx)/2);
             louis = (- leftJoystickValy -  leftJoystickValx)/2;
             maria = (- leftJoystickValy -  leftJoystickValx)/2;
             matthew = ( leftJoystickValy -  leftJoystickValx)/2;
         }
         if((rightJoystickValx) > threshold)
         {
-            //rotate
+            //rotation system but still the same principles as drive, just simpler
             ryan.setpower((-rightJoystickValx)/2);
             louis = (-rightJoystickValx)/2;
             maria = (rightJoystickValx)/2;
@@ -65,8 +73,10 @@ public class MechanumTest extends OpMode {
     }
     public void stop() {
         //tells all power to cut to 0, shouldn't be neccessary
-        ryan.setPower(0);
+        parker.setPower(0);
         louis.setPower(0);
+        maria.setPower(0);
+        matthew.setPower(0);
         toby.setPosition(0.5);
     }
 }
