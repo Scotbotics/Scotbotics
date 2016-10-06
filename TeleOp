@@ -1,13 +1,25 @@
-//Made by Sam Orta
-//Last Edited 4/316
-package com.qualcomm.ftcrobotcontroller.opmodes;
+/**
+ * Created by Sam on 4/3/2016.
+ */
+ 
+package org.firstinspires.ftc.teamcode;
+
+//Last Edited 10/5/16
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
-/**
- * Created by Sam on 4/3/2016.
- */
+
 public class OpTest extends OpMode {
     DcMotor ryan;
     DcMotor louis;
@@ -46,3 +58,4 @@ public class OpTest extends OpMode {
         toby.setPosition(0.5);
     }
 }
+
