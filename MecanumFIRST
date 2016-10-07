@@ -13,7 +13,8 @@ import android.view.ViewParent;
 public class MechanumFIRST extends OpMode {
     DcMotor parker, louis, maria, matthew, collectorOne, collectorTwo, liftleft, liftright; //TODO convert to motormap @jake
     Servo flag, clamp, dump;
-    public float x, y, z, w, pwr;
+    public float x, y, z, w,;
+    public float fudge = 0;
     public static double deadzone = 0.2;
 
     //servo minmax
@@ -53,7 +54,7 @@ public class MechanumFIRST extends OpMode {
         getJoyVals();
         //updates joyvalues with deadzones, xyzw
 
-        pwr = y; //this can be tweaked for exponential power increase
+        fudge = y; //this can be tweaked for exponential power increase
 
         louis.setPower(Range.clip(pwr - x+z, -1, 1));
         maria.setPower(Range.clip(pwr - x-z, -1, 1));
