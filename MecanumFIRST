@@ -13,7 +13,7 @@ import android.view.ViewParent;
 public class MechanumFIRST extends OpMode {
     DcMotor parker, louis, maria, matthew, collectorOne, collectorTwo, liftleft, liftright; //TODO convert to motormap @jake
     Servo flag, clamp, dump;
-    public float x, y, z, w,;
+    public float x, y, z, w;
     public float fudge = 0;
     public static double deadzone = 0.2;
 
@@ -56,10 +56,10 @@ public class MechanumFIRST extends OpMode {
 
         fudge = y; //this can be tweaked for exponential power increase
 
-        louis.setPower(Range.clip(pwr - x+z, -1, 1));
-        maria.setPower(Range.clip(pwr - x-z, -1, 1));
-        parker.setPower(Range.clip(pwr + x-z, -1, 1));
-        matthew.setPower(Range.clip(pwr + x+z, -1, 1));
+        louis.setPower(Range.clip(fudge - x+z, -1, 1));
+        maria.setPower(Range.clip(fudge - x-z, -1, 1));
+        parker.setPower(Range.clip(fudge + x-z, -1, 1));
+        matthew.setPower(Range.clip(fudge + x+z, -1, 1));
         /*
         liftleft.setPower(w);
         liftright.setPower(w);
