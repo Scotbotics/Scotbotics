@@ -1,0 +1,76 @@
+package org.firstinspires.ftc.teamcode;
+
+/**
+ * Created by Sam on 10/6/2016.
+ */
+//This is a modified version of my original code with added code that came from another ftc team off reddit.
+//Last Edited 10/6/16
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
+public class Mechanum2Test extends OpMode {
+    DcMotor ryan; //frontright
+    DcMotor louis; //frontleft
+    DcMotor maria; //backleft
+    DcMotor matthew; //backright
+    Servo toby;
+    float rightJoystickValy;
+    float rightJoystickValx;
+    float leftJoystickValx;
+    float leftJoystickValy;
+    float theta = atan(x/y) + 3.14159/4;  //finds the angle of the joystick and turns it by pi/4 radians or 45 degrees
+    float magnitude = sqrt(x*x+y*y);  //finds the magnitude of the joystick input by the Pythagorean theorem
+    float newX = cos(theta)*magnitude; //finds the input to one set of wheels
+    float newY = sin(theta)*magnitude; //finds the input to the other set of wheels
+    int threshold = 0;
+    //fudge exists in the emergency case of we royally screwed up that I can change all the values fast
+    int fudge;
+    float servoVal;
+    public void init() {
+        //tells everything to start at what power
+        ryan = hardwareMap.dcMotor.get("frontRightDrive"); //Ryan is the right motor
+        louis = hardwareMap.dcMotor.get("frontLeftDrive"); //Louis is the left
+        maria = hardwareMap.dcMotor.get("backRightDrive"); //Ryan is the right motor
+        matthew = hardwareMap.dcMotor.get("backLeftDrive"); //Louis is the left
+        //ryan.setDirection(DcMotor.Direction.REVERSE); //Tells ryan to be different from Louis, so we can drive
+        toby = hardwareMap.servo.get("testServo");
+    }
+    public void loop() {
+        rightJoystickValy = gamepad1.right_stick_y;
+        rightJoystickValx = gamepad1.right_stick_x;
+        leftJoystickValy = gamepad2.left_stick_y;
+        leftJoystickValx = gamepad2.left_stick_x;
+        if((gamepad2.left_stick_y) > threshold || (leftJoystickValx = gamepad2.left_stick_x) > threshold)
+        {
+            ryan.setpower(( leftJoystickValy -  leftJoystickValx)/2);
+            louis = (- leftJoystickValy -  leftJoystickValx)/2;
+            maria = (- leftJoystickValy -  leftJoystickValx)/2;
+            matthew = ( leftJoystickValy -  leftJoystickValx)/2;
+        }
+        if((rightJoystickValx) > threshold)
+        {
+            //rotate
+            ryan.setpower((-rightJoystickValx)/2);
+            louis = (-rightJoystickValx)/2;
+            maria = (rightJoystickValx)/2;
+            matthew = (rightJoystickValx)/2;
+        }
+    }
+}
+    public void stop() {
+        //tells all power to cut to 0, shouldn't be neccessary
+        ryan.setPower(0);
+        louis.setPower(0);
+        toby.setPosition(0.5);
+    }
+}
