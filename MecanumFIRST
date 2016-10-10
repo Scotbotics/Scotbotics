@@ -12,7 +12,7 @@ import android.view.ViewParent;
 public class MechanumFIRST extends OpMode {
     DcMotor parker, louis, maria, matthew, collectorOne, collectorTwo, liftleft, liftright; //TODO convert to motormap @jake
     Servo flag, clamp, dump;
-    public float x, y, z, w;
+    public float leftX, leftY, rightX, rightY;
     public float fudge = 0;
     public static double deadzone = 0.2;
 
@@ -53,15 +53,15 @@ public class MechanumFIRST extends OpMode {
         getJoyVals();
         //updates joyvalues with deadzones, xyzw
 
-        fudge = y; //this can be tweaked for exponential power increase
+        fudge = leftY; //this can be tweaked for exponential power increase
         //Louis = frontRight
-        louis.setPower(Range.clip(fudge - x+z, -1, 1));
+        louis.setPower(Range.clip(fudge - leftX+rightX, -1, 1));
         //maria = rearLeft
-        maria.setPower(Range.clip(fudge - x-z, -1, 1));
+        maria.setPower(Range.clip(fudge - leftX-rightX, -1, 1));
         //Parker = frontLeft
-        parker.setPower(Range.clip(fudge + x-z, -1, 1));
+        parker.setPower(Range.clip(fudge + leftX-rightX, -1, 1));
         //matthew = rearRight
-        matthew.setPower(Range.clip(fudge + x+z, -1, 1));
+        matthew.setPower(Range.clip(fudge + leftX+rightX, -1, 1));
         /*
         liftleft.setPower(w);
         liftright.setPower(w);
@@ -85,16 +85,18 @@ public class MechanumFIRST extends OpMode {
 
     public void getJoyVals()
     {
-        y = gamepad1.left_stick_y;
-        x = gamepad1.left_stick_x;
-        z = gamepad1.right_stick_x;
-        w = gamepad1.right_stick_y;
+        leftY = gamepad1.left_stick_y;
+        leftX = gamepad1.left_stick_x;
+        //formally z
+        rightX = gamepad1.right_stick_x;
+        //formally w
+        rightY = gamepad1.right_stick_y;
         //updates joystick values
 
-        if(Math.abs(x)<deadzone) x = 0;
-        if(Math.abs(y)<deadzone) y = 0;
-        if(Math.abs(z)<deadzone) z = 0;
-        if(Math.abs(w)<0.9) w = 0;
+        if(Math.abs(leftX)<deadzone) leftX = 0;
+        if(Math.abs(leftY)<deadzone) leftY = 0;
+        if(Math.abs(rightX)<deadzone) rightX = 0;
+        if(Math.abs(rightY)<0.9) rightY = 0;
         //checks deadzones
     }
 
