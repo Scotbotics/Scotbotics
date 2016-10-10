@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
@@ -26,10 +25,10 @@ public class MechanumFIRST extends OpMode {
     */
     @Override
     public void init() {
-        parker = hardwareMap.dcMotor.get("front_left");
-        louis = hardwareMap.dcMotor.get("front_right");
-        maria = hardwareMap.dcMotor.get("back_left");
-        matthew = hardwareMap.dcMotor.get("back_right");
+        parker = hardwareMap.dcMotor.get("frontLeft");
+        louis = hardwareMap.dcMotor.get("frontRight");
+        maria = hardwareMap.dcMotor.get("rearLeft");
+        matthew = hardwareMap.dcMotor.get("rearRight");
         /*
         liftleft = hardwareMap.dcMotor.get("lift_left");
         liftright = hardwareMap.dcMotor.get("lift_right");
@@ -37,7 +36,7 @@ public class MechanumFIRST extends OpMode {
         collectorTwo = hardwareMap.dcMotor.get("collector_two");
     */
         louis.setDirection(DcMotor.Direction.REVERSE);
-        matthew.setDirection(DcMotor.Direction.REVERSE);
+        maria.setDirection(DcMotor.Direction.REVERSE);
         //reverses right side, so collector is front
         /*
         flag = hardwareMap.servo.get("flag");
@@ -55,10 +54,13 @@ public class MechanumFIRST extends OpMode {
         //updates joyvalues with deadzones, xyzw
 
         fudge = y; //this can be tweaked for exponential power increase
-
+        //Louis = frontRight
         louis.setPower(Range.clip(fudge - x+z, -1, 1));
+        //maria = rearLeft
         maria.setPower(Range.clip(fudge - x-z, -1, 1));
+        //Parker = frontLeft
         parker.setPower(Range.clip(fudge + x-z, -1, 1));
+        //matthew = rearRight
         matthew.setPower(Range.clip(fudge + x+z, -1, 1));
         /*
         liftleft.setPower(w);
