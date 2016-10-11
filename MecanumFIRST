@@ -9,8 +9,13 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.ViewParent;
 
+/*
+Created by FTCkey and then modified by Sam Orta on 10/1/16
+Last edited 10/11/16
+ */
+
 public class MechanumFIRST extends OpMode {
-    DcMotor parker, louis, maria, matthew, collectorOne, collectorTwo, liftleft, liftright; //TODO convert to motormap @jake
+    DcMotor parker, louis, maria, matthew, toby, collectorTwo, liftleft, liftright; //TODO convert to motormap @jake
     Servo flag, clamp, dump;
     public float leftX, leftY, rightX, rightY;
     public float fudge = 0;
@@ -29,12 +34,12 @@ public class MechanumFIRST extends OpMode {
         louis = hardwareMap.dcMotor.get("frontRight");
         maria = hardwareMap.dcMotor.get("rearLeft");
         matthew = hardwareMap.dcMotor.get("rearRight");
-        /*
-        liftleft = hardwareMap.dcMotor.get("lift_left");
-        liftright = hardwareMap.dcMotor.get("lift_right");
-        collectorOne = hardwareMap.dcMotor.get("collector_one");
-        collectorTwo = hardwareMap.dcMotor.get("collector_two");
-    */
+
+        //liftleft = hardwareMap.dcMotor.get("lift_left");
+        //liftright = hardwareMap.dcMotor.get("lift_right");
+        toby = hardwareMap.dcMotor.get("collector_one");
+        //collectorTwo = hardwareMap.dcMotor.get("collector_two");
+
         louis.setDirection(DcMotor.Direction.REVERSE);
         maria.setDirection(DcMotor.Direction.REVERSE);
         //reverses right side, so collector is front
@@ -67,11 +72,15 @@ public class MechanumFIRST extends OpMode {
         liftright.setPower(w);
 
         //allows control of linear slides
-
-        collectorOne.setPower((gamepad1.left_trigger>0.5)? -1:(gamepad1.left_bumper)? 1:0);
+        */
+        //if(gamepad1.a = true) {
+            
+        //}
+        //toby.setPower((gamepad1.a>0.5)? -1:(gamepad1.left_bumper)? 1:0);
+        /*
         collectorTwo.setPower((gamepad1.left_trigger>0.5)? -1:(gamepad1.left_bumper)? 1:0);
         //allows control of collector
-        /*
+
         if(gamepad1.right_bumper) dump.setPosition(DUMP_MIN);
         if(gamepad1.right_trigger>0.5) dump.setPosition(DUMP_MAX);
         //allows control of dump servos
@@ -108,5 +117,6 @@ public class MechanumFIRST extends OpMode {
         louis.setPower(0);
         matthew.setPower(0);
         maria.setPower(0);
+        toby.setPower(0);
     }
 }
