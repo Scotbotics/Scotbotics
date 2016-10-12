@@ -15,7 +15,7 @@ Last edited 10/11/16
  */
 
 public class MechanumFIRST extends OpMode {
-    DcMotor parker, louis, maria, matthew, toby, collectorTwo, liftleft, liftright; //TODO convert to motormap @jake
+    DcMotor parker, louis, maria, matthew, toby, collectorTwo, liftleft, liftright;
     Servo flag, clamp, dump;
     public float leftX, leftY, rightX, rightY;
     public float fudge = 0;
