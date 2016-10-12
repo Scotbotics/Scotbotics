@@ -1,0 +1,48 @@
+1. Import all of these lines when you start a new program
+
+package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
+import android.view.ViewParent;
+
+They are needed to import all the functions and files needed for the software to hardware connection that the robot is built off of
+
+2. public class MechanumFIRST extends OpMode { }
+
+The class is obviously needed for the program to work but it must extend OpMode as that is the main way the code is transmitted and
+contains much of the base code needed for the TeleOp or Autonomous
+
+4. public void init() {
+        parker = hardwareMap.dcMotor.get("frontLeft");
+        louis = hardwareMap.dcMotor.get("frontRight");
+  
+  For every motor or servo you are using you need to initialize it so the the computer knows what is going to happen. On top of that it
+  needs to match the names of the motors in the configuration you set up on the robot controller app.
+  
+ 5. public void loop() {
+        //Has the drive and servos loop
+        rightJoystickVal = gamepad1.right_stick_y;
+        leftJoystickVal = gamepad2.left_stick_y;
+        ryan.setPower(rightJoystickVal * fudge);
+        louis.setPower(leftJoystickVal * fudge);
+        
+  How anything moves needs to be sed and this connects the value of the joysticks on the controller to it's own variable which then
+  connects to the motor variable which connects to the motor configuration which connects to the actual motor, simple right?
+  
+ 6. public void stop() {
+        //tells all power to cut to 0, shouldn't be neccessary
+        ryan.setPower(0);
+        louis.setPower(0);
+        toby.setPosition(0.5);
+    }
+}
+This step is technically unneeded but is helpful just as a precaution in case a sudden stop is needed. Therefore always include a a rule
+to set motor and servo power to 0 when a stop is called
+
+This is the basics of making any drivable robot and plenty can be built on top of this basic code.
