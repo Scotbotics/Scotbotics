@@ -15,12 +15,12 @@ Last edited 10/11/16
  */
 
 public class MechanumFIRST extends OpMode {
-    DcMotor parker, louis, maria, matthew, toby, collectorTwo, liftleft, liftright;
+    DcMotor parker, louis, maria, matthew, toby, eric collectorTwo, liftleft, liftright;
     Servo flag, clamp, dump;
     public float leftX, leftY, rightX, rightY;
     public float fudge = 0;
     public static double deadzone = 0.2;
-
+    boolean aPress, bPress;
     //servo minmax
     /*final static double CLAMP_MIN  = 172.0/255.0;
     final static double CLAMP_MID = 220.0/255.0;
@@ -30,6 +30,8 @@ public class MechanumFIRST extends OpMode {
     */
     @Override
     public void init() {
+        //aPress = controller2.a
+        //bPress = controller2.b
         parker = hardwareMap.dcMotor.get("frontLeft");
         louis = hardwareMap.dcMotor.get("frontRight");
         maria = hardwareMap.dcMotor.get("rearLeft");
@@ -37,7 +39,9 @@ public class MechanumFIRST extends OpMode {
 
         //liftleft = hardwareMap.dcMotor.get("lift_left");
         //liftright = hardwareMap.dcMotor.get("lift_right");
-        toby = hardwareMap.dcMotor.get("collector_one");
+        //The motors for the launcher and collector, will get added in once driving is nailed down.
+        //toby = hardwareMap.dcMotor.get("collector");
+        //eric = hardwareMap.dcMotor.get("launcher");
         //collectorTwo = hardwareMap.dcMotor.get("collector_two");
 
         louis.setDirection(DcMotor.Direction.REVERSE);
@@ -73,9 +77,12 @@ public class MechanumFIRST extends OpMode {
 
         //allows control of linear slides
         */
-        //if(gamepad1.a = true) {
-            
-        //}
+        if(aPress = true) {
+         toby.setPower(100); 
+        }
+        if(bPress = true) {
+          eric.setPower(100);
+        */
         //toby.setPower((gamepad1.a>0.5)? -1:(gamepad1.left_bumper)? 1:0);
         /*
         collectorTwo.setPower((gamepad1.left_trigger>0.5)? -1:(gamepad1.left_bumper)? 1:0);
