@@ -4,6 +4,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
@@ -15,10 +24,9 @@ Last edited 10/11/16
  */
 
 public class MechanumFIRST extends OpMode {
-    DcMotor parker, louis, maria, matthew, toby, collectorTwo, liftleft, liftright;
-    Servo flag, clamp, dump;
-    public float leftX, leftY, rightX, rightY;
-    public float fudge = 0;
+    DcMotor parker, louis, maria, matthew, toby, eric, chris;
+    Servo mochi;
+    public float leftX, leftY, rightX, rightY, fudge;
     public static double deadzone = 0.2;
 
     //servo minmax
@@ -30,18 +38,18 @@ public class MechanumFIRST extends OpMode {
     */
     @Override
     public void init() {
+
         parker = hardwareMap.dcMotor.get("frontLeft");
         louis = hardwareMap.dcMotor.get("frontRight");
         maria = hardwareMap.dcMotor.get("rearLeft");
         matthew = hardwareMap.dcMotor.get("rearRight");
-
-        //liftleft = hardwareMap.dcMotor.get("lift_left");
-        //liftright = hardwareMap.dcMotor.get("lift_right");
-        toby = hardwareMap.dcMotor.get("collector_one");
-        //collectorTwo = hardwareMap.dcMotor.get("collector_two");
+        toby = hardwareMap.dcMotor.get("buttonPusher");
+        //mochi = hardwareMap.servo.get("flagRaiser");
+        //eric = hardwareMap.dcMotor.get("catapult");
+        //chris = hardwareMap.dcMotor.get("harvester");
 
         louis.setDirection(DcMotor.Direction.REVERSE);
-        maria.setDirection(DcMotor.Direction.REVERSE);
+        matthew.setDirection(DcMotor.Direction.REVERSE);
         //reverses right side, so collector is front
         /*
         flag = hardwareMap.servo.get("flag");
@@ -57,7 +65,22 @@ public class MechanumFIRST extends OpMode {
     public void loop() {
         getJoyVals();
         //updates joyvalues with deadzones, xyzw
-
+        if (gamepad2.a) toby.setPower(.1);
+      //  if (gamepad.x) {
+            //eric.setPower(1);
+       // }
+        if (gamepad2.x) toby.setPower(-.1);
+        /*
+        if(gamepad2.dpad_right) {
+            mochi.setPosition(1.0);
+        }
+        if(gamepad2.dpad_up) {
+            mochi.setPosition(.5);
+        }
+        if(gamepad2.dpad_left) {
+            mochi.setPosition(0);
+        }
+         */
         fudge = leftY; //this can be tweaked for exponential power increase
         //Louis = frontRight
         louis.setPower(Range.clip(fudge - leftX+rightX, -1, 1));
@@ -74,7 +97,7 @@ public class MechanumFIRST extends OpMode {
         //allows control of linear slides
         */
         //if(gamepad1.a = true) {
-            
+
         //}
         //toby.setPower((gamepad1.a>0.5)? -1:(gamepad1.left_bumper)? 1:0);
         /*
@@ -118,5 +141,8 @@ public class MechanumFIRST extends OpMode {
         matthew.setPower(0);
         maria.setPower(0);
         toby.setPower(0);
+       // mochi.setPower(0.5);
+        //eric.setPower(0);
+        //chirs.setPower(0);
     }
 }
