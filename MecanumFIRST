@@ -65,21 +65,22 @@ public class MechanumFIRST extends OpMode {
     public void loop() {
         getJoyVals();
         //updates joyvalues with deadzones, xyzw
-        if (gamepad2.a) toby.setPower(.1);
-      //  if (gamepad.x) {
+        //sets the power of Chris if a on functions is pressed
+        //if (gamepad2.a) chris.setPower(.1);
+        //allows control of harvester
+
+        //if (gamepad.x) {
             //eric.setPower(1);
        // }
-        if (gamepad2.x) toby.setPower(-.1);
-        /*
-        if(gamepad2.dpad_right) {
-            mochi.setPosition(1.0);
-        }
-        if(gamepad2.dpad_up) {
-            mochi.setPosition(.5);
-        }
-        if(gamepad2.dpad_left) {
-            mochi.setPosition(0);
-        }
+
+        //if (gamepad2.x) toby.setPower(-.1);
+
+
+        /* //servo controller for the flag
+        if(gamepad2.dpad_up) mochi.setPosition(1.0);
+        if(gamepad2.dpad_right)  mochi.setPosition(0.5);
+        if(gamepad2.dpad_down)  mochi.setPosition(0);
+
          */
         fudge = leftY; //this can be tweaked for exponential power increase
         //Louis = frontRight
@@ -90,20 +91,15 @@ public class MechanumFIRST extends OpMode {
         parker.setPower(Range.clip(fudge + leftX-rightX, -1, 1));
         //matthew = rearRight
         matthew.setPower(Range.clip(fudge + leftX+rightX, -1, 1));
-        /*
-        liftleft.setPower(w);
-        liftright.setPower(w);
 
-        //allows control of linear slides
-        */
-        //if(gamepad1.a = true) {
 
-        //}
-        //toby.setPower((gamepad1.a>0.5)? -1:(gamepad1.left_bumper)? 1:0);
-        /*
-        collectorTwo.setPower((gamepad1.left_trigger>0.5)? -1:(gamepad1.left_bumper)? 1:0);
-        //allows control of collector
 
+        //toby pushes to the left by hitting left trigger/left bumper?
+        //toby pushes to the right by hitting right trigger/right bumper?
+        toby.setPower(-((gamepad2.left_trigger>0.5)? -1:(gamepad2.left_bumper)? 1:0));
+        toby.setPower((gamepad2.right_trigger>0.5)? -1:(gamepad2.right_bumper)? 1:0);
+
+/*
         if(gamepad1.right_bumper) dump.setPosition(DUMP_MIN);
         if(gamepad1.right_trigger>0.5) dump.setPosition(DUMP_MAX);
         //allows control of dump servos
@@ -125,6 +121,7 @@ public class MechanumFIRST extends OpMode {
         rightY = gamepad1.right_stick_y;
         //updates joystick values
 
+        //deadzones are the area that controllers don't work as none are calibrated perfectly, this checks for them
         if(Math.abs(leftX)<deadzone) leftX = 0;
         if(Math.abs(leftY)<deadzone) leftY = 0;
         if(Math.abs(rightX)<deadzone) rightX = 0;
