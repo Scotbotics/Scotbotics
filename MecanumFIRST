@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import android.media.MediaPlayer;
 
 //import a few more things for android.os on the phones
 import android.os.Handler;
@@ -27,7 +28,7 @@ import android.view.ViewParent;
 Created by FTCkey and then modified by Sam Orta on 10/1/16
 Last edited 10/17/16
  */
- //code where this program originally came from is http://ftckey.com/programming/tele-op/
+//code where this program originally came from is http://ftckey.com/programming/tele-op/
 
 public class MechanumFIRST extends OpMode {
     //Variables that define what the motors and servos are
@@ -39,6 +40,7 @@ public class MechanumFIRST extends OpMode {
     public float leftX, leftY, rightX, rightY, fudge;
     //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
     public static double deadzone = 0.2;
+    MediaPlayer ScotlandTheBrave;
 
     //servo minmax
     /*final static double CLAMP_MIN  = 172.0/255.0;
@@ -47,7 +49,7 @@ public class MechanumFIRST extends OpMode {
     final static double DUMP_MIN  = 80.0/255.0;
     final static double DUMP_MAX  = 180.0/255.0;
     */
-    
+
     //initialize stage in which everything is set up and prepared
     @Override
     public void init() {
@@ -58,6 +60,8 @@ public class MechanumFIRST extends OpMode {
         maria = hardwareMap.dcMotor.get("rearLeft");
         matthew = hardwareMap.dcMotor.get("rearRight");
         toby = hardwareMap.dcMotor.get("buttonPusher");
+        ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
+
         //mochi = hardwareMap.servo.get("flagRaiser");
         //eric = hardwareMap.dcMotor.get("catapult");
         //chris = hardwareMap.dcMotor.get("harvester");
@@ -84,8 +88,8 @@ public class MechanumFIRST extends OpMode {
         //allows control of harvester
 
         //if (gamepad.x) {
-            //eric.setPower(1);
-       // }
+        //eric.setPower(1);
+        // }
 
         //if (gamepad2.x) toby.setPower(-.1);
 
@@ -96,7 +100,7 @@ public class MechanumFIRST extends OpMode {
         if(gamepad2.dpad_down)  mochi.setPosition(0);
 
          */
-         //this controls how the drive system works by calculating how the joysticks control the power of te robot.
+        //this controls how the drive system works by calculating how the joysticks control the power of te robot.
         fudge = leftY; //this can be tweaked for exponential power increase
         //Louis = frontRight
         louis.setPower(Range.clip(fudge - leftX+rightX, -1, 1));
@@ -113,6 +117,9 @@ public class MechanumFIRST extends OpMode {
         //toby pushes to the right by hitting right trigger/right bumper?
         toby.setPower(-((gamepad2.left_trigger>0.5)? -1:(gamepad2.left_bumper)? 1:0));
         toby.setPower((gamepad2.right_trigger>0.5)? -1:(gamepad2.right_bumper)? 1:0);
+
+        //yes I programmed Scotland The Brave into the robot
+        if(gamepad2.y) ScotlandTheBrave.start();
 
 /*
         if(gamepad1.right_bumper) dump.setPosition(DUMP_MIN);
@@ -155,7 +162,7 @@ public class MechanumFIRST extends OpMode {
         matthew.setPower(0);
         maria.setPower(0);
         toby.setPower(0);
-       // mochi.setPower(0.5);
+        // mochi.setPower(0.5);
         //eric.setPower(0);
         //chirs.setPower(0);
     }
