@@ -1,0 +1,86 @@
+//made by Sam Orta on 10/24/16
+//baseline for more complicated code.
+
+//package that allows importing into the phone
+package org.firstinspires.ftc.teamcode;
+
+//import a lot of different functions, methods and commands for the ftc hardware
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+
+//import a few more things for android.os on the phones
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
+import android.view.ViewParent;
+
+public class AutonomousBaseline extends OpMode {
+    //Variables that define what the motors and servos are
+    //yes I name the variables after people who have formerlly been on the team
+    //Reason is that I'm insane -Sam
+    DcMotor parker, louis, maria, matthew, toby
+    Servo mochi;
+    //variables for the joysticks and their positions on gamepad1
+    public float leftX, leftY, rightX, rightY, fudge;
+    //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
+
+
+    //initialize stage in which everything is set up and prepared
+    @Override
+    public void init() {
+        //list of the all the motors and connect themselves to the actual motors
+        //the things in parantheses ex. "frontLeft" are what the motors are named in the configuration on the robot controller phone
+        parker = hardwareMap.dcMotor.get("frontLeft");
+        louis = hardwareMap.dcMotor.get("frontRight");
+        maria = hardwareMap.dcMotor.get("rearLeft");
+        matthew = hardwareMap.dcMotor.get("rearRight");
+        toby = hardwareMap.dcMotor.get("buttonPusher");
+
+         //reverse polarity for the robot to be correctly driving
+        parker.setDirection(DcMotor.Direction.REVERSE);
+        maria.setDirection(DcMotor.Direction.REVERSE);
+
+        flag = hardwareMap.servo.get("flag");
+        dump = hardwareMap.servo.get("dump");
+        clamp = hardwareMap.servo.get("clamp");
+        //dump.setPosition(DUMP_MIN);
+        clamp.setPosition(CLAMP_MIN);
+        */
+        //gets servos and sets to minimum values
+    }
+
+    @Override
+    public void loop() {
+
+        toby.setPower(-((gamepad2.left_trigger>0.5)? -1:(gamepad2.left_bumper)? 1:0));
+        toby.setPower((gamepad2.right_trigger>0.5)? -1:(gamepad2.right_bumper)? 1:0);
+
+    }
+
+
+    @Override
+    public void stop() {
+        //nothing here? probably gotta call garbage collection at some point
+        //tells everything to cut all power
+        parker.setPower(0);
+        louis.setPower(0);
+        matthew.setPower(0);
+        maria.setPower(0);
+        toby.setPower(0);
+        // mochi.setPower(0.5);
+        //eric.setPower(0);
+        //chirs.setPower(0);
+    }
+}
