@@ -77,9 +77,12 @@ public class MechanumFIRST extends OpMode {
         //if (gamepad.x) {
         //eric.setPower(1);
         // }
-
-
-
+        
+        /*
+        if (gamepad2.y) {
+            chris.setPower(0.5);
+         }
+        */
         /* //servo controller for the flag
         if(gamepad2.dpad_up) {
          mochi.setPosition(1.0);
@@ -114,10 +117,10 @@ public class MechanumFIRST extends OpMode {
         toby.setPower(((gamepad2.right_trigger>0.5)? -1:(gamepad2.right_bumper)? 1:0));
 
         //yes I programmed Scotland The Brave into the robot
-        if(gamepad2.y) {
+        if(gamepad1.y) {
             ScotlandTheBrave.start();
         }
-        if(gamepad2.dpad_down) {
+        if(gamepad1.dpad_down) {
             ScotlandTheBrave.stop();
         }
 
