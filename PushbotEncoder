@@ -1,34 +1,8 @@
 /*
-Copyright (c) 2016 Robert Atkinson
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted (subject to the limitations in the disclaimer below) provided that
-the following conditions are met:
-
-Redistributions of source code must retain the above copyright notice, this list
-of conditions and the following disclaimer.
-
-Redistributions in binary form must reproduce the above copyright notice, this
-list of conditions and the following disclaimer in the documentation and/or
-other materials provided with the distribution.
-
-Neither the name of Robert Atkinson nor the names of his contributors may be used to
-endorse or promote products derived from this software without specific prior
-written permission.
-
-NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
-LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESSFOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Originally made by Robert Atkinson
+Heavily edited by Sam, hopefully Josh and Nathan C
+Created 10/25/16
+Last edited 10/26/16
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -63,16 +37,33 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  *  There are other ways to perform encoder based moves, but this method is probably the simplest.
  *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+
  */
 
 @Autonomous(name="PushbotEncoder", group="Pushbot")
-@Disabled
+
 public class PushBotEncoderTest extends LinearOpMode {
 
     /* Declare OpMode members. */
-    HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
+   // HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
+    //Variables that define what the motors and servos are
+    //yes I name the variables after people who have formerlly been on the team
+    //Reason is that I'm insane -Sam
+    DcMotor parker, louis, maria, matthew, toby
+    //variables for exponential power increase
+    public float fudge;
+    //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
+    
+    parker = hardwareMap.dcMotor.get("frontLeft");
+    louis = hardwareMap.dcMotor.get("frontRight");
+    maria = hardwareMap.dcMotor.get("rearLeft");
+    matthew = hardwareMap.dcMotor.get("rearRight");
+    toby = hardwareMap.dcMotor.get("buttonPusher");
+
+    //reverse polarity for the robot to be correctly driving
+    parker.setDirection(DcMotor.Direction.REVERSE);
+    maria.setDirection(DcMotor.Direction.REVERSE);
+    
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
