@@ -26,7 +26,7 @@ import android.view.ViewParent;
 
 /*
 Created by FTCkey and then modified by Sam Orta on 10/1/16
-Last edited 10/25/16
+Last edited 10/17/16
  */
 //code where this program originally came from is http://ftckey.com/programming/tele-op/
 
@@ -40,7 +40,7 @@ public class MechanumFIRST extends OpMode {
     public float leftX, leftY, rightX, rightY, fudge, trueFudge;
     //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
     public static double deadzone = 0.2;
-    MediaPlayer ScotlandTheBrave;
+    MediaPlayer ScotlandTheBrave, HowCouldThisHappen;
 
 
     //initialize stage in which everything is set up and prepared
@@ -54,6 +54,7 @@ public class MechanumFIRST extends OpMode {
         matthew = hardwareMap.dcMotor.get("rearRight");
         toby = hardwareMap.dcMotor.get("buttonPusher");
         //set up Scotland the brave
+        HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.HowCouldThisHappenToMe);
         ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
 
         //mochi = hardwareMap.servo.get("flagRaiser");
@@ -77,12 +78,9 @@ public class MechanumFIRST extends OpMode {
         //if (gamepad.x) {
         //eric.setPower(1);
         // }
-        
-        /*
-        if (gamepad2.y) {
-            chris.setPower(0.5);
-         }
-        */
+
+
+
         /* //servo controller for the flag
         if(gamepad2.dpad_up) {
          mochi.setPosition(1.0);
@@ -116,14 +114,19 @@ public class MechanumFIRST extends OpMode {
         toby.setPower((-((gamepad2.left_trigger>0.5)? -1:(gamepad2.left_bumper)? 1:0)));
         toby.setPower(((gamepad2.right_trigger>0.5)? -1:(gamepad2.right_bumper)? 1:0));
 
-        //yes I programmed Scotland The Brave into the robot
-        if(gamepad1.y) {
+        //yes I programmed Scotland The Brave and How could this happen to Me into the robot
+        if(gamepad2.y) {
             ScotlandTheBrave.start();
         }
-        if(gamepad1.dpad_down) {
+        if(gamepad2.dpad_down) {
             ScotlandTheBrave.stop();
         }
-
+        if(gamepad1.y) {
+            HowCouldThisHappen.start();
+        }
+        if(gamepad1.dpad_down) {
+            HowCouldThisHappen.stop();
+        }
 
     }
 
@@ -161,4 +164,5 @@ public class MechanumFIRST extends OpMode {
         //chirs.setPower(0);
     }
 }
+
 
