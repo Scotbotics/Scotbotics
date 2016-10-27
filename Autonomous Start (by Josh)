@@ -1,0 +1,217 @@
+/**
+ * Created by joshuadebare on 10/16/16.
+ */
+
+
+//package that allows importing into the phone
+//package org.firstinspires.ftc.teamcode;
+
+//import a lot of different functions, methods and commands for the ftc hardware
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import android.media.MediaPlayer;
+
+//import a few more things for android.os on the phones
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
+import android.view.ViewParent;
+public class PsydocodeAutonomous {
+    public boolean blue;
+    public boolean far;
+
+    //Methods
+ public static  main, String [args]{
+        if( blue == true && far == false){
+
+           //Start with robot pointing towards beacon
+            //One rotation = 12.56637 inches
+            left();   // 30 inches, 2.738 rotations
+            foward(); // 24 inches 1.9099 rotations
+            left(); //  21 inches  1.671127
+            foward(); //  22 inches1.7507044
+            //Sense Color
+            //Push Button
+           // Undo uneven botton pusher
+            left();//48 inches 3.18971882 rotations
+           // Push Button
+           // Original Button state
+           // push capp ball
+            //Go Right 48 inches
+            //Go back 60 inches
+        }
+        if( blue == false && far == false){
+
+            //Start with robot pointing towards beacon
+            //One rotation = 12.56637 inches
+            right();   // 30 inches, 2.738 rotations
+            foward(); // 24 inches 1.9099 rotations
+            right(); //  21 inches  1.671127
+            foward(); //  22 inches1.7507044
+            //Sense Color
+            //Push Button
+            // Undo uneven botton pusher
+            right();//48 inches 3.18971882 rotations
+            // Push Button
+            // Original Button state
+            // push capp ball
+            //Go left 48 inches
+            //Go back 60 inches
+        }
+    }
+
+
+    public void init() {
+        //list of the all the motors and connect themselves to the actual motors
+        //the things in parantheses ex. "frontLeft" are what the motors are named in the configuration on the robot controller phone
+        parker = hardwareMap.dcMotor.get("frontLeft");
+        louis = hardwareMap.dcMotor.get("frontRight");
+        maria = hardwareMap.dcMotor.get("rearLeft");
+        matthew = hardwareMap.dcMotor.get("rearRight");
+        toby = hardwareMap.dcMotor.get("buttonPusher");
+        //set up Scotland the brave
+        HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.HowCouldThisHappenToMe);
+        ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
+
+        //mochi = hardwareMap.servo.get("flagRaiser");
+        //eric = hardwareMap.dcMotor.get("catapult");
+        //chris = hardwareMap.dcMotor.get("harvester");
+
+        //reverses left side, so the robot can drive other directions
+        parker.setDirection(DcMotor.Direction.REVERSE);
+        maria.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
+    public static void Foward(double rotations){
+        fudge = leftY ; //this can be tweaked for exponential power increase
+        ; //this can be tweaked for exponential power increase
+
+        trueFudge = (float) 1; // CHANGED 10/21/16 BY AZUL AND ANDERS FOR MAKER FAIR
+
+        //Louis = frontRightu
+        louis.setPower(.5);
+        //maria = rearLeft
+        maria.setPower(.5);
+        //Parker = frontLeft
+        parker.setPower(.5);
+        //matthew = rearRight
+        matthew.setPower(.5);
+        //Wait(rotations);
+
+
+    }
+
+    public static void backward( double rotations){
+        fudge = leftY ; //this can be tweaked for exponential power increase
+        ; //this can be tweaked for exponential power increase
+
+        trueFudge = (float) 1; // CHANGED 10/21/16 BY AZUL AND ANDERS FOR MAKER FAIR
+
+        //Louis = frontRightu
+        louis.setPower(-.5);
+        //maria = rearLeft
+        maria.setPower(.5);
+        //Parker = frontLeft
+        parker.setPower(-.5);
+        //matthew = rearRight
+        matthew.setPower(-.5);
+        //Wait(rotations);
+
+    }
+
+
+
+    public static void right(){
+        fudge = leftY ; //this can be tweaked for exponential power increase
+        ; //this can be tweaked for exponential power increase
+
+        trueFudge = (float) 1; // CHANGED 10/21/16 BY AZUL AND ANDERS FOR MAKER FAIR
+
+        //Louis = frontRightu
+        louis.setPower(.5);
+        //maria = rearLeft
+        maria.setPower(-.5);
+        //Parker = frontLeft
+        parker.setPower(-.5);
+        //matthew = rearRight
+        matthew.setPower(-.5);
+        //Wait(rotations);
+
+
+    }
+
+    public static void left(){
+        fudge = leftY ; //this can be tweaked for exponential power increase
+        ; //this can be tweaked for exponential power increase
+
+        trueFudge = (float) 1; // CHANGED 10/21/16 BY AZUL AND ANDERS FOR MAKER FAIR
+
+        //Louis = frontRightu
+        louis.setPower(-.5);
+        //maria = rearLeft
+        maria.setPower(.5);
+        //Parker = frontLeft
+        parker.setPower(-.5);
+        //matthew = rearRight
+        matthew.setPower(.5);
+        //Wait(rotations);
+
+
+    }
+
+
+    /*
+     Blue Near:
+     Methods:
+        Foward (One Rotation)
+        Backward (One Rotation)
+        SlideRight (One Rotation)
+        SlideLeft (One Rotation
+
+     point towards beacon
+     Left 30 inches
+     Foward 24 inches
+     Left 21 inches
+     22 inches foward
+     Sense Color
+     Push Button
+    Undo uneven botton pusher
+     Move 48 inches left
+     Push Button
+      Original Button state
+      If time:
+      Go Right 48 inches
+      Go back 60 inches
+
+      Blue Far:
+     point towards beacon
+     Foward 20 inches
+     Left 30 inches
+     Foward 48 inches
+     Left 21 inches
+     22 inches foward
+     Sense Color
+     Push Button
+    Undo uneven botton pusher
+     Move 48 inches left
+     Push Button
+      Original Button state
+      If time:
+      Go Right 48 inches
+      Go back 60 inches
+
+     */
+}
