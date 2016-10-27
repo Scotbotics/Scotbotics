@@ -59,6 +59,16 @@ public class AutonomousBaseline extends OpMode {
         clamp.setPosition(CLAMP_MIN);
         */
         //gets servos and sets to minimum values
+        
+        // Anders started working on the code here on 10.27.16
+        //help! needing to loop these: while parker.revolutions.get(2);
+        
+        for (i =0, i = parker.revolutions(), i<2)
+        
+            parker.setPower.get(0.5);
+            louis.setPower.get(0.5);
+            maria.setPower.get(0.5);
+            matthew.setPower.get(0.5)
     }
 
     @Override
