@@ -1,6 +1,8 @@
 # Scotbotics
 Main Area for All Code
 
+10/31/16 MecanumFIRST is our current TeleOp and MecanumAutonomous is our current Autonomous
+
 Notes to anyone who might be on our shared github, this is also some sort of a tutorial -
 
 1. You are currently in what is known as a resporitory. It is a folder that houses all the code we have written
@@ -13,7 +15,7 @@ Notes to anyone who might be on our shared github, this is also some sort of a t
 
 5. To create a new file go to where the resporitory name is and click the plus sign. You can then name your code file, put in the code and hit commit.
 
-6. Github IS NOT AN IDE. You cannot test your code in this, put your code in after you know it works.
+6. Github IS NOT AN IDE. You cannot test your code in this, put your code in after you know it works. Please check it through andorid studio
 
 7. All code is available for your own use, just give the author some some credit and feel free to edit it. If you would like to change the code you have two options. 
   
@@ -25,7 +27,6 @@ Notes to anyone who might be on our shared github, this is also some sort of a t
 
 9. Please put comments in your code, especially in parts that no one but the person who wrote it would understand easily.
 
-10. We have a TODO list of things that need to be done. If you could take it upon yourself to do one and then mark that you're doing it and mark it when it's done
 
 That should be about it. Enjoy your day and welcome to our coding group!
 -Sam Orta
