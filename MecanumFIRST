@@ -26,7 +26,7 @@ import android.view.ViewParent;
 
 /*
 Created by FTCkey and then modified by Sam Orta on 10/1/16
-Last edited 10/17/16
+Last edited 10/30/16
  */
 //code where this program originally came from is http://ftckey.com/programming/tele-op/
 
@@ -54,12 +54,12 @@ public class MechanumFIRST extends OpMode {
         matthew = hardwareMap.dcMotor.get("rearRight");
         toby = hardwareMap.dcMotor.get("buttonPusher");
         //set up Scotland the brave
-        HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.HowCouldThisHappenToMe);
+        HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappentome);
         ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
 
         //mochi = hardwareMap.servo.get("flagRaiser");
         //eric = hardwareMap.dcMotor.get("catapult");
-        //chris = hardwareMap.dcMotor.get("harvester");
+        chris = hardwareMap.dcMotor.get("harvester");
 
         //reverses left side, so the robot can drive other directions
         parker.setDirection(DcMotor.Direction.REVERSE);
@@ -72,7 +72,9 @@ public class MechanumFIRST extends OpMode {
         getJoyVals();
         //updates joyvalues with deadzones, xyzw
         //sets the power of Chris if a on functions is pressed
-        //if (gamepad2.a) chris.setPower(.1);
+        if (gamepad2.a) {
+            chris.setPower(.1);
+        }
         //allows control of harvester
 
         //if (gamepad.x) {
@@ -118,13 +120,13 @@ public class MechanumFIRST extends OpMode {
         if(gamepad2.y) {
             ScotlandTheBrave.start();
         }
-        if(gamepad2.dpad_down) {
+        if(gamepad2.dpad_left) {
             ScotlandTheBrave.stop();
         }
         if(gamepad1.y) {
             HowCouldThisHappen.start();
         }
-        if(gamepad1.dpad_down) {
+        if(gamepad1.dpad_left) {
             HowCouldThisHappen.stop();
         }
 
@@ -164,5 +166,3 @@ public class MechanumFIRST extends OpMode {
         //chirs.setPower(0);
     }
 }
-
-
