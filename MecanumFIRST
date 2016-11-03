@@ -52,30 +52,30 @@ public class MechanumFIRST extends OpMode {
         louis = hardwareMap.dcMotor.get("frontRight");
         maria = hardwareMap.dcMotor.get("rearLeft");
         matthew = hardwareMap.dcMotor.get("rearRight");
-        toby = hardwareMap.dcMotor.get("buttonPusher");
-        //set up Scotland the brave
-        HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappentome);
-        ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
 
         //mochi = hardwareMap.servo.get("flagRaiser");
         //eric = hardwareMap.dcMotor.get("catapult");
+        toby = hardwareMap.dcMotor.get("buttonPusher");
         chris = hardwareMap.dcMotor.get("harvester");
 
         //reverses left side, so the robot can drive other directions
         parker.setDirection(DcMotor.Direction.REVERSE);
         maria.setDirection(DcMotor.Direction.REVERSE);
 
+        //set up Scotland the brave
+        HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappentome);
+        ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
     }
 
     @Override
     public void loop() {
         getJoyVals();
         //updates joyvalues with deadzones, xyzw
-        //sets the power of Chris if a on functions is pressed
-        if (gamepad2.a) {
-            chris.setPower(.1);
-        }
         //allows control of harvester
+        if (gamepad2.a) {
+            chris.setPower(1);
+        }
+
 
         //if (gamepad.x) {
         //eric.setPower(1);
