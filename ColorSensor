@@ -1,0 +1,55 @@
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
+import com.qualcomm.ftcrobotcontroller.R;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+
+public class ColorSensor extends LinearOpMode
+{
+	ColorSensor colorSensor;
+	DeviceInterfaceModule = CDI;
+
+	public void runOpMode() throws InterruptedException 
+	{
+		colorSensor = hardwareMap.colorSensor.get(“color”);
+		CDI = hardwareMap.deviceInterfaceModule.get(“Device Interface Module 1”);
+		
+		boolean LEDState = true;
+		colorSensor.enableLed(LEDState);
+	
+		float hsvValues[] = [0, 0, 0];
+		
+		boolean red = false;
+		boolean blue = false;
+		boolean unknown	= false;
+
+		Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+		//telemetry.addData(“2 Clear”, colorSensor.alpha());
+		telemetry.addData(“3 Red”, colorSensor.red());
+		telemetry.addData(“5 Blue”, colorSensor.blue());
+		telemetry.addData(“6 Hue”, hsvValues[0]);
+
+		if (colorSensor.red() > colorSensor.blue())
+		{
+			red = true;
+			return red;
+		}
+		else if (colorSensor.blue() > colorSensor.red())
+		{
+			blue = true;
+			return blue;
+		}
+		else
+		{
+			unknown = true;
+			return unknown;
+		}
+	}
+}
+
+
