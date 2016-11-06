@@ -25,8 +25,8 @@ public class ColorSensor extends LinearOpMode
 	
 	public static void main(String[]args)
 	{
-		System.out.println(runOpMode);
-		System.out.println("It works!");
+
+System.out.println(runOpMode);
 	}
 	public void loop(String color) throws InterruptedException 
 	{
@@ -46,7 +46,7 @@ public class ColorSensor extends LinearOpMode
 		telemetry.addData(“3 Red”, colorSensor.red());
 		telemetry.addData(“5 Blue”, colorSensor.blue());
 		telemetry.addData(“6 Hue”, hsvValues[0]);
-
+		telemetry.addData("Start", "Start");
 		if (colorSensor.red() > colorSensor.blue())
 		{
 			color = red;
