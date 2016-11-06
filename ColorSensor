@@ -1,19 +1,34 @@
-import android.app.Activity;
-import android.graphics.Color;
-import android.view.View;
-
-import com.qualcomm.ftcrobotcontroller.R;
+//import a lot of different functions, methods and commands for the ftc hardware
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import android.media.MediaPlayer;
+import android.graphics.Color;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 
 public class ColorSensor extends LinearOpMode
 {
 	ColorSensor colorSensor;
 	DeviceInterfaceModule = CDI;
-
-	public void runOpMode() throws InterruptedException 
+	
+	public static void main(String[]args)
+	{
+		System.out.println(runOpMode);
+		System.out.println("It works!");
+	}
+	public void loop(String color) throws InterruptedException 
 	{
 		colorSensor = hardwareMap.colorSensor.get(“color”);
 		CDI = hardwareMap.deviceInterfaceModule.get(“Device Interface Module 1”);
@@ -23,9 +38,7 @@ public class ColorSensor extends LinearOpMode
 	
 		float hsvValues[] = [0, 0, 0];
 		
-		boolean red = false;
-		boolean blue = false;
-		boolean unknown	= false;
+		String color = "";
 
 		Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
 
@@ -36,18 +49,23 @@ public class ColorSensor extends LinearOpMode
 
 		if (colorSensor.red() > colorSensor.blue())
 		{
-			red = true;
-			return red;
+			color = red;
+			telemetr.addData("red");
+			return color;
+
 		}
 		else if (colorSensor.blue() > colorSensor.red())
 		{
-			blue = true;
-			return blue;
+			color = blue;
+			telemetry.addData("blue");
+			return color;
+
 		}
 		else
 		{
-			unknown = true;
-			return unknown;
+			color = unknown;
+			telemetry.addData("unknown");
+			return color;
 		}
 	}
 }
