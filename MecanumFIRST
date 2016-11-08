@@ -25,8 +25,8 @@ import android.util.Log;
 import android.view.ViewParent;
 
 /*
-Created by FTCkey and then modified by Sam Orta on 10/1/16
-Last edited 10/30/16
+Created by FTCkey and then heavily modified by Sam Orta on 10/1/16
+Last edited 1/7/16
  */
 //code where this program originally came from is http://ftckey.com/programming/tele-op/
 
@@ -37,10 +37,10 @@ public class MechanumFIRST extends OpMode {
     DcMotor parker, louis, maria, matthew, toby, eric, chris;
     Servo mochi;
     //variables for the joysticks and their positions on gamepad1
-    public float leftX, leftY, rightX, rightY, fudge, trueFudge;
+    public float leftX, leftY, rightX, rightY, fudge, harvesterY, trueFudge;
     //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
     public static double deadzone = 0.2;
-    MediaPlayer ScotlandTheBrave, HowCouldThisHappen;
+    MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence;
 
 
     //initialize stage in which everything is set up and prepared
@@ -53,7 +53,8 @@ public class MechanumFIRST extends OpMode {
         maria = hardwareMap.dcMotor.get("rearLeft");
         matthew = hardwareMap.dcMotor.get("rearRight");
 
-        //mochi = hardwareMap.servo.get("flagRaiser");
+        mochi = hardwareMap.servo.get("flagRaiser");
+
         //eric = hardwareMap.dcMotor.get("catapult");
         toby = hardwareMap.dcMotor.get("buttonPusher");
         chris = hardwareMap.dcMotor.get("harvester");
@@ -62,28 +63,27 @@ public class MechanumFIRST extends OpMode {
         parker.setDirection(DcMotor.Direction.REVERSE);
         maria.setDirection(DcMotor.Direction.REVERSE);
 
-        //set up Scotland the brave
+        //set up out playlist
         HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappentome);
         ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
+        TheSoundOfSilence = MediaPlayer.create(hardwareMap.appContext, R.raw.thesoundofsilence);
     }
 
     @Override
     public void loop() {
         getJoyVals();
         //updates joyvalues with deadzones, xyzw
+
         //allows control of harvester
-        if (gamepad2.a) {
-            chris.setPower(1);
+        chris.setPower(harvesterY * trueFudge);
+
+        if(gamepad2.x) {
+            eric.setPower(1);
+        }
+        if(gamepad2.b) {
+            eric.setPower(0);
         }
 
-
-        //if (gamepad.x) {
-        //eric.setPower(1);
-        // }
-
-
-
-        /* //servo controller for the flag
         if(gamepad2.dpad_up) {
          mochi.setPosition(1.0);
          }
@@ -93,10 +93,8 @@ public class MechanumFIRST extends OpMode {
         if(gamepad2.dpad_down) {
          mochi.setPosition(0);
            }
-         */
         //this controls how the drive system works by calculating how the joysticks control the power of te robot.
         fudge = leftY ; //this can be tweaked for exponential power increase
-        ; //this can be tweaked for exponential power increase
 
         trueFudge = (float) 1; // CHANGED 10/21/16 BY AZUL AND ANDERS FOR MAKER FAIR
 
@@ -117,17 +115,23 @@ public class MechanumFIRST extends OpMode {
         toby.setPower(((gamepad2.right_trigger>0.5)? -1:(gamepad2.right_bumper)? 1:0));
 
         //yes I programmed Scotland The Brave and How could this happen to Me into the robot
-        if(gamepad2.y) {
+        if(gamepad1.y) {
             ScotlandTheBrave.start();
         }
-        if(gamepad2.dpad_left) {
-            ScotlandTheBrave.stop();
+        if(gamepad1.dpad_up && ScotlandTheBrave.isPlaying()) {
+            ScotlandTheBrave.pause();
         }
-        if(gamepad1.y) {
+        if(gamepad1.x) {
             HowCouldThisHappen.start();
         }
-        if(gamepad1.dpad_left) {
-            HowCouldThisHappen.stop();
+        if(gamepad1.dpad_left && HowCouldThisHappen.isPlaying()) {
+            HowCouldThisHappen.pause();
+        }
+        if(gamepad1.b) {
+            TheSoundOfSilence.start();
+        }
+        if(gamepad1.dpad_right && TheSoundOfSilence.isPlaying()) {
+            TheSoundOfSilence.pause();
         }
 
     }
@@ -142,6 +146,7 @@ public class MechanumFIRST extends OpMode {
         //formally w
         rightY = gamepad1.right_stick_y;
         //updates joystick values
+        harvesterY = gamepad2.left_stick_y;
 
         //deadzones are the area that controllers don't work as none are calibrated perfectly, this checks for them
         if(Math.abs(leftX)<deadzone) leftX = 0;
@@ -161,8 +166,8 @@ public class MechanumFIRST extends OpMode {
         matthew.setPower(0);
         maria.setPower(0);
         toby.setPower(0);
-        // mochi.setPower(0.5);
-        //eric.setPower(0);
-        //chirs.setPower(0);
+        mochi.setPosition(0.5);
+        eric.setPower(0);
+        chris.setPower(0);
     }
 }
