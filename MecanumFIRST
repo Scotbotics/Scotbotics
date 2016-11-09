@@ -25,7 +25,7 @@ import android.util.Log;
 import android.view.ViewParent;
 
 /*
-Created by FTCkey and then heavily modified by Sam Orta on 10/1/16
+Created by Sam Orta on 10/1/16. Came from FTCkey template
 Last edited 1/7/16
  */
 //code where this program originally came from is http://ftckey.com/programming/tele-op/
@@ -36,10 +36,13 @@ public class MechanumFIRST extends OpMode {
     //Reason is that I'm insane -Sam
     DcMotor parker, louis, maria, matthew, toby, eric, chris;
     Servo mochi;
+    
     //variables for the joysticks and their positions on gamepad1
     public float leftX, leftY, rightX, rightY, fudge, harvesterY, trueFudge;
+    
     //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
     public static double deadzone = 0.2;
+    
     MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence;
 
 
@@ -77,28 +80,37 @@ public class MechanumFIRST extends OpMode {
         //allows control of harvester
         chris.setPower(harvesterY * trueFudge);
 
+        //Turns the ball launcher on
         if(gamepad2.x) {
             eric.setPower(-1);
         }
+        
+        //Turns the ball launcher off
         if(gamepad2.b) {
             eric.setPower(0);
         }
-
+        
+        //Raises the flag
         if(gamepad2.dpad_up) {
          mochi.setPosition(1.0);
-         }
+        }
+        
+        //Stops the flag
         if(gamepad2.dpad_left) {
           mochi.setPosition(0.5);
-          }
+        }
+        
+        //Lowers the flag
         if(gamepad2.dpad_down) {
          mochi.setPosition(0);
-           }
+        }
+        
         //this controls how the drive system works by calculating how the joysticks control the power of te robot.
         fudge = leftY ; //this can be tweaked for exponential power increase
 
         trueFudge = (float) 1; // CHANGED 10/21/16 BY AZUL AND ANDERS FOR MAKER FAIR
 
-        //Louis = frontRightu
+        //Louis = frontRight
         louis.setPower(Range.clip(trueFudge * (fudge - leftX+rightX), -1, 1));
         //maria = rearLeft
         maria.setPower(Range.clip(trueFudge * (fudge - leftX-rightX), -1, 1));
@@ -107,11 +119,11 @@ public class MechanumFIRST extends OpMode {
         //matthew = rearRight
         matthew.setPower(Range.clip(trueFudge * (fudge + leftX+rightX), -1, 1));
 
-        //1 is right side
-        //-1 is left side
+        //1 is right side for button pusher
+        //-1 is left side for button pusher
 
-        //toby pushes to the left by hitting left trigger/left bumper?
-        //toby pushes to the right by hitting right trigger/right bumper?
+        //toby pushes to the left by hitting left trigger
+        //toby pushes to the right by hitting right trigger
         toby.setPower((-((gamepad2.left_trigger>0.5)? -1:(gamepad2.left_bumper)? 1:0)));
         toby.setPower(((gamepad2.right_trigger>0.5)? -1:(gamepad2.right_bumper)? 1:0));
 
@@ -119,18 +131,27 @@ public class MechanumFIRST extends OpMode {
         if(gamepad1.y) {
             ScotlandTheBrave.start();
         }
+        //If the song is playing, you can stop it 
         if(gamepad1.dpad_up && ScotlandTheBrave.isPlaying()) {
             ScotlandTheBrave.pause();
         }
+                
+        //How to start "How did this happen". Use when losing or everything is breaking
         if(gamepad1.x) {
             HowCouldThisHappen.start();
         }
+        
+        //If the song is playing, you can stop it 
         if(gamepad1.dpad_left && HowCouldThisHappen.isPlaying()) {
             HowCouldThisHappen.pause();
         }
+        
+        //Use when wanting to listen to a good song, or everything is broken
         if(gamepad1.b) {
             TheSoundOfSilence.start();
         }
+        
+        //If the song is playing, you can stop it 
         if(gamepad1.dpad_right && TheSoundOfSilence.isPlaying()) {
             TheSoundOfSilence.pause();
         }
@@ -162,6 +183,7 @@ public class MechanumFIRST extends OpMode {
     public void stop() {
         //nothing here? probably gotta call garbage collection at some point
         //tells everything to cut all power
+        //All motors go to 0 power when cut, servos stop moving at 0.5 power (Mochi)
         parker.setPower(0);
         louis.setPower(0);
         matthew.setPower(0);
