@@ -55,7 +55,7 @@ public class MechanumFIRST extends OpMode {
 
         mochi = hardwareMap.servo.get("flagRaiser");
 
-        //eric = hardwareMap.dcMotor.get("catapult");
+        eric = hardwareMap.dcMotor.get("catapult");
         toby = hardwareMap.dcMotor.get("buttonPusher");
         chris = hardwareMap.dcMotor.get("harvester");
 
@@ -78,7 +78,7 @@ public class MechanumFIRST extends OpMode {
         chris.setPower(harvesterY * trueFudge);
 
         if(gamepad2.x) {
-            eric.setPower(1);
+            eric.setPower(-1);
         }
         if(gamepad2.b) {
             eric.setPower(0);
@@ -87,7 +87,7 @@ public class MechanumFIRST extends OpMode {
         if(gamepad2.dpad_up) {
          mochi.setPosition(1.0);
          }
-        if(gamepad2.dpad_right) {
+        if(gamepad2.dpad_left) {
           mochi.setPosition(0.5);
           }
         if(gamepad2.dpad_down) {
@@ -107,7 +107,8 @@ public class MechanumFIRST extends OpMode {
         //matthew = rearRight
         matthew.setPower(Range.clip(trueFudge * (fudge + leftX+rightX), -1, 1));
 
-
+        //1 is right side
+        //-1 is left side
 
         //toby pushes to the left by hitting left trigger/left bumper?
         //toby pushes to the right by hitting right trigger/right bumper?
