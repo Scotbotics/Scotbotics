@@ -1,6 +1,4 @@
 /*
-
-Last Edited; nathan chin  11/6/16
 Modern Robotics Color Sensor Active & Passive Example
 Created 7/25/2016 by Colton Mehlhoff of Modern Robotics using FTC SDK 1.6
  Reuse permitted with credit where credit is due
@@ -15,8 +13,25 @@ Created 7/25/2016 by Colton Mehlhoff of Modern Robotics using FTC SDK 1.6
         For more information, visit modernroboticsedu.com.
         Support is available by emailing support@modernroboticsinc.com.
 */
+//package that allows importing into the phone
 package org.firstinspires.ftc.teamcode;
 
+//import a lot of different functions, methods and commands for the ftc hardware
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import android.media.MediaPlayer;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,25 +39,37 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-public class MRI_ColorSensor extends LinearOpMode {
-
+public class MRI_ColorSensor extends OpMode {
+    DcMotor parker, louis, maria, matthew, toby, eric, chris;
+    Servo mochi;
     ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
     TouchSensor touch;             //Instance of TouchSensor - for changing color sensor mode
     DeviceInterfaceModule CDI;     //Instance of DeviceInterfaceModule - for showing a red or blue LED
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init()  {
+
+        parker = hardwareMap.dcMotor.get("frontLeft");
+        louis = hardwareMap.dcMotor.get("frontRight");
+        maria = hardwareMap.dcMotor.get("rearLeft");
+        matthew = hardwareMap.dcMotor.get("rearRight");
+
+        toby = hardwareMap.dcMotor.get("buttonPusher");
         //the below three lines set up the configuration file
+
         colorSensor = hardwareMap.colorSensor.get("color");
-        touch = hardwareMap.touchSensor.get("t");
+        //touch = hardwareMap.touchSensor.get("t");
         //We named the CDI using the default name given by the FTC configuration file
         CDI = hardwareMap.deviceInterfaceModule.get("Device Interface Module 1");
 
 
         //boolean touchState = false;  //Tracks the last known state of the touch sensor
-        boolean LEDState = false;     //Tracks the mode of the color sensor; Active = true, Passive = false
+    }
+    public void loop() {
 
-        waitForStart();  //Wait for the play button to be pressed
+    }
+    public void getColor() {
+        boolean LEDState = false;     //Tracks the mode of the color sensor; Active = true, Passive = false
 
         colorSensor.enableLed(LEDState);
         /*LEDState = !LEDState;
@@ -80,17 +107,33 @@ public class MRI_ColorSensor extends LinearOpMode {
             telemetry.addData("5 Blue ", colorSensor.blue());
             telemetry.addData("6 Hue", hsvValues[0]);
             //illuminate the RED/BLUE LED on the Core Device Interface if the RED/BLUE value is greatest
+            String direction = "";
             if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > colorSensor.green()) {
                 CDI.setLED(1, true);           //Red ON
-                CDI.setLED(0, false);          //Blue OFF
+                CDI.setLED(0, false);
+                direction = "left";
+                //set ballpusher to hit the correct beacon
+                //if red team:
+                toby.setPower(1);
+                //if blue team:
+                //toby.setPower(-1);
+                                    //Blue OFF
+
             } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
                 CDI.setLED(1, false);          //Red OFF
-                CDI.setLED(0, true);           //Blue ON
+                CDI.setLED(0, true);
+                direction = "right";
+                //if blue team
+                toby.setPower(-1);
+                //if red team
+                //toby.setPower(-1);
+
             } else {
                 CDI.setLED(1, false);           //Red OFF
                 CDI.setLED(0, false);           //Blue OFF
             }
 
-            waitOneFullHardwareCycle();  //wait for all new data to go from the phone to the controllers and from the controllers to the phone.
+              //wait for all new data to go from the phone to the controllers and from the controllers to the phone.
         } //End main loop of program
+
     }
