@@ -1,5 +1,3 @@
-
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -9,9 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
+ *Created by Sam Orta
+ *Last Edited by Josh 11/6/16
  * This file illustrates the concept of driving a path based on encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
  * The code is structured as a LinearOpMode
+ * Currently this code moves the robot nowhere for 3 seconds.
+ *Currently all wheels arw going inwards.  Make it os two are going outwards.  WIll go to the inward sides.
  *
  * The code REQUIRES that you DO have encoders on the wheels,
  *   otherwise you would use: PushbotAutoDriveByTime;
@@ -35,8 +37,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="MecanumAutonomousBlueOne")
-public class MecanumAutonomousBlueOne extends LinearOpMode {
+@Autonomous(name="MecanumAutonomous")
+public class MecanumAutonomous extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareMecanumPushbot robot = new HardwareMecanumPushbot();   // Use a Pushbot's hardware
@@ -57,7 +59,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
-
+        
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
@@ -90,40 +92,145 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        // encoderDrive(DRIVE_SPEED, 48, 48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+       // encoderDrive(DRIVE_SPEED, 48, 48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         // encoderDrive(Drive_Speed, );
-        //left
+        // efirst left slide
         //Louis = frontRightu
-        robot.louis.setPower(-.5);
+      //  robot.louis.setPower(-1);
         //maria = rearLeft
-        robot.maria.setPower(.5);
+      //  robot.maria.setPower(1);
         //Parker = frontLeft
-        robot.parker.setPower(-.5);
+      //  robot.parker.setPower(-1);
         //matthew = rearRight
-        robot.matthew.setPower(.5);
-        sleep(300);
+      //  robot.matthew.setPower(1);
+      //  sleep(800);
 
-        // encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+       // encoderDrive(DRIVE_SPEED, 24, 24, 2.0);  // S1: Forward 47 Inches with 5 Sec timeout
+//Left
+    //Louis is front right
+          robot.louis.setPower(1);
+        //maria = rearLeft;
+          robot.maria.setPower(1);
+       // Parker = frontLeft;
+          robot.parker.setPower(-1);
+      //  matthew = rearRight;
+          robot.matthew.setPower(-1);
 
-        //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-        // robot.rightClaw.setPosition(0.0);
-        sleep(1000);     // pause for servos to move
+        runtime.reset();
+        while(opModeIsActive() && (runtime.seconds() < 3.0)){
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+            idle();
+        }
+          //Thread.sleep(5000);
 
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+
+
+    encoderDrive(DRIVE_SPEED, 24, 24, 22, 22, 2.0);
+
+        robot.louis.setPower(1);
+        //maria = rearLeft;
+        robot.maria.setPower(1);
+        // Parker = frontLeft;
+        robot.parker.setPower(-1);
+        //  matthew = rearRight;
+        robot.matthew.setPower(-1);
+
+        runtime.reset();
+        while(opModeIsActive() && (runtime.seconds() < 2.0)){
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+            idle();
+        }
+
+        encoderDrive(DRIVE_SPEED, 22, 22, 22, 22, 2.0);
+
+
+        //Nathan's Code
+
+        robot.louis.setPower(1);
+        //maria = rearLeft;
+        robot.maria.setPower(1);
+        // Parker = frontLeft;
+        robot.parker.setPower(-1);
+        //  matthew = rearRight;
+        robot.matthew.setPower(-1);
+
+        runtime.reset();
+        while(opModeIsActive() && (runtime.seconds() < 5.0)){
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+            idle();
+        }
+
     }
+    //Thread.sleep(5000);
 
     /*
-     *  Method to perfmorm a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
+    //Foward
+               //encoderDrive(DRIVE_SPEED, 24, 24, 2.0);  // S1: Forward 47 Inches with 5 Sec timeout
+            //left
+            robot.louis.setPower(-.5);
+            //maria = rearLeft;
+            robot.maria.setPower(.5);
+            // Parker = frontLeft;
+            robot.parker.setPower(-.5);
+            //  matthew = rearRight;
+            robot.matthew.setPower(.5);
+           // sleep(1000);
+
+                //foward
+                encoderDrive(DRIVE_SPEED, 22, 22, 2.0);  // S1: Forward 47 Inches with 5 Sec timeout
+
+                //   sleep(2000);
+
+                //nathan do your code here
+
+                 //left
+                robot.louis.setPower(-.5);
+                //maria = rearLeft;
+                robot.maria.setPower(.5);
+                // Parker = frontLeft;
+                robot.parker.setPower(-.5);
+                //  matthew = rearRight;
+                robot.matthew.setPower(.5);
+                sleep(5000);
+
+                //nathan, more code here
+                //...If we want to push cap ball
+            //right
+                robot.louis.setPower(.5);
+                //maria = rearLeft;
+                robot.maria.setPower(-.5);
+                // Parker = frontLeft;
+                robot.parker.setPower(.5);
+                //  matthew = rearRight;
+                robot.matthew.setPower(-.5);
+                sleep(5000);
+                //back
+                encoderDrive(DRIVE_SPEED, -60, -60, 2.0);  // S1: Forward 47 Inches with 5 Sec timeout
+
+                // encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+                //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+
+                //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
+                // robot.rightClaw.setPosition(0.0);
+                sleep(1000);     // pause for servos to move
+
+                telemetry.addData("Path", "Complete");
+                telemetry.update();
+            }
+
+            /*
+             *  Method to perfmorm a relative move, based on encoder counts.
+             *  Encoders are not reset as the move is based on the current position.
+             *  Move will stop if any of three conditions occur:
+             *  1) Move gets to the desired position
+             *  2) Move runs out of time
+             *  3) Driver stops the opmode running.
+             */
     public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
+                             double leftFront, double rightFront, double rightRear, double leftRear,
                              double timeoutS) throws InterruptedException {
         int newLeftTarget;
         int newRightTarget;
@@ -132,11 +239,11 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.parker.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
-            newLeftTarget = robot.maria.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
+            newLeftTarget = robot.parker.getCurrentPosition() + (int) (leftFront * COUNTS_PER_INCH);
+            newLeftTarget = robot.maria.getCurrentPosition() + (int) (leftFront * COUNTS_PER_INCH);
 
-            newRightTarget = robot.louis.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
-            newRightTarget = robot.matthew.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
+            newRightTarget = robot.louis.getCurrentPosition() + (int) (rightRear * COUNTS_PER_INCH);
+            newRightTarget = robot.matthew.getCurrentPosition() + (int) (rightFront * COUNTS_PER_INCH);
 
             robot.maria.setTargetPosition(newLeftTarget);
             robot.parker.setTargetPosition(newLeftTarget);
