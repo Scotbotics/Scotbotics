@@ -7,7 +7,7 @@ Notes to anyone who might be on our shared github, this is also some sort of a t
 
 1. You are currently in what is known as a resporitory. It is a folder that houses all the code we have written
 
-2. Our resporitory is broken up in branches which sort them into categories, current branches include setup, master (contains everything), strings and magpie. To change branches go to the create/change branch, it's in the top leftish left corner.
+2. Make sure there's no errors, for the love of neuroscience no red lines and please don't have red lines and not tell that in the program.
 
 3. To access a file just click on it. The gray text to the right of it is a description of whatever the last editor did on the file. Please update it if you edit code.
 
