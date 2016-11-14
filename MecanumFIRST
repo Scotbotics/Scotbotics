@@ -26,7 +26,7 @@ import android.view.ViewParent;
 
 /*
 Created by Sam Orta on 10/1/16. Came from FTCkey template
-Last edited 1/7/16
+Last edited 1/9/16
  */
 //code where this program originally came from is http://ftckey.com/programming/tele-op/
 
@@ -36,14 +36,14 @@ public class MechanumFIRST extends OpMode {
     //Reason is that I'm insane -Sam
     DcMotor parker, louis, maria, matthew, toby, eric, chris;
     Servo mochi;
-    
+
     //variables for the joysticks and their positions on gamepad1
     public float leftX, leftY, rightX, rightY, fudge, harvesterY, trueFudge;
-    
+
     //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
     public static double deadzone = 0.2;
-    
-    MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence;
+
+    MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger;
 
 
     //initialize stage in which everything is set up and prepared
@@ -70,6 +70,8 @@ public class MechanumFIRST extends OpMode {
         HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappentome);
         ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
         TheSoundOfSilence = MediaPlayer.create(hardwareMap.appContext, R.raw.thesoundofsilence);
+        EyeOfTheTiger = MediaPlayer.create(hardwareMap.appContext, R.raw.eyeofthetiger);
+
     }
 
     @Override
@@ -84,27 +86,27 @@ public class MechanumFIRST extends OpMode {
         if(gamepad2.x) {
             eric.setPower(-1);
         }
-        
+
         //Turns the ball launcher off
         if(gamepad2.b) {
             eric.setPower(0);
         }
-        
+
         //Raises the flag
         if(gamepad2.dpad_up) {
-         mochi.setPosition(1.0);
+            mochi.setPosition(1.0);
         }
-        
+
         //Stops the flag
         if(gamepad2.dpad_left) {
-          mochi.setPosition(0.5);
+            mochi.setPosition(0.5);
         }
-        
+
         //Lowers the flag
         if(gamepad2.dpad_down) {
-         mochi.setPosition(0);
+            mochi.setPosition(0);
         }
-        
+
         //this controls how the drive system works by calculating how the joysticks control the power of te robot.
         fudge = leftY ; //this can be tweaked for exponential power increase
 
@@ -124,38 +126,44 @@ public class MechanumFIRST extends OpMode {
 
         //toby pushes to the left by hitting left trigger
         //toby pushes to the right by hitting right trigger
-        toby.setPower((-((gamepad2.left_trigger>0.5)? -1:(gamepad2.left_bumper)? 1:0)));
-        toby.setPower(((gamepad2.right_trigger>0.5)? -1:(gamepad2.right_bumper)? 1:0));
+        toby.setPower((((gamepad2.left_trigger>0.5)?  1:0)));
+        toby.setPower((-((gamepad2.right_trigger>0.5)? 1:0)));
 
         //yes I programmed Scotland The Brave and How could this happen to Me into the robot
         if(gamepad1.y) {
             ScotlandTheBrave.start();
         }
-        //If the song is playing, you can stop it 
+        //If the song is playing, you can stop it
         if(gamepad1.dpad_up && ScotlandTheBrave.isPlaying()) {
             ScotlandTheBrave.pause();
         }
-                
+
         //How to start "How did this happen". Use when losing or everything is breaking
         if(gamepad1.x) {
             HowCouldThisHappen.start();
         }
-        
-        //If the song is playing, you can stop it 
+
+        //If the song is playing, you can stop it
         if(gamepad1.dpad_left && HowCouldThisHappen.isPlaying()) {
             HowCouldThisHappen.pause();
         }
-        
+
         //Use when wanting to listen to a good song, or everything is broken
         if(gamepad1.b) {
             TheSoundOfSilence.start();
         }
-        
-        //If the song is playing, you can stop it 
+
+        //If the song is playing, you can stop it
         if(gamepad1.dpad_right && TheSoundOfSilence.isPlaying()) {
             TheSoundOfSilence.pause();
         }
 
+        if(gamepad1.a) {
+            EyeOfTheTiger.start();
+        }
+        if(gamepad1.dpad_down && EyeOfTheTiger.isPlaying()) {
+            EyeOfTheTiger.stop();
+        }
     }
 
     public void getJoyVals()
