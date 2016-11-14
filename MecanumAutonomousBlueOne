@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -37,10 +41,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="MecanumAutonomous")
-public class MecanumAutonomous extends LinearOpMode {
+@Autonomous(name="MecanumAutonomousBlueOne")
+public class MecanumAutonomousBlueOne extends LinearOpMode {
 
     /* Declare OpMode members. */
+    ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
+    DeviceInterfaceModule CDI;     //Instance of DeviceInterfaceModule - for showing a red or blue LED
+
     HardwareMecanumPushbot robot = new HardwareMecanumPushbot();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -48,18 +55,92 @@ public class MecanumAutonomous extends LinearOpMode {
     static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double DRIVE_SPEED = 0.6;
+    static final double DRIVE_SPEED = 0.25;
     static final double TURN_SPEED = 0.5;
+    public void getColor() {
+        boolean LEDState = true;     //Tracks the mode of the color sensor; Active = true, Passive = false
+
+        colorSensor.enableLed(LEDState);
+        /*LEDState = !LEDState;
+        colorSensor.enableLed(LEDState);*/
+
+        //Set the mode of the LED; Active = true, Passive = false
+        //Active - For measuring reflected light. Cancels out ambient light
+        //Passive - For measuring ambient light, eg. the FTC Color Beacon
+
+        float hsvValues[] = {0, 0, 0};  //used to get Hue
+
+            /*while (opModeIsActive()) {  //Main loop of program
+
+            //The below two if() statements ensure that the mode of the color sensor is changed only once each time the touch sensor is pressed.
+            //The mode of the color sensor is saved to the sensor's long term memory. Just like flash drives, the long term memory has a life time in the 10s or 100s of thousands of cycles.
+            //This seems like a lot but if your program wrote to the long term memory every time though the main loop, it would shorten the life of your sensor.
+
+            if (!touchState && touch.isPressed()) {  //If the touch sensor is just now being pressed (was not pressed last time through the loop but now is)
+                touchState = true;                   //Change touch state to true because the touch sensor is now pressed
+                LEDState = !LEDState;                //Change the LEDState to the opposite of what it was
+                colorSensor.enableLed(LEDState);     //Set the mode of the color sensor using LEDState
+            }
+            if (!touch.isPressed()) {                //If the touch sensor is now pressed
+                touchState = false;                  //Set the touchState to false to indicate that the touch sensor was released
+            }
+            */
+
+        //calculate hue
+        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+        //display values
+        telemetry.addData("2 Clear", colorSensor.alpha());
+        telemetry.addData("3 Red  ", colorSensor.red());
+        telemetry.addData("4 Green", colorSensor.green());
+        telemetry.addData("5 Blue ", colorSensor.blue());
+        telemetry.addData("6 Hue", hsvValues[0]);
+        //illuminate the RED/BLUE LED on the Core Device Interface if the RED/BLUE value is greatest
+        String direction = "";
+        if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > colorSensor.green()) {
+            CDI.setLED(1, true);           //Red ON
+            CDI.setLED(0, false);
+
+            telemetry.addData("red dominant", colorSensor.red());
+            //set ballpusher to hit the correct beacon
+            //if red team:
+            robot.toby.setPower(1);
+
+            robot.toby.setPower(0);
+            //encoder back
+            //if blue team:
+            //toby.setPower(-1);
+            //Blue OFF
+
+        } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
+            CDI.setLED(1, false);          //Red OFF
+            CDI.setLED(0, true);
+
+            telemetry.addData("blue dominant", colorSensor.blue());
+            //if blue team
+            robot.toby.setPower(-1);
+            //if red team
+            //toby.setPower(-1);
+
+        } else {
+            CDI.setLED(1, false);           //Red OFF
+            CDI.setLED(0, false);           //Blue OFF
+        }
+
+        //wait for all new data to go from the phone to the controllers and from the controllers to the phone.
+    } //End main loop of program
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-
+        colorSensor = hardwareMap.colorSensor.get("color");
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
-        
+
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
@@ -92,69 +173,25 @@ public class MecanumAutonomous extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-       // encoderDrive(DRIVE_SPEED, 48, 48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        // encoderDrive(Drive_Speed, );
-        // efirst left slide
-        //Louis = frontRightu
-      //  robot.louis.setPower(-1);
-        //maria = rearLeft
-      //  robot.maria.setPower(1);
-        //Parker = frontLeft
-      //  robot.parker.setPower(-1);
-        //matthew = rearRight
-      //  robot.matthew.setPower(1);
-      //  sleep(800);
+        //drive speed is 0.25
+        encoderDrive(DRIVE_SPEED, -30, 30, -30, 30, 5.0); //go left first
+        encoderDrive(DRIVE_SPEED, 24, 24, 24, 24, 5.0);  // Forward 24 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, -21, 21, -21, 21, 5.0); //turn left again
+        encoderDrive(DRIVE_SPEED, 22, 22, 22, 22, 5.0); //go forward 22
+        getColor();
+        encoderDrive(DRIVE_SPEED, -48, 48, -48, 48, 5.0); //go left 48
+        getColor();
+        encoderDrive(DRIVE_SPEED, 48, -48, 48, -48, 5.0); //right 48
+        encoderDrive(DRIVE_SPEED, -60, -60, -60, -60, 5.0); //right 48
 
-       // encoderDrive(DRIVE_SPEED, 24, 24, 2.0);  // S1: Forward 47 Inches with 5 Sec timeout
-//Left
-    //Louis is front right
-          robot.louis.setPower(1);
-        //maria = rearLeft;
-          robot.maria.setPower(1);
-       // Parker = frontLeft;
-          robot.parker.setPower(-1);
-      //  matthew = rearRight;
-          robot.matthew.setPower(-1);
-
+        /*
         runtime.reset();
         while(opModeIsActive() && (runtime.seconds() < 3.0)){
             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
             idle();
         }
-          //Thread.sleep(5000);
-
-
-
-    encoderDrive(DRIVE_SPEED, 24, 24, 22, 22, 2.0);
-
-        robot.louis.setPower(1);
-        //maria = rearLeft;
-        robot.maria.setPower(1);
-        // Parker = frontLeft;
-        robot.parker.setPower(-1);
-        //  matthew = rearRight;
-        robot.matthew.setPower(-1);
-
-        runtime.reset();
-        while(opModeIsActive() && (runtime.seconds() < 2.0)){
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-            idle();
-        }
-
-        encoderDrive(DRIVE_SPEED, 22, 22, 22, 22, 2.0);
-
-
-        //Nathan's Code
-
-        robot.louis.setPower(1);
-        //maria = rearLeft;
-        robot.maria.setPower(1);
-        // Parker = frontLeft;
-        robot.parker.setPower(-1);
-        //  matthew = rearRight;
-        robot.matthew.setPower(-1);
+        //Thread.sleep(5000);
 
         runtime.reset();
         while(opModeIsActive() && (runtime.seconds() < 5.0)){
@@ -162,65 +199,10 @@ public class MecanumAutonomous extends LinearOpMode {
             telemetry.update();
             idle();
         }
+        */
 
     }
     //Thread.sleep(5000);
-
-    /*
-    //Foward
-               //encoderDrive(DRIVE_SPEED, 24, 24, 2.0);  // S1: Forward 47 Inches with 5 Sec timeout
-            //left
-            robot.louis.setPower(-.5);
-            //maria = rearLeft;
-            robot.maria.setPower(.5);
-            // Parker = frontLeft;
-            robot.parker.setPower(-.5);
-            //  matthew = rearRight;
-            robot.matthew.setPower(.5);
-           // sleep(1000);
-
-                //foward
-                encoderDrive(DRIVE_SPEED, 22, 22, 2.0);  // S1: Forward 47 Inches with 5 Sec timeout
-
-                //   sleep(2000);
-
-                //nathan do your code here
-
-                 //left
-                robot.louis.setPower(-.5);
-                //maria = rearLeft;
-                robot.maria.setPower(.5);
-                // Parker = frontLeft;
-                robot.parker.setPower(-.5);
-                //  matthew = rearRight;
-                robot.matthew.setPower(.5);
-                sleep(5000);
-
-                //nathan, more code here
-                //...If we want to push cap ball
-            //right
-                robot.louis.setPower(.5);
-                //maria = rearLeft;
-                robot.maria.setPower(-.5);
-                // Parker = frontLeft;
-                robot.parker.setPower(.5);
-                //  matthew = rearRight;
-                robot.matthew.setPower(-.5);
-                sleep(5000);
-                //back
-                encoderDrive(DRIVE_SPEED, -60, -60, 2.0);  // S1: Forward 47 Inches with 5 Sec timeout
-
-                // encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-                //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-
-                //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-                // robot.rightClaw.setPosition(0.0);
-                sleep(1000);     // pause for servos to move
-
-                telemetry.addData("Path", "Complete");
-                telemetry.update();
-            }
-
             /*
              *  Method to perfmorm a relative move, based on encoder counts.
              *  Encoders are not reset as the move is based on the current position.
@@ -232,23 +214,25 @@ public class MecanumAutonomous extends LinearOpMode {
     public void encoderDrive(double speed,
                              double leftFront, double rightFront, double rightRear, double leftRear,
                              double timeoutS) throws InterruptedException {
-        int newLeftTarget;
-        int newRightTarget;
+        int newFrontLeftTarget;
+        int newRearLeftTarget;
+        int newFrontRightTarget;
+        int newRearRightTarget;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.parker.getCurrentPosition() + (int) (leftFront * COUNTS_PER_INCH);
-            newLeftTarget = robot.maria.getCurrentPosition() + (int) (leftFront * COUNTS_PER_INCH);
+            newFrontLeftTarget = robot.parker.getCurrentPosition() + (int) (leftFront * COUNTS_PER_INCH);
+            newRearLeftTarget = robot.maria.getCurrentPosition() + (int) (leftRear * COUNTS_PER_INCH);
 
-            newRightTarget = robot.louis.getCurrentPosition() + (int) (rightRear * COUNTS_PER_INCH);
-            newRightTarget = robot.matthew.getCurrentPosition() + (int) (rightFront * COUNTS_PER_INCH);
+            newFrontRightTarget = robot.louis.getCurrentPosition() + (int) (rightFront * COUNTS_PER_INCH);
+            newRearRightTarget = robot.matthew.getCurrentPosition() + (int) (rightRear * COUNTS_PER_INCH);
 
-            robot.maria.setTargetPosition(newLeftTarget);
-            robot.parker.setTargetPosition(newLeftTarget);
-            robot.matthew.setTargetPosition(newRightTarget);
-            robot.louis.setTargetPosition(newRightTarget);
+            robot.maria.setTargetPosition(newRearLeftTarget);
+            robot.parker.setTargetPosition(newFrontLeftTarget);
+            robot.matthew.setTargetPosition(newRearRightTarget);
+            robot.louis.setTargetPosition(newFrontRightTarget);
 
             // Turn On RUN_TO_POSITION
             robot.parker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -268,9 +252,8 @@ public class MecanumAutonomous extends LinearOpMode {
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.louis.isBusy() && robot.parker.isBusy() && robot.maria.isBusy() && robot.matthew.isBusy())) {
-
                 // Display it for the driver.
-                telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
+                telemetry.addData("Path1", "Running to %7d :%7d", newFrontLeftTarget, newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
                 telemetry.addData("Path2", "Running at %7d :%7d",
                         robot.parker.getCurrentPosition(),
                         robot.louis.getCurrentPosition(),
