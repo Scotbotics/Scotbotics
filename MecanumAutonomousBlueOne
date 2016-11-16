@@ -11,37 +11,19 @@ import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- *Created by Sam Orta
- *Last Edited by Josh 11/6/16
- * This file illustrates the concept of driving a path based on encoder counts.
- * It uses the common Pushbot hardware class to define the drive on the robot.
- * The code is structured as a LinearOpMode
- * Currently this code moves the robot nowhere for 3 seconds.
- *Currently all wheels arw going inwards.  Make it os two are going outwards.  WIll go to the inward sides.
- *
- * The code REQUIRES that you DO have encoders on the wheels,
- *   otherwise you would use: PushbotAutoDriveByTime;
- *
- *  This code ALSO requires that the drive Motors have been configured such that a positive
- *  power command moves them forwards, and causes the encoders to count UP.
- *
- *   The desired path in this example is:
- *   - Drive forward for 48 inches
- *   - Spin right for 12 Inches
- *   - Drive Backwards for 24 inches
+ *e522wa                                                                                                    kwards for 24 inches
  *   - Stop and close the claw.
  *
- *  The code is written using a method called: encoderDrive(speed, leftInches, rightInches, timeoutS)
+ *  The code is written using a method called: encoderDrive(speed, leftFrontInches, rightFrontInches, leftRearInches, rightRearInches
+ *  timeoutS)
  *  that performs the actual movement.
  *  This methods assumes that each movement is relative to the last stopping place.
  *  There are other ways to perform encoder based moves, but this method is probably the simplest.
  *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="MecanumAutonomousBlueOne")
+@Autonomous(name="MecanumAutonomousBlueOne6")
 public class MecanumAutonomousBlueOne extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -57,6 +39,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.25;
     static final double TURN_SPEED = 0.5;
+
     public void getColor() {
         boolean LEDState = true;     //Tracks the mode of the color sensor; Active = true, Passive = false
 
@@ -104,9 +87,11 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
             telemetry.addData("red dominant", colorSensor.red());
             //set ballpusher to hit the correct beacon
             //if red team:
+            runtime.reset();
             robot.toby.setPower(1);
-
-            robot.toby.setPower(0);
+            if (opModeIsActive() && (runtime.seconds() > 5.0)) {
+                robot.toby.setPower(0);
+            }
             //encoder back
             //if blue team:
             //toby.setPower(-1);
@@ -118,9 +103,12 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
 
             telemetry.addData("blue dominant", colorSensor.blue());
             //if blue team
+            runtime.reset();
             robot.toby.setPower(-1);
             //if red team
-            //toby.setPower(-1);
+            if (opModeIsActive() && (runtime.seconds() > 5.0)) {
+                robot.toby.setPower(0);
+            }
 
         } else {
             CDI.setLED(1, false);           //Red OFF
@@ -149,6 +137,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         robot.parker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.maria.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.matthew.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.toby.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         idle();
 
@@ -156,14 +145,19 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.maria.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.toby.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        telemetry.addData("Status", "Starting Program");    //
+        telemetry.update();
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Starting at %7d :%7d",
                 robot.parker.getCurrentPosition(),
                 robot.louis.getCurrentPosition(),
                 robot.maria.getCurrentPosition(),
+                robot.matthew.getCurrentPosition(),
                 robot.matthew.getCurrentPosition());
+
 
         telemetry.update();
 
@@ -174,16 +168,45 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //drive speed is 0.25
-        encoderDrive(DRIVE_SPEED, -30, 30, -30, 30, 5.0); //go left first
-        encoderDrive(DRIVE_SPEED, 24, 24, 24, 24, 5.0);  // Forward 24 Inches with 5 Sec timeout
-        encoderDrive(DRIVE_SPEED, -21, 21, -21, 21, 5.0); //turn left again
-        encoderDrive(DRIVE_SPEED, 22, 22, 22, 22, 5.0); //go forward 22
+        tobyReset(DRIVE_SPEED, -5, 1.0);
+        telemetry.addData("Status", "Toby Moved");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED, 20, -20, 20, -20, 1.0); //go left first got 44invhrdr
+        telemetry.addData("Status", "First Left Completed");
+        telemetry.update();
+        sleep(5000);
+        encoderDrive(DRIVE_SPEED, -5, 5, -5, 5, 5.0);  // Forward 24 Inches with 5 Sec timeout
+        telemetry.addData("Status", "First Forward Completed");    //
+        telemetry.update();
+        sleep(5000);
+        encoderDrive(DRIVE_SPEED, 21, -21, -21, 21, 5.0); //turn left again for 21
+        telemetry.addData("Status", "Second Left Completed");    //
+        telemetry.update();
+        sleep(5000);
+        encoderDrive(DRIVE_SPEED, -22, -22, -22, -22, 5.0); //go forward 22
+        telemetry.addData("Status", "Second Forward Completed");    //
+        telemetry.update();
+        sleep(5000);
         getColor();
-        encoderDrive(DRIVE_SPEED, -48, 48, -48, 48, 5.0); //go left 48
+        telemetry.addData("Status", "First Color Completed");    //
+        telemetry.update();
+        sleep(5000);
+        encoderDrive(DRIVE_SPEED, 48, -48, -48, 48, 5.0); //go left 48
+        telemetry.addData("Status", "Third Left Completed");    //
+        telemetry.update();
+        sleep(5000);
         getColor();
-        encoderDrive(DRIVE_SPEED, 48, -48, 48, -48, 5.0); //right 48
-        encoderDrive(DRIVE_SPEED, -60, -60, -60, -60, 5.0); //right 48
-
+        telemetry.addData("Status", "Second Color Completed");    //
+        telemetry.update();
+        sleep(5000);
+        encoderDrive(DRIVE_SPEED, -48, 48, 48, -48, 5.0); //right 48
+        telemetry.addData("Status", "First Right Completed");    //
+        telemetry.update();
+        sleep(5000);
+        encoderDrive(DRIVE_SPEED, 60, 60, 60, 60, 5.0); //Reverse 60
+        telemetry.addData("Status", "First Reverse Completed");    //
+        telemetry.update();
+        sleep(5000);
         /*
         runtime.reset();
         while(opModeIsActive() && (runtime.seconds() < 3.0)){
@@ -221,11 +244,13 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
-
+            //parker = hardwareMap.dcMotor.get("frontLeft");
+            //louis = hardwareMap.dcMotor.get("frontRight");
+            //maria = hardwareMap.dcMotor.get("rearLeft");
+            //matthew = hardwareMap.dcMotor.get("rearRight");
             // Determine new target position, and pass to motor controller
             newFrontLeftTarget = robot.parker.getCurrentPosition() + (int) (leftFront * COUNTS_PER_INCH);
             newRearLeftTarget = robot.maria.getCurrentPosition() + (int) (leftRear * COUNTS_PER_INCH);
-
             newFrontRightTarget = robot.louis.getCurrentPosition() + (int) (rightFront * COUNTS_PER_INCH);
             newRearRightTarget = robot.matthew.getCurrentPosition() + (int) (rightRear * COUNTS_PER_INCH);
 
@@ -265,6 +290,10 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
                 // Allow time for other processes to run.
                 idle();
             }
+            robot.maria.setPower(0);
+            robot.parker.setPower(0);
+            robot.matthew.setPower(0);
+            robot.louis.setPower(0);
 
 
             // Turn off RUN_TO_POSITION
@@ -273,6 +302,51 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
             robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.parker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
+            sleep(250);   // optional pause after each move
+
+        }
+    }
+    public void tobyReset(double speed, double move, double timeoutS) throws InterruptedException {
+        int newMove;
+
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+            //parker = hardwareMap.dcMotor.get("frontLeft");
+            //louis = hardwareMap.dcMotor.get("frontRight");
+            //maria = hardwareMap.dcMotor.get("rearLeft");
+            //matthew = hardwareMap.dcMotor.get("rearRight");
+            // Determine new target position, and pass to motor controller
+            newMove = robot.parker.getCurrentPosition() + (int) (move * COUNTS_PER_INCH);
+
+            robot.toby.setTargetPosition(newMove);
+
+            // Turn On RUN_TO_POSITION
+            robot.toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.toby.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and all motors are running.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.toby.isBusy())) {
+                // Display it for the driver.
+                telemetry.addData("Path1", "Running to %7d :%7d", newMove);
+                telemetry.addData("Toby", "Actually Running",
+                                robot.toby.getCurrentPosition());
+
+                telemetry.update();
+
+                // Allow time for other processes to run.
+                idle();
+            }
+            robot.toby.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             sleep(250);   // optional pause after each move
 
