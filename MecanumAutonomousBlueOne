@@ -44,8 +44,8 @@ import android.view.ViewParent;
  *
  */
 
-@Autonomous(name="MecanumAutonomousBlueOne7")
-public class MecanumAutonomousBlueOne extends LinearOpMode {
+@Autonomous(name="MecanumAutonomousBlueOne6")
+public class MechanumAutonomousBlueOne extends LinearOpMode {
 
     /* Declare OpMode members. */
     ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
@@ -60,7 +60,6 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 1;
     static final double TURN_SPEED = 0.5;
-
 
 
     @Override
@@ -112,22 +111,25 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //drive speed is 0.25
 
-        encoderDrive(DRIVE_SPEED, 20, -20, 20, -20, 1.0); //go left first got 44invhrdr
+        telemetry.addData("Status", "Color SensorReads");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED, -30, 30, -30, 30, 1.0); //go left first got 44in
         telemetry.addData("Status", "First Left Completed");
         telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, -10, 10, 10, -10, 5.0);  // Forward 24 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, -24, -24, -24, -24, 5.0);  // Forward 24 Inches with 5 Sec timeout
         telemetry.addData("Status", "First Forward Completed");    //
         telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, 21, -21, -21, 21, 5.0); //turn left again for 21
+        encoderDrive(DRIVE_SPEED, -21, 21, -21, 21, 5.0); //turn left again for 21
         telemetry.addData("Status", "Second Left Completed");    //
         telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, -22, -22, -22, -22, 5.0); //go forward 22
+        encoderDrive(DRIVE_SPEED, -22, 22, -22, 22, 5.0); //go forward 22
         telemetry.addData("Status", "Second Forward Completed");    //
         telemetry.update();
         sleep(5000);
+
 
 
         boolean LEDState = true;     //Tracks the mode of the color sensor; Active = true, Passive = false
@@ -166,7 +168,6 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
             if (opModeIsActive() && (runtime.seconds() > 5.0)) {
                 telemetry.addData("Status", "Toby Moved");
                 telemetry.update();
-                tobyReset(DRIVE_SPEED, -5, 5.0);
                 robot.toby.setPower(0);
 
             }
@@ -187,9 +188,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
             //if red team
             if (opModeIsActive() && (runtime.seconds() > 5.0)) {
                 robot.toby.setPower(0);
-                telemetry.addData("Status", "Toby Moved");
-                telemetry.update();
-                tobyReset(DRIVE_SPEED, 5, 5.0);
+
             }
 
         } else {
@@ -201,7 +200,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         telemetry.addData("Status", "First Color Completed");    //
         telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, 48, -48, -48, 48, 5.0); //go left 48
+        encoderDrive(DRIVE_SPEED, -48, 48, -48, 48, 5.0); //go left 48
         telemetry.addData("Status", "Third Left Completed");    //
         telemetry.update();
         sleep(5000);
@@ -263,10 +262,8 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         }
 
 
-        telemetry.addData("Status", "Second Color Completed");    //
-        telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, -48, 48, 48, -48, 5.0); //right 48
+        encoderDrive(DRIVE_SPEED, 48, -48, 48, -48, 5.0); //right 48
         telemetry.addData("Status", "First Right Completed");    //
         telemetry.update();
         sleep(5000);
@@ -274,6 +271,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         telemetry.addData("Status", "First Reverse Completed");    //
         telemetry.update();
         sleep(5000);
+
         /*
         runtime.reset();
         while(opModeIsActive() && (runtime.seconds() < 3.0)){
@@ -292,6 +290,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         */
 
     }
+
     //Thread.sleep(5000);
             /*
              *  Method to perfmorm a relative move, based on encoder counts.
@@ -345,10 +344,10 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
             // keep looping while we are still active, and there is time left, and all motors are running.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (robot.louis.isBusy() || robot.parker.isBusy() || robot.maria.isBusy() ||  robot.matthew.isBusy())) {
-                        // Display it for the driver.
-                        telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d", newFrontLeftTarget, newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
-                        telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
+                    (robot.louis.isBusy() && robot.parker.isBusy() && robot.maria.isBusy() && robot.matthew.isBusy())) {
+                // Display it for the driver.
+                telemetry.addData("Path1", "Running to %7d :%7d", newFrontLeftTarget, newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
+                telemetry.addData("Path2", "Running at %7d :%7d",
                         robot.parker.getCurrentPosition(),
                         robot.louis.getCurrentPosition(),
                         robot.matthew.getCurrentPosition(),
@@ -400,11 +399,11 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.toby.isBusy())) {
-                    // Display it for the driver.
-                    telemetry.addData("Toby", "Actually Running",
-                                robot.toby.getCurrentPosition());
+                // Display it for the driver.
+                telemetry.addData("Toby", "Actually Running",
+                        robot.toby.getCurrentPosition());
 
-                    telemetry.update();
+                telemetry.update();
 
                 // Allow time for other processes to run.
                 idle();
