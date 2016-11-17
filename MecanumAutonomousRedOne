@@ -23,8 +23,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  */
 
-@Autonomous(name="MecanumAutonomousRedTwo6")
-public class MecanumAutonomousRedTwo extends LinearOpMode {
+@Autonomous(name="MecanumAutonomousRedOne6")
+public class MecanumAutonomousRedOne extends LinearOpMode {
 
     /* Declare OpMode members. */
     ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
@@ -171,23 +171,16 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
         tobyReset(DRIVE_SPEED, -5, 1.0);
         telemetry.addData("Status", "Toby Moved");
         telemetry.update();
-
-        encoderDrive(DRIVE_SPEED, -20, 20, -20, 20, 5.0);  // Forward 20 Inches with 5 Sec timeout
-        telemetry.addData("Status", "0th Forward Completed");    //
+        encoderDrive(DRIVE_SPEED, -44, 44, -44, 44, 1.0); //go left first got 44invhrdr
+        telemetry.addData("Status", "First Right Completed");
         telemetry.update();
         sleep(5000);
-
-
-        encoderDrive(DRIVE_SPEED, -30, 30, -30, 30, 1.0); //go left first got 44invhrdr
-        telemetry.addData("Status", "First Left Completed");
-        telemetry.update();
-        sleep(5000);
-        encoderDrive(DRIVE_SPEED, -48, -48, -48, -48, 5.0);  // Forward 48 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, -24, -24, -24, -24, 5.0);  // Forward 24 Inches with 5 Sec timeout
         telemetry.addData("Status", "First Forward Completed");    //
         telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, 21, -21, -21, 21, 5.0); //turn left again for 21
-        telemetry.addData("Status", "Second Left Completed");    //
+        encoderDrive(DRIVE_SPEED, -21, 21, 21, -21, 5.0); //turn left again for 21
+        telemetry.addData("Status", "Second Right Completed");    //
         telemetry.update();
         sleep(5000);
         encoderDrive(DRIVE_SPEED, -22, -22, -22, -22, 5.0); //go forward 22
@@ -198,15 +191,15 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
         telemetry.addData("Status", "First Color Completed");    //
         telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, 48, -48, -48, 48, 5.0); //go left 48
-        telemetry.addData("Status", "Third Left Completed");    //
+        encoderDrive(DRIVE_SPEED, -48, 48, 48, -48, 5.0); //go left 48
+        telemetry.addData("Status", "Third Right Completed");    //
         telemetry.update();
         sleep(5000);
         getColor();
         telemetry.addData("Status", "Second Color Completed");    //
         telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, -48, 48, 48, -48, 5.0); //right 48
+        encoderDrive(DRIVE_SPEED, 48, -48, -48, 48, 5.0); //right 48
         telemetry.addData("Status", "First Right Completed");    //
         telemetry.update();
         sleep(5000);
