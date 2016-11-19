@@ -14,14 +14,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import android.media.MediaPlayer;
 
@@ -43,7 +38,7 @@ import android.view.ViewParent;
  *
  */
 
-@Autonomous(name="MecanumAutonomousBlueOne7")
+@Autonomous(name="MecanumAutonomousBlueOne8")
 public class MecanumAutonomousBlueOne extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -57,7 +52,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
     static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double DRIVE_SPEED = 0.5;
+    static final double DRIVE_SPEED = 1.0;
     static final double TURN_SPEED = 0.5;
 
 
@@ -112,23 +107,23 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //drive speed is 1
-
-        encoderDrive(DRIVE_SPEED, -40, 40, -40, 40, 1.0); //go left first 30 inches
-        telemetry.addData("Status", "First Left Completed");
+        sleep(4000);
+        encoderDrive(DRIVE_SPEED, -47, 47, -47, 47, 1.0); //go left first 30 inches
+        telemetry.addData("Status", "First Left Ctompleted");
         telemetry.update();
-        sleep(1000);
-        encoderDrive(DRIVE_SPEED, -15, -15, -15, -15, 1.0);  // Forward 24 Inches with 5 Sec timeout
+        sleep(4000);
+        encoderDrive(DRIVE_SPEED, -7, -7, -7, -7, 1.0);  // Forward 24 Inches with 5 Sec timeout
         telemetry.addData("Status", "First Forward Completed");    //
         telemetry.update();
-        sleep(1000);
+        sleep(4000);
         encoderDrive(DRIVE_SPEED, -10, 10, -10, 10, 1.0); //turn left again for 21
         telemetry.addData("Status", "Second Left Completed");    //
         telemetry.update();
-        sleep(1000);
-        encoderDrive(DRIVE_SPEED, -22, -22, -22, -22, 1.0); //go forward 22
+        sleep(4000);
+        encoderDrive(DRIVE_SPEED, -17, -17, -17, -17, 1.0); //go forward 22
         telemetry.addData("Status", "Second Forward Completed");    //
         telemetry.update();
-        sleep(500);
+        sleep(4000);
         telemetry.addData("Data", "Not crashed before color sensor");
         telemetry.update();
 
@@ -362,7 +357,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
                 //telemetry.update();
 
                 // Allow time for other processes to run.
-                sleep(250);
+                sleep(1000);
             }
             robot.maria.setPower(0);
             robot.parker.setPower(0);
