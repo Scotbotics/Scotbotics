@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import android.media.MediaPlayer;
 
 //import a few more things for android.os on the phones
+import android.media.MediaRouter;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
@@ -43,8 +44,8 @@ public class MechanumFIRST extends OpMode {
     //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
     public static double deadzone = 0.2;
 
-    MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger;
-
+    MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger, RockyTheme;
+    MediaPlayer OverwatchTheme, ProtectorsOfTheEarth, Victory, LetItGoAirhorn, Thunderstuck;
 
     //initialize stage in which everything is set up and prepared
     @Override
@@ -71,6 +72,15 @@ public class MechanumFIRST extends OpMode {
         ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
         TheSoundOfSilence = MediaPlayer.create(hardwareMap.appContext, R.raw.thesoundofsilence);
         EyeOfTheTiger = MediaPlayer.create(hardwareMap.appContext, R.raw.eyeofthetiger);
+        RockyTheme = MediaPlayer.create(hardwareMap.appContext, R.raw.rockytheme);
+        OverwatchTheme = MediaPlayer.create(hardwareMap.appContext, R.raw.overwatchtheme);
+        ProtectorsOfTheEarth = MediaPlayer.create(hardwareMap.appContext, R.raw.protectorsoftheearth);
+        Victory = MediaPlayer.create(hardwareMap.appContext, R.raw.victory);
+        LetItGoAirhorn = MediaPlayer.create(hardwareMap.appContext, R.raw.letitgoairhorn);
+        Thunderstuck = MediaPlayer.create(hardwareMap.appContext, R.raw.thunderstruck);
+
+
+
 
     }
 
@@ -140,29 +150,29 @@ public class MechanumFIRST extends OpMode {
 
         //How to start "How did this happen". Use when losing or everything is breaking
         if(gamepad1.x) {
-            HowCouldThisHappen.start();
+            RockyTheme.start();
         }
 
         //If the song is playing, you can stop it
         if(gamepad1.dpad_left && HowCouldThisHappen.isPlaying()) {
-            HowCouldThisHappen.pause();
+            RockyTheme.pause();
         }
 
         //Use when wanting to listen to a good song, or everything is broken
         if(gamepad1.b) {
-            TheSoundOfSilence.start();
+            ProtectorsOfTheEarth.start();
         }
 
         //If the song is playing, you can stop it
         if(gamepad1.dpad_right && TheSoundOfSilence.isPlaying()) {
-            TheSoundOfSilence.pause();
+            ProtectorsOfTheEarth.pause();
         }
 
         if(gamepad1.a) {
-            EyeOfTheTiger.start();
+            LetItGoAirhorn.start();
         }
         if(gamepad1.dpad_down && EyeOfTheTiger.isPlaying()) {
-            EyeOfTheTiger.stop();
+            LetItGoAirhorn.stop();
         }
     }
 
