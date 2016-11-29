@@ -44,6 +44,19 @@ public class MechanumFIRST extends OpMode {
     //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
     public static double deadzone = 0.2;
 
+    static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double DRIVE_SPEED = 1.0;
+    static final double TURN_SPEED = 0.5;
+
+    //inches forward is 229 * n inches
+    int TobyMoveLeft = -2290;
+    int TobyMoveRight = 2290;
+
+    public ElapsedTime runtime = new ElapsedTime();
+
     MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger, RockyTheme;
     MediaPlayer OverwatchTheme, ProtectorsOfTheEarth, Victory, LetItGoAirhorn, Thunderstuck;
 
@@ -67,6 +80,7 @@ public class MechanumFIRST extends OpMode {
         parker.setDirection(DcMotor.Direction.REVERSE);
         maria.setDirection(DcMotor.Direction.REVERSE);
 
+        toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //set up out playlist
         HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappentome);
         ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
@@ -117,6 +131,34 @@ public class MechanumFIRST extends OpMode {
             mochi.setPosition(0);
         }
 
+        if(gamepad2.left_bumper) {
+            toby.setTargetPosition(TobyMoveRight);
+            // Turn On RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            toby.setPower(-1);
+
+            // Turn off RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+           // tobyReset(DRIVE_SPEED, 10, 1.0);
+        }
+        if(gamepad2.right_bumper) {
+            toby.setTargetPosition(TobyMoveLeft);
+            // Turn On RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            toby.setPower(1);
+
+            toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            // tobyReset(DRIVE_SPEED, 10, 1.0);
+        }
+
+
         //this controls how the drive system works by calculating how the joysticks control the power of te robot.
         fudge = leftY ; //this can be tweaked for exponential power increase
 
@@ -136,8 +178,32 @@ public class MechanumFIRST extends OpMode {
 
         //toby pushes to the left by hitting left trigger
         //toby pushes to the right by hitting right trigger
-        toby.setPower((((gamepad2.left_trigger>0.5)?  1:0)));
-        toby.setPower((-((gamepad2.right_trigger>0.5)? 1:0)));
+        if(gamepad2.right_trigger > 0.5) {
+            toby.setTargetPosition(TobyMoveRight);
+            // Turn On RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            toby.setPower(1);
+
+            // Turn off RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        if(gamepad2.left_trigger > 0.5) {
+            toby.setTargetPosition(TobyMoveLeft);
+            // Turn On RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            toby.setPower(-1);
+
+            // Turn off RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        //toby.setPower((((gamepad2.left_trigger>0.5)?  1:0)));
+        //toby.setPower((-((gamepad2.right_trigger>0.5)? 1:0)));
 
         //yes I programmed Scotland The Brave and How could this happen to Me into the robot
         if(gamepad1.y) {
@@ -171,7 +237,7 @@ public class MechanumFIRST extends OpMode {
         if(gamepad1.a) {
             LetItGoAirhorn.start();
         }
-        if(gamepad1.dpad_down && EyeOfTheTiger.isPlaying()) {
+        if(gamepad1.dpad_down && LetItGoAirhorn.isPlaying()) {
             LetItGoAirhorn.stop();
         }
     }
@@ -195,6 +261,7 @@ public class MechanumFIRST extends OpMode {
         if(Math.abs(rightY)<0.9) rightY = 0;
         //checks deadzones
     }
+
 
 
     @Override
