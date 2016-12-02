@@ -14,14 +14,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import android.media.MediaPlayer;
 
@@ -32,8 +27,7 @@ import android.util.Log;
 import android.view.ViewParent;
 
 /**
- *e522wa                                                                                                    kwards for 24 inches
- *   - Stop and close the claw.
+
  *
  *  The code is written using a method called: encoderDrive(speed, leftFrontInches, rightFrontInches, leftRearInches, rightRearInches
  *  timeoutS)
@@ -44,28 +38,32 @@ import android.view.ViewParent;
  *
  */
 
-@Autonomous(name="MecanumAutonomousRedTwo")
-public class MecanumAutonomousRedTwo extends LinearOpMode {
+@Autonomous(name="MecanumAutonomousBlueOne9")
+public class MecanumAutonomousBlueOne extends LinearOpMode {
 
     /* Declare OpMode members. */
     ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
     DeviceInterfaceModule CDI;     //Instance of DeviceInterfaceModule - for showing a red or blue LED
 
     HardwareMecanumPushbot robot = new HardwareMecanumPushbot();   // Use a Pushbot's hardware
-    private ElapsedTime runtime = new ElapsedTime();
+    public ElapsedTime runtime = new ElapsedTime();
 
-    static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
+    static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: AndyMark Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double DRIVE_SPEED = 0.25;
-    static final double TURN_SPEED = 0.5;
+    static final double DRIVE_SPEED = 1.0;
+    static final double TURN_SPEED = 0.65;
 
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+        ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
+
         colorSensor = hardwareMap.colorSensor.get("color");
+        CDI = hardwareMap.deviceInterfaceModule.get("Device Interface Module 1");
+
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
@@ -110,44 +108,44 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        //drive speed is 0.25
-
-        telemetry.addData("Status","Color SensorReads");
+        //drive speed is 1
+        encoderDrive(DRIVE_SPEED, -20, -20, -20, -20, 1.0); //go left first 20 inches
+        telemetry.addData("Status", "First Left Completed");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, -20, 20, -20, 20, 5.0);  // Forward 20 Inches with 5 Sec timeout
-        telemetry.addData("Status", "0th Forward Completed");    //
-        telemetry.update();
-        sleep(5000);
-        encoderDrive(DRIVE_SPEED, -30, 30, -30, 30, 1.0); //go left first for 30
-        telemetry.addData("Status", "First Right Completed");
-        telemetry.update();
-        sleep(5000);
-        encoderDrive(DRIVE_SPEED, -48, -48, -48, -48, 5.0);  // Forward 48 Inches with 5 Sec timeout
+        sleep(100);
+        //front wheels stop later
+        encoderDrive(DRIVE_SPEED, 30, -30, 30, -30, 1.0);  // Forward 24 Inches with 5 Sec timeout
+        //When does telemetry show up, after first wheel stop or after second wheel stop?
         telemetry.addData("Status", "First Forward Completed");    //
         telemetry.update();
-        sleep(5000);
-        encoderDrive(DRIVE_SPEED, -21, 21, -21, 21, 5.0); //turn left again for 21
-        telemetry.addData("Status", "Second Right Completed");    //
+        sleep(100);
+
+        //front wheels stop later
+
+
+        encoderDrive(DRIVE_SPEED, 21,-21, 21, -21, 1.0); //turn left again for 21
+        telemetry.addData("Status", "Second Left Completed");
         telemetry.update();
-        sleep(5000);
-        encoderDrive(DRIVE_SPEED, -22, -22, -22, -22, 5.0); //go forward 22
+        sleep(100);
+
+        //When does telemetry show up, after first wheel stop or after second wheel stop?
+        encoderDrive(DRIVE_SPEED, -22, -22, -22, -22, 1.0); //go forward 22
         telemetry.addData("Status", "Second Forward Completed");    //
         telemetry.update();
-        sleep(5000);
-
-
+        sleep(100);
+        telemetry.addData("Data", "Not crashed before color sensor");
+        telemetry.update();
 
         boolean LEDState = true;     //Tracks the mode of the color sensor; Active = true, Passive = false
 
         colorSensor.enableLed(LEDState);
-        LEDState = !LEDState;
+        //LEDState = !LEDState;
 
         //Set the mode of the LED; Active = true, Passive = false
         //Active - For measuring reflected light. Cancels out ambient light
         //Passive - For measuring ambient light, eg. the FTC Color Beacon
 
-        telemetry.addData("Data", "Not crashed yet");
-        telemetry.update();
+
         float hsvValues[] = {0, 0, 0};  //used to get Hue
 
         //calculate hue
@@ -159,22 +157,28 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
         telemetry.addData("4 Green", colorSensor.green());
         telemetry.addData("5 Blue ", colorSensor.blue());
         telemetry.addData("6 Hue", hsvValues[0]);
+
+        telemetry.addData("Data", "Not crashed yet");
+        telemetry.update();
         //illuminate the RED/BLUE LED on the Core Device Interface if the RED/BLUE value is greatest
         String direction = "";
-        if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > colorSensor.green()) {
-            CDI.setLED(1, true);           //Red ON
-            CDI.setLED(0, false);
+        if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
+            CDI.setLED(1, false);           //Red ON
+            CDI.setLED(0, true);
 
-            telemetry.addData("red dominant", colorSensor.red());
+            telemetry.addData("blue dominant", colorSensor.red());
             //set ballpusher to hit the correct beacon
             //if red team:
             runtime.reset();
-            robot.toby.setPower(-1);
+            robot.toby.setPower(1);
             if (opModeIsActive() && (runtime.seconds() > 5.0)) {
                 telemetry.addData("Status", "Toby Moved");
                 telemetry.update();
-                tobyReset(DRIVE_SPEED, 5, 5.0);
+                tobyReset(DRIVE_SPEED, -10, 1.0);
+                sleep(1000);
+                tobyReset(DRIVE_SPEED, 10, 1.0);
                 robot.toby.setPower(0);
+                telemetry.addData("encoder moved back", colorSensor.blue());
 
             }
 
@@ -183,37 +187,37 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             //toby.setPower(-1);
             //Blue OFF
 
-        } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
-            CDI.setLED(1, false);          //Red OFF
-            CDI.setLED(0, true);
+            else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > colorSensor.green()) {
+                CDI.setLED(1, true);          //Red OFF
+                CDI.setLED(0, false);
 
-            telemetry.addData("blue dominant", colorSensor.blue());
-            //if blue team
-            runtime.reset();
-            robot.toby.setPower(-1);
-            //if red team
-            if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                telemetry.addData("Status", "Toby Moved");
-                telemetry.update();
-                tobyReset(DRIVE_SPEED, 5, 5.0);
-                robot.toby.setPower(0);
+                telemetry.addData("red dominant", colorSensor.blue());
+                //if blue team
+                runtime.reset();
+                tobyReset(DRIVE_SPEED, 10, 1.0);
+                //if red team
+                if (opModeIsActive() && (runtime.seconds() > 5.0)) {
+                    robot.toby.setPower(0);
+                    tobyReset(DRIVE_SPEED, -10, 1.0);
+                    sleep(1000);
+                    robot.toby.setPower(0);
+                    telemetry.addData("encoder moved back", colorSensor.blue());
+                }
 
+            } else {
+                CDI.setLED(1, false);           //Red OFF
+                CDI.setLED(0, false);           //Blue OFF
             }
-
-        } else {
-            CDI.setLED(1, false);           //Red OFF
-            CDI.setLED(0, false);           //Blue OFF
         }
 
         //wait for all new data to go from the phone to the controllers and from the controllers to the phone.
         telemetry.addData("Status", "First Color Completed");    //
         telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, -48, 48, -48, 48, 5.0); //go left 48
-        telemetry.addData("Status", "Third Right Completed");    //
+        encoderDrive(DRIVE_SPEED, 48, -48, 48, -48, 5.0); //go left 48
+        telemetry.addData("Status", "Third Left Completed");    //
         telemetry.update();
         sleep(5000);
-        colorSensor.enableLed(LEDState);
 
         //Set the mode of the LED; Active = true, Passive = false
         //Active - For measuring reflected light. Cancels out ambient light
@@ -237,12 +241,13 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             //set ballpusher to hit the correct beacon
             //if red team:
             runtime.reset();
-            robot.toby.setPower(-1);
+            robot.toby.setPower(1);
             if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                telemetry.addData("Status", "Toby Moved");
-                telemetry.update();
-                tobyReset(DRIVE_SPEED, 5, 5.0);
+                tobyReset(DRIVE_SPEED, 10, 1.0);
+                sleep(1000);
+                tobyReset(DRIVE_SPEED, -10, 1.0);
                 robot.toby.setPower(0);
+                telemetry.addData("encoder moved back", colorSensor.red());
 
             }
 
@@ -258,17 +263,21 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             telemetry.addData("blue dominant", colorSensor.blue());
             //if blue team
             runtime.reset();
-            robot.toby.setPower(1);
+            robot.toby.setPower(-1);
             //if red team
             if (opModeIsActive() && (runtime.seconds() > 5.0)) {
+                tobyReset(DRIVE_SPEED, -10, 1.0);
+                sleep(1000);
+                tobyReset(DRIVE_SPEED, 10, 1.0);
                 robot.toby.setPower(0);
-                tobyReset(DRIVE_SPEED, -5, 5.0);
+                telemetry.addData("encoder moved back", colorSensor.red());
             }
 
         } else {
             CDI.setLED(1, false);           //Red OFF
             CDI.setLED(0, false);           //Blue OFF
         }
+
 
 
         telemetry.addData("Status", "Second Color Completed");    //
@@ -335,50 +344,65 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             robot.louis.setTargetPosition(newFrontRightTarget);
 
 
-            // reset the timeout time and start motion.
-            robot.matthew.setPower(Math.abs(speed));
-            robot.maria.setPower(Math.abs(speed));
-            robot.louis.setPower(Math.abs(speed));
-            robot.parker.setPower(Math.abs(speed));
-
             // Turn On RUN_TO_POSITION
+            robot.matthew.setPower(rightRear/Math.abs(rightRear));
+            robot.maria.setPower(leftRear/Math.abs(leftRear));
+            robot.louis.setPower(rightFront/Math.abs(rightFront));
+            robot.parker.setPower(leftFront/Math.abs(leftFront));
+
+            sleep(250);
             runtime.reset();
 
-            robot.parker.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.maria.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.louis.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.matthew.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            /*
+            robot.parker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.maria.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            */
 
+
+            // reset the timeout time and start motion.
 
             // keep looping while we are still active, and there is time left, and all motors are running.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (robot.louis.isBusy() && robot.parker.isBusy() && robot.maria.isBusy() && robot.matthew.isBusy())) {
-                    // Display it for the driver.
-                        telemetry.addData("Path1", "Running to %7d :%7d", newFrontLeftTarget, newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
-                        telemetry.addData("Path2", "Running at %7d :%7d",
-                        robot.parker.getCurrentPosition(),
-                        robot.louis.getCurrentPosition(),
-                        robot.matthew.getCurrentPosition(),
-                        robot.maria.getCurrentPosition());
+                    (robot.louis.isBusy() && robot.parker.isBusy() && robot.maria.isBusy() &&  robot.matthew.isBusy())) {
+                        // Display it for the driver.
+                        //telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d", newFrontLeftTarget, newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
+                        //telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
+                        //robot.parker.getCurrentPosition(),
+                        //robot.louis.getCurrentPosition(),
+                        //robot.matthew.getCurrentPosition(),
+                        //robot.maria.getCurrentPosition());
 
-                telemetry.update();
+                //telemetry.update();
 
                 // Allow time for other processes to run.
-                idle();
+                //sleep(1000);
             }
+
+
+            // Turn off RUN_TO_POSITION
+            /*
+            if((robot.maria.getCurrentPosition() == newRearLeftTarget) && (robot.matthew.getCurrentPosition() == newRearRightTarget)) {
+                robot.maria.setPower(0);
+                robot.parker.setPower(0);
+                robot.matthew.setPower(0);
+                robot.louis.setPower(0);
+            }
+            */
+
             robot.maria.setPower(0);
             robot.parker.setPower(0);
             robot.matthew.setPower(0);
             robot.louis.setPower(0);
 
-
-            // Turn off RUN_TO_POSITION
+            /*
             robot.maria.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.parker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+            */
 
             sleep(250);   // optional pause after each move
 
@@ -388,15 +412,14 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
     public void tobyReset(double speed, double move, double timeoutS) throws InterruptedException {
         int newMove;
 
-
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newMove = robot.parker.getCurrentPosition() + (int) (move * COUNTS_PER_INCH);
+            newMove = robot.toby.getCurrentPosition() + (int) (move * COUNTS_PER_INCH);
+
 
             robot.toby.setTargetPosition(newMove);
-
             // Turn On RUN_TO_POSITION
             robot.toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -405,17 +428,15 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             robot.toby.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and all motors are running.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (robot.toby.isBusy())) {
-                // Display it for the driver.
-                telemetry.addData("Toby", "Actually Running",
-                        robot.toby.getCurrentPosition());
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) && (robot.toby.isBusy())) {
+                    // Display it for the driver.
+                    telemetry.addData("Toby", "Actually Running",
+                                robot.toby.getCurrentPosition());
 
-                telemetry.update();
+                    telemetry.update();
 
                 // Allow time for other processes to run.
-                idle();
+                sleep(250);
             }
             robot.toby.setPower(0);
 
