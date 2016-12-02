@@ -109,7 +109,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //drive speed is 1
-        encoderDrive(DRIVE_SPEED, 44, -44, 44, -44, 1.0); //go left first 30 inches
+        encoderDrive(DRIVE_SPEED, 44, -44, 44, -44, 1.0); //go right first 44 inches
         telemetry.addData("Status", "First Left Completed");
         telemetry.update();
         sleep(100);
@@ -123,7 +123,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         //front wheels stop later
 
 
-        encoderDrive(DRIVE_SPEED, 21, -21, 21, -21, 1.0); //turn left again for 21
+        encoderDrive(DRIVE_SPEED, 21, -21, 21, -21, 1.0); //turn right again for 21
         telemetry.addData("Status", "Second Left Completed");
         telemetry.update();
         sleep(100);
