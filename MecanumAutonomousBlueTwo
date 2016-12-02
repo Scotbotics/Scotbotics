@@ -39,7 +39,7 @@ import android.view.ViewParent;
  */
 
 @Autonomous(name="MecanumAutonomousBlueOne9")
-public class MecanumAutonomousRedTwo extends LinearOpMode {
+public class MecanumAutonomousBlueTwo extends LinearOpMode {
 
     /* Declare OpMode members. */
     ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
@@ -109,27 +109,36 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //drive speed is 1
-        encoderDrive(DRIVE_SPEED, -20, -20, -20, -20, 1.0); //go forwards first 20 inches
+        encoderDrive(DRIVE_SPEED, -20, -20, -20, -20, 1.0); //go forward first 20 inches
         telemetry.addData("Status", "First Left Completed");
         telemetry.update();
         sleep(100);
         //front wheels stop later
-        encoderDrive(DRIVE_SPEED, 30, -30, 30, -30, 1.0);  // right 30 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, -30, 30, -30, 30, 1.0);  // left 30 Inches with 5 Sec timeout
         //When does telemetry show up, after first wheel stop or after second wheel stop?
         telemetry.addData("Status", "First Forward Completed");    //
         telemetry.update();
         sleep(100);
 
-        encoderDrive(DRIVE_SPEED, -21, -21, -21, -21, 1.0); //forward again for 21
+        //front wheels stop later
+
+
+        encoderDrive(DRIVE_SPEED, -48, -48, -48, -48, 1.0); //forward left again for 48
         telemetry.addData("Status", "Second Left Completed");
         telemetry.update();
         sleep(100);
 
         //When does telemetry show up, after first wheel stop or after second wheel stop?
-        encoderDrive(DRIVE_SPEED, 22, -22, 22, -22, 1.0); //go right 22
+        encoderDrive(DRIVE_SPEED, -21, 21, -21, 21, 1.0); //go left 21
         telemetry.addData("Status", "Second Forward Completed");    //
         telemetry.update();
         sleep(100);
+
+        encoderDrive(DRIVE_SPEED, -22, -22, -22, -22, 1.0); //turn forward again for 22
+        telemetry.addData("Status", "Second Left Completed");
+        telemetry.update();
+        sleep(100);
+
         telemetry.addData("Data", "Not crashed before color sensor");
         telemetry.update();
 
@@ -159,11 +168,11 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
         telemetry.update();
         //illuminate the RED/BLUE LED on the Core Device Interface if the RED/BLUE value is greatest
         String direction = "";
-        if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
-            CDI.setLED(1, false);           //Red ON
-            CDI.setLED(0, true);
+        if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > colorSensor.green()) {
+            CDI.setLED(1, true);           //Red ON
+            CDI.setLED(0, false);
 
-            telemetry.addData("blue dominant", colorSensor.red());
+            telemetry.addData("red dominant", colorSensor.red());
             //set ballpusher to hit the correct beacon
             //if red team:
             runtime.reset();
@@ -171,11 +180,11 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             if (opModeIsActive() && (runtime.seconds() > 5.0)) {
                 telemetry.addData("Status", "Toby Moved");
                 telemetry.update();
-                tobyReset(DRIVE_SPEED, -10, 1.0);
-                sleep(1000);
                 tobyReset(DRIVE_SPEED, 10, 1.0);
+                sleep(1000);
+                tobyReset(DRIVE_SPEED, -10, 1.0);
                 robot.toby.setPower(0);
-                telemetry.addData("encoder moved back", colorSensor.blue());
+                telemetry.addData("encoder moved back", colorSensor.red());
 
             }
 
@@ -184,21 +193,21 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             //toby.setPower(-1);
             //Blue OFF
 
-            else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > colorSensor.green()) {
-                CDI.setLED(1, true);          //Red OFF
-                CDI.setLED(0, false);
+            else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
+                CDI.setLED(1, false);          //Red OFF
+                CDI.setLED(0, true);
 
-                telemetry.addData("red dominant", colorSensor.blue());
+                telemetry.addData("blue dominant", colorSensor.blue());
                 //if blue team
                 runtime.reset();
-                tobyReset(DRIVE_SPEED, 10, 1.0);
+                tobyReset(DRIVE_SPEED, -10, 1.0);
                 //if red team
                 if (opModeIsActive() && (runtime.seconds() > 5.0)) {
                     robot.toby.setPower(0);
-                    tobyReset(DRIVE_SPEED, -10, 1.0);
+                    tobyReset(DRIVE_SPEED, 10, 1.0);
                     sleep(1000);
                     robot.toby.setPower(0);
-                    telemetry.addData("encoder moved back", colorSensor.blue());
+                    telemetry.addData("encoder moved back", colorSensor.red());
                 }
 
             } else {
@@ -211,7 +220,7 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
         telemetry.addData("Status", "First Color Completed");    //
         telemetry.update();
         sleep(5000);
-        encoderDrive(DRIVE_SPEED, 48, -48, 48, -48, 5.0); //go left 48
+        encoderDrive(DRIVE_SPEED, -48, 48, -48, 48, 5.0); //go left 48
         telemetry.addData("Status", "Third Left Completed");    //
         telemetry.update();
         sleep(5000);
