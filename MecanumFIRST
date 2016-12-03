@@ -103,6 +103,12 @@ public class MechanumFIRST extends OpMode {
         getJoyVals();
         //updates joyvalues with deadzones, xyzw
 
+        telemetry.addData("Maria", "Power: " + maria.getPower());
+        telemetry.addData("Matthew", "Power: " + matthew.getPower());
+        telemetry.addData("Louis", "Power: " + louis.getPower());
+        telemetry.addData("Parker", "Power: " + parker.getPower());
+
+        telemetry.update();
         //allows control of harvester
         chris.setPower(harvesterY * trueFudge);
 
@@ -130,7 +136,7 @@ public class MechanumFIRST extends OpMode {
         if(gamepad2.dpad_down) {
             mochi.setPosition(0);
         }
-
+        /*
         if(gamepad2.left_bumper) {
             toby.setTargetPosition(TobyMoveRight);
             // Turn On RUN_TO_POSITION
@@ -144,6 +150,8 @@ public class MechanumFIRST extends OpMode {
             toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
            // tobyReset(DRIVE_SPEED, 10, 1.0);
         }
+        */
+        /*
         if(gamepad2.right_bumper) {
             toby.setTargetPosition(TobyMoveLeft);
             // Turn On RUN_TO_POSITION
@@ -159,6 +167,7 @@ public class MechanumFIRST extends OpMode {
 
             // tobyReset(DRIVE_SPEED, 10, 1.0);
         }
+        */
 
 
         //this controls how the drive system works by calculating how the joysticks control the power of te robot.
@@ -242,15 +251,24 @@ public class MechanumFIRST extends OpMode {
         }
 
         //If the song is playing, you can stop it
-        if(gamepad1.dpad_right && TheSoundOfSilence.isPlaying()) {
+        if(gamepad1.dpad_right && ProtectorsOfTheEarth.isPlaying()) {
             ProtectorsOfTheEarth.pause();
         }
 
         if(gamepad1.a) {
-            LetItGoAirhorn.start();
+            //LetItGoAirhorn.start();
+            maria.setPower(0.5);
+            matthew.setPower(0.5);
+            louis.setPower(0.5);
+            parker.setPower(0.5);
+
         }
         if(gamepad1.dpad_down && LetItGoAirhorn.isPlaying()) {
-            LetItGoAirhorn.stop();
+            LetItGoAirhorn.pause();
+            maria.setPower(0);
+            matthew.setPower(0);
+            louis.setPower(0);
+            parker.setPower(0);
         }
     }
 
