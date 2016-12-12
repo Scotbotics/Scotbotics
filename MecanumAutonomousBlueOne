@@ -38,7 +38,7 @@ import android.view.ViewParent;
  *
  */
 
-@Autonomous(name="MecanumAutonomousBlueOneBETYOUDIDN'TSEETHIS")
+@Autonomous(name="BeaconAutonomousBlueOne")
 public class MecanumAutonomousBlueOne extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -89,8 +89,6 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        telemetry.addData("Status", "Starting Program");    //
-        telemetry.update();
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Starting at %7d :%7d",
@@ -110,7 +108,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //drive speed is 1
-        encoderDrive(DRIVE_SPEED, -2, 2, -2, 2, 10.0); //go left first 30 inches
+        encoderDrive(DRIVE_SPEED, -20, 20, -20, 20, 1.0); //go left first 30 inches
         telemetry.addData("Status", "First Left Completed");
         telemetry.update();
         sleep(100);
@@ -123,7 +121,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
                 robot.matthew.getCurrentPosition(),
                 robot.maria.getCurrentPosition());
         //front wheels stop later
-        encoderDrive(DRIVE_SPEED, -10, -10, -10, -10, 1.0);  // Forward 24 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, -26, -26, -26, -26, 1.0);  // Forward 24 Inches with 5 Sec timeout
         //When does telemetry show up, after first wheel stop or after second wheel stop?
         telemetry.addData("Status", "First Forward Completed");    //
         telemetry.update();
@@ -132,13 +130,13 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         //front wheels stop later
 
 
-        encoderDrive(DRIVE_SPEED, -50, 50, -50, 50, 1.0); //turn left again for 21
+        encoderDrive(DRIVE_SPEED, -29, 29, -29, 29, 1.0); //turn left again for 21
         telemetry.addData("Status", "Second Left Completed");
         telemetry.update();
         sleep(100);
 
         //When does telemetry show up, after first wheel stop or after second wheel stop?
-        encoderDrive(DRIVE_SPEED, -24, -24, -24, -24, 1.0); //go forward 22
+        encoderDrive(DRIVE_SPEED, -20, -20, -20, -20, 1.0); //go forward 22
         telemetry.addData("Status", "Second Forward Completed");    //
         telemetry.update();
         sleep(100);
@@ -226,7 +224,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         telemetry.addData("Status", "First Color Completed");    //
         telemetry.update();
         sleep(100);
-        encoderDrive(DRIVE_SPEED, 5, 5, 5, 5, 1.0); //go left 48
+        encoderDrive(DRIVE_SPEED, 5, 5, 5, 5, 0.0001); //go left 48
         telemetry.addData("Status", "First Reverse Completed");    //
         telemetry.update();
         sleep(100);
@@ -380,8 +378,8 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
             telemetry.addData("Matthew", "Power: " + robot.matthew.getPower());
             telemetry.addData("Louis", "Power: " + robot.louis.getPower());
             telemetry.addData("Parker", "Power: " + robot.parker.getPower());
-
-            sleep(250);
+            sleep
+            (250);
             runtime.reset();
 
             /*
