@@ -237,38 +237,30 @@ public class MechanumFIRST extends OpMode {
 
         //How to start "How did this happen". Use when losing or everything is breaking
         if(gamepad1.x) {
-            RockyTheme.start();
+            HowCouldThisHappen.start();
         }
 
         //If the song is playing, you can stop it
-        if(gamepad1.dpad_left && RockyTheme.isPlaying()) {
-            RockyTheme.pause();
+        if(gamepad1.dpad_left && HowCouldThisHappen.isPlaying()) {
+            HowCouldThisHappen.pause();
         }
 
         //Use when wanting to listen to a good song, or everything is broken
         if(gamepad1.b) {
-            ProtectorsOfTheEarth.start();
+            RockyTheme.start();
         }
 
         //If the song is playing, you can stop it
-        if(gamepad1.dpad_right && ProtectorsOfTheEarth.isPlaying()) {
-            ProtectorsOfTheEarth.pause();
+        if(gamepad1.dpad_right && RockyTheme.isPlaying()) {
+            RockyTheme.pause();
         }
 
         if(gamepad1.a) {
-            //LetItGoAirhorn.start();
-            maria.setPower(0.5);
-            matthew.setPower(0.5);
-            louis.setPower(0.5);
-            parker.setPower(0.5);
-
+            EyeOfTheTiger.start();
         }
-        if(gamepad1.dpad_down && LetItGoAirhorn.isPlaying()) {
-            LetItGoAirhorn.pause();
-            maria.setPower(0);
-            matthew.setPower(0);
-            louis.setPower(0);
-            parker.setPower(0);
+        if(gamepad1.dpad_down && EyeOfTheTiger.isPlaying()) {
+            EyeOfTheTiger.pause();
+
         }
     }
 
@@ -299,13 +291,15 @@ public class MechanumFIRST extends OpMode {
         //nothing here? probably gotta call garbage collection at some point
         //tells everything to cut all power
         //All motors go to 0 power when cut, servos stop moving at 0.5 power (Mochi)
-        parker.setPower(0);
-        louis.setPower(0);
-        matthew.setPower(0);
-        maria.setPower(0);
-        toby.setPower(0);
-        mochi.setPosition(0.5);
-        eric.setPower(0);
-        chris.setPower(0);
+            parker.setPower(0);
+
+            louis.setPower(0);
+            matthew.setPower(0);
+            maria.setPower(0);
+            toby.setPower(0);
+            mochi.setPosition(0.5);
+            eric.setPower(0);
+            chris.setPower(0);
+
     }
 }
