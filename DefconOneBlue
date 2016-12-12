@@ -1,0 +1,276 @@
+package org.firstinspires.ftc.teamcode;
+
+import android.graphics.Color;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import android.media.MediaPlayer;
+
+//import a few more things for android.os on the phones
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
+import android.view.ViewParent;
+
+/**
+
+ *
+ *  The code is written using a method called: encoderDrive(speed, leftFrontInches, rightFrontInches, leftRearInches, rightRearInches
+ *  timeoutS)
+ *  that performs the actual movement.
+ *  This methods assumes that each movement is relative to the last stopping place.
+ *  There are other ways to perform encoder based moves, but this method is probably the simplest.
+ *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
+ *
+ */
+
+@Autonomous(name="RedShootThenForwardPrayToMarks")
+public class DefconOneBlue extends LinearOpMode {
+
+    /* Declare OpMode members. */
+    ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
+    DeviceInterfaceModule CDI;     //Instance of DeviceInterfaceModule - for showing a red or blue LED
+
+    HardwareMecanumPushbot robot =    new HardwareMecanumPushbot();   // Use a Pushbot's hardware
+    private ElapsedTime runtime = new ElapsedTime();
+
+    static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: AndyMark Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double DRIVE_SPEED = 1.0;
+    static final double TURN_SPEED = 0.65;
+    int colorChosen = 0;
+
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
+
+        colorSensor = hardwareMap.colorSensor.get("color");
+        CDI = hardwareMap.deviceInterfaceModule.get("Device Interface Module 1");
+
+        /*
+         * Initialize the drive system variables.
+         * The init() method of the hardware class does all the work here
+         */
+        robot.init(hardwareMap);
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.update();
+
+
+        robot.louis.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.parker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.maria.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.matthew.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.toby.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        idle();
+
+        robot.parker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.maria.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Path0", "Starting at %7d :%7d",
+                robot.parker.getCurrentPosition(),
+                robot.louis.getCurrentPosition(),
+                robot.maria.getCurrentPosition(),
+                robot.matthew.getCurrentPosition(),
+                robot.toby.getCurrentPosition());
+
+
+        telemetry.update();
+
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+
+        telemetry.addData("Status", "Starting Program");    //
+        telemetry.update();
+        /*
+        //encoderDrive(DRIVE_SPEED, 1, -1, 1, -1, 1.0);
+        robot.maria.setPower(-.7);
+        robot.matthew.setPower(.7);
+        robot.parker.setPower(.7);
+        robot.louis.setPower(-0.7);
+
+        runtime.reset();
+
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+            idle();
+        }
+        robot.maria.setPower(0);
+        robot.matthew.setPower(0);
+        robot.parker.setPower(0);
+        robot.louis.setPower(0);
+        */
+        runtime.reset();
+        while (runtime.seconds() < 10) {
+            robot.eric.setPower(-1);
+            robot.chris.setPower(-1);
+        }
+        robot.eric.setPower(0);
+        robot.chris.setPower(0);
+/*
+
+
+
+            runtime.reset();
+            robot.maria.setPower(.7);
+            robot.matthew.setPower(.7);
+            robot.parker.setPower(.7);
+            robot.louis.setPower(0.7);
+            while (runtime.seconds() < 1) {
+                telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                telemetry.update();
+                idle();
+
+            }
+
+
+            robot.maria.setPower(-.7);
+            robot.matthew.setPower(-.7);
+            robot.parker.setPower(-.7);
+            robot.louis.setPower(-0.7);
+            while (runtime.seconds() < 3) {
+                telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                telemetry.update();
+                idle();
+
+            }
+            */
+            telemetry.addData("Maria", "Power: " + robot.maria.getPower());
+            telemetry.addData("Matthew", "Power: " + robot.matthew.getPower());
+            telemetry.addData("Louis", "Power: " + robot.louis.getPower());
+            telemetry.addData("Parker", "Power: " + robot.parker.getPower());
+
+
+    }
+
+    public void encoderDrive(double speed,
+                             double leftFront, double rightFront, double rightRear, double leftRear,
+                             double timeoutS) throws InterruptedException {
+        int newFrontLeftTarget;
+        int newRearLeftTarget;
+        int newFrontRightTarget;
+        int newRearRightTarget;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+            //parker = hardwareMap.dcMotor.get("frontLeft");
+            //louis = hardwareMap.dcMotor.get("frontRight");
+            //maria = hardwareMap.dcMotor.get("rearLeft");
+            //matthew = hardwareMap.dcMotor.get("rearRight");
+            // Determine new target position, and pass to motor controller
+            newFrontLeftTarget = robot.parker.getCurrentPosition() + (int) (leftFront * COUNTS_PER_INCH);
+            newRearLeftTarget = robot.maria.getCurrentPosition() + (int) (leftRear * COUNTS_PER_INCH);
+            newFrontRightTarget = robot.louis.getCurrentPosition() + (int) (rightFront * COUNTS_PER_INCH);
+            newRearRightTarget = robot.matthew.getCurrentPosition() + (int) (rightRear * COUNTS_PER_INCH);
+
+            robot.maria.setTargetPosition(newRearLeftTarget);
+            robot.parker.setTargetPosition(newFrontLeftTarget);
+            robot.matthew.setTargetPosition(newRearRightTarget);
+            robot.louis.setTargetPosition(newFrontRightTarget);
+
+
+            // Turn On RUN_TO_POSITION
+            robot.matthew.setPower(rightRear/Math.abs(rightRear));
+            robot.maria.setPower(leftRear/Math.abs(leftRear));
+            robot.louis.setPower(rightFront/Math.abs(rightFront));
+            robot.parker.setPower(leftFront/Math.abs(leftFront));
+
+            telemetry.addData("Maria", "Power: " + robot.maria.getPower());
+            telemetry.addData("Matthew", "Power: " + robot.matthew.getPower());
+            telemetry.addData("Louis", "Power: " + robot.louis.getPower());
+            telemetry.addData("Parker", "Power: " + robot.parker.getPower());
+            sleep
+                    (250);
+            runtime.reset();
+
+            /*
+            robot.parker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.maria.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            */
+
+
+
+            // reset the timeout time and start motion.
+
+            // keep looping while we are still active, and there is time left, and all motors are running.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.louis.isBusy() && robot.parker.isBusy() && robot.maria.isBusy() &&  robot.matthew.isBusy())) {
+                // Display it for the driver.
+                telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d", newFrontLeftTarget, newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
+                telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
+
+
+                        robot.parker.getCurrentPosition(),
+                        robot.louis.getCurrentPosition(),
+                        robot.matthew.getCurrentPosition(),
+                        robot.maria.getCurrentPosition());
+
+                telemetry.addData("Maria", "Power: " + robot.maria.getPower());
+                telemetry.addData("Matthew", "Power: " + robot.matthew.getPower());
+                telemetry.addData("Louis", "Power: " + robot.louis.getPower());
+                telemetry.addData("Parker", "Power: " + robot.parker.getPower());
+
+                telemetry.update();
+
+                // Allow time for other processes to run.
+                //sleep(1000);
+            }
+
+
+            // Turn off RUN_TO_POSITION
+            /*
+            if((robot.maria.getCurrentPosition() == newRearLeftTarget) && (robot.matthew.getCurrentPosition() == newRearRightTarget)) {
+                robot.maria.setPower(0);
+                robot.parker.setPower(0);
+                robot.matthew.setPower(0);
+                robot.louis.setPower(0);
+            }
+            */
+
+            robot.maria.setPower(0);
+            robot.parker.setPower(0);
+            robot.matthew.setPower(0);
+            robot.louis.setPower(0);
+
+            /*
+            robot.maria.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.parker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            */
+
+            sleep(250);   // optional pause after each move
+
+        }
+    }
+
+
+}
