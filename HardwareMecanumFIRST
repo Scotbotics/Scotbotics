@@ -18,8 +18,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class HardwareMecanumPushbot
 {
-    DcMotor parker, louis, maria, matthew, toby, eric, chris;
-
+    public DcMotor  matthew   = null;
+    public DcMotor  maria  = null;
+    public DcMotor  toby    = null;
+    public DcMotor  parker    = null;
+    public DcMotor  louis   = null;
+    public DcMotor  chris   = null;
     /* Public OpMode members. */
 
 
@@ -44,6 +48,10 @@ public class HardwareMecanumPushbot
         matthew = hwMap.dcMotor.get("rearRight");
         toby = hwMap.dcMotor.get("buttonPusher");
 
+        //eric = hwMap.dcMotor.get("catapult");
+        toby = hwMap.dcMotor.get("buttonPusher");
+        chris = hwMap.dcMotor.get("harvester");
+
         parker.setDirection(DcMotor.Direction.REVERSE);
         maria.setDirection(DcMotor.Direction.REVERSE);
 
@@ -54,6 +62,7 @@ public class HardwareMecanumPushbot
         maria.setPower(0);
         matthew.setPower(0);
         toby.setPower(0);
+        chris.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
