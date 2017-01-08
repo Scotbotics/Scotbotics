@@ -217,9 +217,15 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
                 telemetry.addData("Status", "Toby Moved Blue");
                 telemetry.update();
                 sleep(1000);
-                if (opModeIsActive() && (runtime.seconds() > 2.0) && (runtime.seconds() < 2.447)) {
+                tobyReset(DRIVE_SPEED, 10, 1.0);
+                int reset  = runtime.seconds();
+                /*if (opModeIsActive() && (runtime.seconds() < reset)) {
+                   runtime.reset();
+                   robot.toby.setPower(1.0);
+                }*/
+                /*if (opModeIsActive() && (runtime.seconds() > 2.0) && (runtime.seconds() < 2.447)) {
                    robot.toby.setPower(0.1);
-                }
+                }*/
                 //robot.toby.setPower(0);
                 telemetry.addData("encoder moved back", colorSensor.red());
                 telemetry.update();
