@@ -38,7 +38,7 @@ import android.view.ViewParent;
  *
  */
 
-@Autonomous(name="MecanumAutonomousBlueOne9")
+@Autonomous(name="MecanumAutonomousRedTwo")
 public class MecanumAutonomousRedTwo extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -159,7 +159,7 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
         telemetry.update();
         //illuminate the RED/BLUE LED on the Core Device Interface if the RED/BLUE value is greatest
         String direction = "";
-        if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
+              if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
             CDI.setLED(1, false);           //Red ON
             CDI.setLED(0, true);
 
@@ -167,17 +167,15 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             //set ballpusher to hit the correct beacon
             //if red team:
             runtime.reset();
-            robot.toby.setPower(1);
-            if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                telemetry.addData("Status", "Toby Moved");
-                telemetry.update();
-                tobyReset(DRIVE_SPEED, -10, 1.0);
-                sleep(1000);
-                tobyReset(DRIVE_SPEED, 10, 1.0);
-                robot.toby.setPower(0);
-                telemetry.addData("encoder moved back", colorSensor.blue());
-
+            tobyReset(DRIVE_SPEED,10, 1.0);
+            telemetry.addData("Status", "Toby Moved Blue");
+            telemetry.update();
+            sleep(1000);
+            if (opModeIsActive() && (runtime.seconds() > 2.0) && (runtime.seconds() < 2.446)) {
+                robot.toby.setPower(0.1);
             }
+            telemetry.addData("encoder moved back", colorSensor.blued());
+            telemetry.update();
 
             //encoder back
             //if blue team:
@@ -185,23 +183,25 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             //Blue OFF
 
             else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > colorSensor.green()) {
-                CDI.setLED(1, true);          //Red OFF
-                CDI.setLED(0, false);
+                CDI.setLED(1, false);          //Red OFF
+                CDI.setLED(0, true);
 
                 telemetry.addData("red dominant", colorSensor.blue());
                 //if blue team
                 runtime.reset();
                 tobyReset(DRIVE_SPEED, 10, 1.0);
                 //if red team
-                if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                    robot.toby.setPower(0);
-                    tobyReset(DRIVE_SPEED, -10, 1.0);
-                    sleep(1000);
-                    robot.toby.setPower(0);
-                    telemetry.addData("encoder moved back", colorSensor.blue());
+                telemetry.addData("Status", "Toby Moved Blue");
+                telemetry.update();
+                sleep(1000);
+                if (opModeIsActive() && (runtime.seconds() > 2.0) && (runtime.seconds() < 2.447)) {
+                   robot.toby.setPower(-0.1);
                 }
+                //robot.toby.setPower(0);
+                telemetry.addData("encoder moved back", colorSensor.blue());
+                telemetry.update();
 
-            } else {
+             else {
                 CDI.setLED(1, false);           //Red OFF
                 CDI.setLED(0, false);           //Blue OFF
             }
@@ -235,40 +235,52 @@ public class MecanumAutonomousRedTwo extends LinearOpMode {
             CDI.setLED(0, false);
 
             telemetry.addData("red dominant", colorSensor.red());
+            telemetry.update();
             //set ballpusher to hit the correct beacon
             //if red team:
             runtime.reset();
-            robot.toby.setPower(1);
-            if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                tobyReset(DRIVE_SPEED, 10, 1.0);
-                sleep(1000);
-                tobyReset(DRIVE_SPEED, -10, 1.0);
-                robot.toby.setPower(0);
-                telemetry.addData("encoder moved back", colorSensor.red());
-
+            tobyReset(DRIVE_SPEED, 10, 1.0);
+            //robot.toby.setPower(1);
+            //if red team
+            telemetry.addData("Status", "Toby Moved Blue");
+            telemetry.update();
+            sleep(1000);
+            if (opModeIsActive() && (runtime.seconds() > 2.0) && (runtime.seconds() < 2.446)) {
+                robot.toby.setPower(0.1);
             }
+            //robot.toby.setPower(0);
+            telemetry.addData("encoder moved back", colorSensor.red());
+            telemetry.update();
 
-            //encoder back
-            //if blue team:
-            //toby.setPower(-1);
-            //Blue OFF
 
-        } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
-            CDI.setLED(1, false);          //Red OFF
+        }
+        //encoder back
+        //if blue team:
+        //toby.setPower(-1);
+        //Blue OFF
+
+        else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
+            CDI.setLED(1, false);           //Red ON
             CDI.setLED(0, true);
 
-            telemetry.addData("blue dominant", colorSensor.blue());
-            //if blue team
+            telemetry.addData("blue dominant", colorSensor.red());
+            telemetry.update();
+            //set ballpusher to hit the correct beacon
+            //if red team:
             runtime.reset();
-            robot.toby.setPower(-1);
+            tobyReset(DRIVE_SPEED, -10, 1.0);
+            //robot.toby.setPower(1);
             //if red team
-            if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                tobyReset(DRIVE_SPEED, -10, 1.0);
-                sleep(1000);
-                tobyReset(DRIVE_SPEED, 10, 1.0);
-                robot.toby.setPower(0);
-                telemetry.addData("encoder moved back", colorSensor.red());
+            telemetry.addData("Status", "Toby Moved Blue");
+            telemetry.update();
+            sleep(1000);
+            if (opModeIsActive() && (runtime.seconds() > 2.0) && (runtime.seconds() < 2.446)) {
+                robot.toby.setPower(-0.1);
             }
+            //robot.toby.setPower(0);
+            telemetry.addData("encoder moved back", colorSensor.red());
+            telemetry.update();
+
 
         } else {
             CDI.setLED(1, false);           //Red OFF
