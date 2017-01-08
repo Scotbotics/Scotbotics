@@ -1,488 +1,288 @@
+//package that allows importing into the phone
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
-import com.qualcomm.robotcore.util.ElapsedTime;
+//import a lot of different functions, methods and commands for the ftc hardware
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import android.media.MediaPlayer;
 
 //import a few more things for android.os on the phones
+import android.media.MediaRouter;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.ViewParent;
 
-/**
-
- *
- *  The code is written using a method called: encoderDrive(speed, leftFrontInches, rightFrontInches, leftRearInches, rightRearInches
- *  timeoutS)
- *  that performs the actual movement.
- *  This methods assumes that each movement is relative to the last stopping place.
- *  There are other ways to perform encoder based moves, but this method is probably the simplest.
- *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
- *
+/*
+Created by Sam Orta on 10/1/16. Came from FTCkey template
+Last edited 1/9/16
  */
+//code where this program originally came from is http://ftckey.com/programming/tele-op/
 
-@Autonomous(name="BeaconAutonomousBlueOneShrodinger")
-public class MecanumAutonomousBlueOne extends LinearOpMode {
+public class MechanumFIRST extends OpMode {
+    //Variables that define what the motors and servos are
+    //yes I name the variables after people who have formerly been on the team
+    //Reason is that I'm insane -Sam
+    public DcMotor  matthew   = null;
+    public DcMotor  maria  = null;
+    public DcMotor  toby    = null;
+    public DcMotor  parker    = null;
+    public DcMotor  louis   = null;
+    public DcMotor  chris   = null;
+    public DcMotor  eric   = null;
 
-    /* Declare OpMode members. */
-    ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
-    DeviceInterfaceModule CDI;     //Instance of DeviceInterfaceModule - for showing a red or blue LED
+    //variables for the joysticks and their positions on gamepad1
+    public float leftX, leftY, rightX, rightY, fudge, harvesterY, trueFudge;
 
-    HardwareMecanumPushbot robot = new HardwareMecanumPushbot();   // Use a Pushbot's hardware
-    public ElapsedTime runtime = new ElapsedTime();
+    //deadzones are attempts to counter the calibration errors on the joysticks and it from breaking completely
+    public static double deadzone = 0.2;
 
-    static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: AndyMark Motor Encoder
+    static final double COUNTS_PER_MOTOR_REV = 1220;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 1.0;
-    static final double TURN_SPEED = 0.65;
-    int colorChosen = 0;
+    static final double TURN_SPEED = 0.5;
+
+    //inches forward is 229 * n inches
+    int TobyMoveLeft = -500;
+    int TobyMoveRight = 500;
+
+    public ElapsedTime runtime = new ElapsedTime();
+
+    MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger, RockyTheme;
+    MediaPlayer OverwatchTheme, ProtectorsOfTheEarth, Victory, LetItGoAirhorn, Thunderstuck;
+
+    //initialize stage in which everything is set up and prepared
+    @Override
+    public void init() {
+        //list of the all the motors and connect themselves to the actual motors
+        //the things in parantheses ex. "frontLeft" are what the motors are named in the configuration on the robot controller phone
+        parker = hardwareMap.dcMotor.get("frontLeft");
+        louis = hardwareMap.dcMotor.get("frontRight");
+        maria = hardwareMap.dcMotor.get("rearLeft");
+        matthew = hardwareMap.dcMotor.get("rearRight");
+
+
+        eric = hardwareMap.dcMotor.get("catapult");
+        toby = hardwareMap.dcMotor.get("buttonPusher");
+        chris = hardwareMap.dcMotor.get("harvester");
+
+        //reverses left side, so the robot can drive other directions
+        parker.setDirection(DcMotor.Direction.REVERSE);
+        maria.setDirection(DcMotor.Direction.REVERSE);
+
+        //set up out playlist
+        HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappentome);
+        ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
+        TheSoundOfSilence = MediaPlayer.create(hardwareMap.appContext, R.raw.thesoundofsilence);
+        EyeOfTheTiger = MediaPlayer.create(hardwareMap.appContext, R.raw.eyeofthetiger);
+        RockyTheme = MediaPlayer.create(hardwareMap.appContext, R.raw.rockytheme);
+        OverwatchTheme = MediaPlayer.create(hardwareMap.appContext, R.raw.overwatchtheme);
+        ProtectorsOfTheEarth = MediaPlayer.create(hardwareMap.appContext, R.raw.protectorsoftheearth);
+        Victory = MediaPlayer.create(hardwareMap.appContext, R.raw.victory);
+        LetItGoAirhorn = MediaPlayer.create(hardwareMap.appContext, R.raw.letitgoairhorn);
+        Thunderstuck = MediaPlayer.create(hardwareMap.appContext, R.raw.thunderstruck);
+
+
+
+
+    }
+
+    @Override
+    public void loop() {
+        getJoyVals();
+        //updates joyvalues with deadzones, xyzw
+
+        //allows control of harvester
+        chris.setPower(harvesterY * trueFudge);
+
+        //Turns the ball launcher on
+
+        if(gamepad2.x) {
+            eric.setPower(1);
+        }
+
+        //Turns the ball launcher off
+        if(gamepad2.b) {
+            eric.setPower(0);
+        }
+
+        /*
+        if(gamepad2.left_bumper) {
+            toby.setTargetPosition(TobyMoveRight);
+            // Turn On RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            toby.setPower(-1);
+
+            // Turn off RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+           // tobyReset(DRIVE_SPEED, 10, 1.0);
+        }
+        */
+        /*
+        if(gamepad2.right_bumper) {
+            toby.setTargetPosition(TobyMoveLeft);
+            // Turn On RUN_TO_POSITION
+            toby.setPower(1);
+
+            toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            toby.setPower(1);
+
+            toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            // tobyReset(DRIVE_SPEED, 10, 1.0);
+        }
+        */
+
+
+        //this controls how the drive system works by calculating how the joysticks control the power of te robot.
+        fudge = leftY ; //this can be tweaked for exponential power increase
+
+        trueFudge = (float) 1; // CHANGED 10/21/16 BY AZUL AND ANDERS FOR MAKER FAIR
+
+        //Louis = frontRight
+        louis.setPower(Range.clip(trueFudge * (fudge - leftX+rightX), -1, 1));
+        //maria = rearLeft
+        maria.setPower(Range.clip(trueFudge * (fudge - leftX-rightX), -1, 1));
+        //Parker = frontLeft
+        parker.setPower(Range.clip(trueFudge * (fudge + leftX-rightX), -1, 1));
+        //matthew = rearRight
+        matthew.setPower(Range.clip(trueFudge * (fudge + leftX+rightX), -1, 1));
+
+        //1 is right side for button pusher
+        //-1 is left side for button pusher
+
+        //toby pushes to the left by hitting left trigger
+        //toby pushes to the right by hitting right trigger
+
+        /*
+        if(gamepad2.right_trigger > 0.5) {
+            //toby.setTargetPosition(100);
+            // Turn On RUN_TO_POSITION
+            toby.setPower(1);
+            /*
+            toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            // Turn off RUN_TO_POSITION
+            toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            */
+        //}
+
+        /*
+        if(gamepad2.left_trigger > 0.5) {
+            //toby.setTargetPosition(-100);
+            // Turn On RUN_TO_POSITION
+            toby.setPower(-1);
+
+            //toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            //runtime.reset();
+
+            // Turn off RUN_TO_POSITION
+            //toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+       */
+
+
+        toby.setPower((((gamepad2.left_trigger>0.5)?  1:0)));
+        toby.setPower((-((gamepad2.right_trigger>0.5)? 1:0)));
+
+        //yes I programmed Scotland The Brave and How could this happen to Me into the robot
+        if(gamepad1.y) {
+            ScotlandTheBrave.start();
+        }
+        //If the song is playing, you can stop it
+        if(gamepad1.dpad_up && ScotlandTheBrave.isPlaying()) {
+            ScotlandTheBrave.pause();
+        }
+
+        //How to start "How did this happen". Use when losing or everything is breaking
+        if(gamepad1.x) {
+            HowCouldThisHappen.start();
+        }
+
+        //If the song is playing, you can stop it
+        if(gamepad1.dpad_left && HowCouldThisHappen.isPlaying()) {
+            HowCouldThisHappen.pause();
+        }
+
+        //Use when wanting to listen to a good song, or everything is broken
+        if(gamepad1.b) {
+            RockyTheme.start();
+        }
+
+        //If the song is playing, you can stop it
+        if(gamepad1.dpad_right && RockyTheme.isPlaying()) {
+            RockyTheme.pause();
+        }
+
+        if(gamepad1.a) {
+            EyeOfTheTiger.start();
+        }
+        if(gamepad1.dpad_down && EyeOfTheTiger.isPlaying()) {
+            EyeOfTheTiger.pause();
+
+        }
+    }
+
+    public void getJoyVals()
+    {
+        //how the joystick variables are connected to the joysticks
+        leftY = gamepad1.left_stick_y;
+        leftX = gamepad1.left_stick_x;
+        //formally z
+        rightX = gamepad1.right_stick_x;
+        //formally w
+        rightY = gamepad1.right_stick_y;
+        //updates joystick values
+        harvesterY = gamepad2.left_stick_y;
+
+        //deadzones are the area that controllers don't work as none are calibrated perfectly, this checks for them
+        if(Math.abs(leftX)<deadzone) leftX = 0;
+        if(Math.abs(leftY)<deadzone) leftY = 0;
+        if(Math.abs(rightX)<deadzone) rightX = 0;
+        if(Math.abs(rightY)<0.9) rightY = 0;
+        //checks deadzones
+    }
+
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
-        ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
+    public void stop() {
+        //nothing here? probably gotta call garbage collection at some point
+        //tells everything to cut all power
+        //All motors go to 0 power when cut, servos stop moving at 0.5 power (Mochi)
+        parker.setPower(0);
 
-        colorSensor = hardwareMap.colorSensor.get("color");
-        CDI = hardwareMap.deviceInterfaceModule.get("Device Interface Module");
-
-        /*
-         * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
-        robot.init(hardwareMap);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
-
-
-        robot.louis.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.parker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.maria.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.matthew.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.toby.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        idle();
-
-        robot.parker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.maria.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0", "Starting at %7d :%7d",
-                robot.parker.getCurrentPosition(),
-                robot.louis.getCurrentPosition(),
-                robot.maria.getCurrentPosition(),
-                robot.matthew.getCurrentPosition(),
-                robot.toby.getCurrentPosition());
-
-
-        telemetry.update();
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-
-
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        //drive speed is 1
-        encoderDrive(DRIVE_SPEED, -5, 5, -5, 5, 1.0); //go left first 30 inches
-        telemetry.addData("Status", "First Left Completed");
-        telemetry.update();
-        sleep(100);
-        telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d");
-        telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
-
-
-                robot.parker.getCurrentPosition(),
-                robot.louis.getCurrentPosition(),
-                robot.matthew.getCurrentPosition(),
-                robot.maria.getCurrentPosition());
-        //front wheels stop later
-        encoderDrive(DRIVE_SPEED, -26, -26, -26, -26, 1.0);  // Forward 24 Inches with 5 Sec timeout
-        //When does telemetry show up, after first wheel stop or after second wheel stop?
-        telemetry.addData("Status", "First Forward Completed");    //
-        telemetry.update();
-        sleep(1000);
-
-        //front wheels stop later
-
-
-        encoderDrive(DRIVE_SPEED, -29, 29, -29, 29, 1.0); //turn left again for 21
-        telemetry.addData("Status", "Second Left Completed");
-        telemetry.update();
-        sleep(100);
-
-        //When does telemetry show up, after first wheel stop or after second wheel stop?
-        encoderDrive(DRIVE_SPEED, -20, -20, -20, -20, 1.0); //go forward 22
-        telemetry.addData("Status", "Second Forward Completed");    //
-        telemetry.update();
-        sleep(100);
-        telemetry.addData("Data", "Not crashed before color sensor");
-        telemetry.update();
-
-        boolean LEDState = true;     //Tracks the mode of the color sensor; Active = true, Passive = false
-
-        colorSensor.enableLed(LEDState);
-        //LEDState = !LEDState;
-
-        //Set the mode of the LED; Active = true, Passive = false
-        //Active - For measuring reflected light. Cancels out ambient light
-        //Passive - For measuring ambient light, eg. the FTC Color Beacon
-
-
-        float hsvValues[] = {0, 0, 0};  //used to get Hue
-
-        //calculate hue
-        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
-
-        //display values
-        telemetry.addData("2 Clear", colorSensor.alpha());
-        telemetry.addData("3 Red  ", colorSensor.red());
-        telemetry.addData("4 Green", colorSensor.green());
-        telemetry.addData("5 Blue ", colorSensor.blue());
-        telemetry.addData("6 Hue", hsvValues[0]);
-
-        telemetry.addData("Data", "Not crashed yet");
-        telemetry.update();
-        //illuminate the RED/BLUE LED on the Core Device Interface if the RED/BLUE value is greatest
-        String direction = "";
-        if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > colorSensor.green()) {
-            CDI.setLED(1, true);           //Red ON
-            CDI.setLED(0, false);
-
-            telemetry.addData("red dominant", colorSensor.red());
-            //set ballpusher to hit the correct beacon
-            //if red team:
-            runtime.reset();
-            tobyReset(DRIVE_SPEED, 10, 1.0);
-            //robot.toby.setPower(1);
-            if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                telemetry.addData("Status", "Toby Moved");
-                telemetry.update();
-                sleep(1000);
-                robot.toby.setPower(-1);
-                tobyReset(DRIVE_SPEED, -20, 1.0);
-                robot.toby.setPower(0);
-                telemetry.addData("encoder moved back", colorSensor.red());
-
-            }
-
-            //encoder back
-            //if blue team:
-            //toby.setPower(-1);
-            //Blue OFF
-
-            else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
-                CDI.setLED(1, false);          //Red OFF
-                CDI.setLED(0, true);
-
-                telemetry.addData("blue dominant", colorSensor.blue());
-                //if blue team
-                runtime.reset();
-                tobyReset(DRIVE_SPEED, -10, 1.0);
-                sleep(2000);
-                tobyReset(DRIVE_SPEED, 10, 1.0);
-                //if red team
-                if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                    robot.toby.setPower(0);
-                    tobyReset(DRIVE_SPEED, 10, 1.0);
-                    sleep(1000);
-                    robot.toby.setPower(0);
-                    telemetry.addData("encoder moved back", colorSensor.red());
-                }
-
-            } else {
-                CDI.setLED(1, false);           //Red OFF
-                CDI.setLED(0, false);           //Blue OFF
-            }
-        }
-
-        //wait for all new data to go from the phone to the controllers and from the controllers to the phone.
-        telemetry.addData("Status", "First Color Completed");    //
-        telemetry.update();
-        sleep(100);
-        encoderDrive(DRIVE_SPEED, 5, 5, 5, 5, 0.0001); //go left 48
-        telemetry.addData("Status", "First Reverse Completed");    //
-        telemetry.update();
-        sleep(100);
-
-        encoderDrive(DRIVE_SPEED, -36, 36, -36, 36, 1.0); //go left 48
-        telemetry.addData("Status", "Third Left Completed");    //
-        telemetry.update();
-        sleep(100);
-
-        encoderDrive(DRIVE_SPEED, -5, -5, -5, -5, 1.0); //go left 48
-        telemetry.addData("Status", "Third Forward Completed");    //
-        telemetry.update();
-        sleep(100);
-
-        //Set the mode of the LED; Active = true, Passive = false
-        //Active - For measuring reflected light. Cancels out ambient light
-        //Passive - For measuring ambient light, eg. the FTC Color Beacon
-
-        //calculate hue
-        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
-
-        //display values
-        telemetry.addData("2 Clear", colorSensor.alpha());
-        telemetry.addData("3 Red  ", colorSensor.red());
-        telemetry.addData("4 Green", colorSensor.green());
-        telemetry.addData("5 Blue ", colorSensor.blue());
-        telemetry.addData("6 Hue", hsvValues[0]);
-        //illuminate the RED/BLUE LED on the Core Device Interface if the RED/BLUE value is greatest
-        if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > colorSensor.green()) {
-            CDI.setLED(1, true);           //Red ON
-            CDI.setLED(0, false);
-
-            telemetry.addData("red dominant", colorSensor.red());
-            //set ballpusher to hit the correct beacon
-            //if red team:
-            runtime.reset();
-            robot.toby.setPower(1);
-            if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                tobyReset(DRIVE_SPEED, 10, 1.0);
-                sleep(1000);
-                tobyReset(DRIVE_SPEED, -10, 1.0);
-                robot.toby.setPower(0);
-                telemetry.addData("encoder moved back", colorSensor.red());
-
-            }
-
-            //encoder back
-            //if blue team:
-            //toby.setPower(-1);
-            //Blue OFF
-
-        } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > colorSensor.green()) {
-            CDI.setLED(1, false);          //Red OFF
-            CDI.setLED(0, true);
-
-            telemetry.addData("blue dominant", colorSensor.blue());
-            //if blue team
-            runtime.reset();
-            robot.toby.setPower(-1);
-            //if red team
-            if (opModeIsActive() && (runtime.seconds() > 5.0)) {
-                tobyReset(DRIVE_SPEED, -10, 1.0);
-                sleep(1000);
-                tobyReset(DRIVE_SPEED, 10, 1.0);
-                robot.toby.setPower(0);
-                telemetry.addData("encoder moved back", colorSensor.red());
-            }
-
-        } else {
-            CDI.setLED(1, false);           //Red OFF
-            CDI.setLED(0, false);           //Blue OFF
-        }
-
-
-
-        telemetry.addData("Status", "Second Color Completed");    //
-        telemetry.update();
-        sleep(1000);
-        /*
-        encoderDrive(DRIVE_SPEED, 26, -26, 26, -26, 5.0); //right 26
-        telemetry.addData("Status", "First Right Completed");    //
-        telemetry.update();
-        sleep(5000);
-        */
-        /*
-        encoderDrive(DRIVE_SPEED, 60, 60, 60, 60, 5.0); //Reverse 60
-        telemetry.addData("Status", "First Reverse Completed");    //
-        telemetry.update();
-        sleep(1000);
-        */
-        /*
-        runtime.reset();
-        while(opModeIsActive() && (runtime.seconds() < 3.0)){
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-            idle();
-        }
-        //Thread.sleep(5000);
-
-        runtime.reset();
-        while(opModeIsActive() && (runtime.seconds() < 5.0)){
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-            idle();
-        }
-        */
+        louis.setPower(0);
+        matthew.setPower(0);
+        maria.setPower(0);
+        toby.setPower(0);
+        //eric.setPower(0);
+        chris.setPower(0);
 
     }
-    //Thread.sleep(5000);
-            /*
-             *  Method to perfmorm a relative move, based on encoder counts.
-             *  Encoders are not reset as the move is based on the current position.
-             *  Move will stop if any of three conditions occur:
-             *  1) Move gets to the desired position
-             *  2) Move runs out of time
-             *  3) Driver stops the opmode running.
-             */
-    public void encoderDrive(double speed,
-                             double leftFront, double rightFront, double rightRear, double leftRear,
-                             double timeoutS) throws InterruptedException {
-        int newFrontLeftTarget;
-        int newRearLeftTarget;
-        int newFrontRightTarget;
-        int newRearRightTarget;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-            //parker = hardwareMap.dcMotor.get("frontLeft");
-            //louis = hardwareMap.dcMotor.get("frontRight");
-            //maria = hardwareMap.dcMotor.get("rearLeft");
-            //matthew = hardwareMap.dcMotor.get("rearRight");
-            // Determine new target position, and pass to motor controller
-            newFrontLeftTarget = robot.parker.getCurrentPosition() + (int) (leftFront * COUNTS_PER_INCH);
-            newRearLeftTarget = robot.maria.getCurrentPosition() + (int) (leftRear * COUNTS_PER_INCH);
-            newFrontRightTarget = robot.louis.getCurrentPosition() + (int) (rightFront * COUNTS_PER_INCH);
-            newRearRightTarget = robot.matthew.getCurrentPosition() + (int) (rightRear * COUNTS_PER_INCH);
-
-            robot.maria.setTargetPosition(newRearLeftTarget);
-            robot.parker.setTargetPosition(newFrontLeftTarget);
-            robot.matthew.setTargetPosition(newRearRightTarget);
-            robot.louis.setTargetPosition(newFrontRightTarget);
-
-
-            // Turn On RUN_TO_POSITION
-            robot.matthew.setPower(rightRear/Math.abs(rightRear));
-            robot.maria.setPower(leftRear/Math.abs(leftRear));
-            robot.louis.setPower(rightFront/Math.abs(rightFront));
-            robot.parker.setPower(leftFront/Math.abs(leftFront));
-
-            telemetry.addData("Maria", "Power: " + robot.maria.getPower());
-            telemetry.addData("Matthew", "Power: " + robot.matthew.getPower());
-            telemetry.addData("Louis", "Power: " + robot.louis.getPower());
-            telemetry.addData("Parker", "Power: " + robot.parker.getPower());
-            sleep
-            (250);
-            runtime.reset();
-
-            /*
-            robot.parker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.maria.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            */
-
-
-
-            // reset the timeout time and start motion.
-
-            // keep looping while we are still active, and there is time left, and all motors are running.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (robot.louis.isBusy() && robot.parker.isBusy() && robot.maria.isBusy() &&  robot.matthew.isBusy())) {
-                        // Display it for the driver.
-                        telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d", newFrontLeftTarget, newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
-                        telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
-
-
-                        robot.parker.getCurrentPosition(),
-                        robot.louis.getCurrentPosition(),
-                        robot.matthew.getCurrentPosition(),
-                        robot.maria.getCurrentPosition());
-
-                        telemetry.addData("Maria", "Power: " + robot.maria.getPower());
-                        telemetry.addData("Matthew", "Power: " + robot.matthew.getPower());
-                        telemetry.addData("Louis", "Power: " + robot.louis.getPower());
-                        telemetry.addData("Parker", "Power: " + robot.parker.getPower());
-
-                        telemetry.update();
-
-                // Allow time for other processes to run.
-                //sleep(1000);
-            }
-
-
-            // Turn off RUN_TO_POSITION
-            /*
-            if((robot.maria.getCurrentPosition() == newRearLeftTarget) && (robot.matthew.getCurrentPosition() == newRearRightTarget)) {
-                robot.maria.setPower(0);
-                robot.parker.setPower(0);
-                robot.matthew.setPower(0);
-                robot.louis.setPower(0);
-            }
-            */
-
-            robot.maria.setPower(0);
-            robot.parker.setPower(0);
-            robot.matthew.setPower(0);
-            robot.louis.setPower(0);
-
-            /*
-            robot.maria.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.matthew.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.louis.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.parker.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            */
-
-            sleep(250);   // optional pause after each move
-
-        }
-    }
-
-    public void tobyReset(double speed, double move, double timeoutS) throws InterruptedException {
-        int newMove;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newMove = robot.toby.getCurrentPosition() + (int) (move * COUNTS_PER_INCH);
-
-
-            robot.toby.setTargetPosition(newMove);
-            // Turn On RUN_TO_POSITION
-            robot.toby.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.toby.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and all motors are running.
-            while (opModeIsActive() && (runtime.seconds() < timeoutS) && (robot.toby.isBusy())) {
-                    // Display it for the driver.
-                    telemetry.addData("Toby", "Actually Running",
-                                robot.toby.getCurrentPosition());
-
-                    telemetry.update();
-
-                // Allow time for other processes to run.
-                sleep(250);
-            }
-            robot.toby.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.toby.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            sleep(250);   // optional pause after each move
-
-        }
-    }
-
 }
