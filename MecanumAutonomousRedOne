@@ -204,7 +204,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
                 telemetry.addData("encoder moved back", colorSensor.blue());
                 telemetry.update();
 
-            } else {
+            else {
                 CDI.setLED(1, false);           //Red OFF
                 CDI.setLED(0, false);           //Blue OFF
             }
