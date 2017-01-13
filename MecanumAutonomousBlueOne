@@ -114,7 +114,7 @@ public class MecanumAutonomousBlueOne extends LinearOpMode {
         telemetry.update();
         sleep(100);
         //front wheels stop later
-        encoderDrive(DRIVE_SPEED, -26, -26, -40, -26, 1.0);  // left 30 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED, -26, -26, -26, -26, 1.0);  // left 30 Inches with 5 Sec timeout(40)
         //When does telemetry show up, after first wheel stop or after second wheel stop?
         telemetry.addData("Status", "First Forward Completed");    //
         telemetry.update();
