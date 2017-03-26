@@ -1,0 +1,83 @@
+/*
+Modern Robotics Color Sensor Active & Passive Example
+Created 7/25/2016 by Colton Mehlhoff of Modern Robotics using FTC SDK 1.6
+ Reuse permitted with credit where credit is due
+
+        Configuration:
+        Device Interface Module named "Device Interface Module 1"
+        Color sensor at default I2C address of 0x3C named "color"
+        Touch sensor named "t" and connected to the port specified by the user in their config file
+
+        This program can be run without a battery and Power Destitution Module
+
+        For more information, visit modernroboticsedu.com.
+        Support is available by emailing support@modernroboticsinc.com.
+*/
+//package that allows importing into the phone
+package org.firstinspires.ftc.teamcode;
+
+//import a lot of different functions, methods and commands for the ftc hardware
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import android.media.MediaPlayer;
+import android.graphics.Color;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
+@TeleOp(name="WhiteLineTester")
+public class WhiteLineTester extends OpMode {
+    DcMotor parker, louis, maria, matthew, toby, eric, chris;
+    Servo mochi;
+    ColorSensor colorSensor;       //Instance of ColorSensor - for reading color
+    TouchSensor touch;             //Instance of TouchSensor - for changing color sensor mode
+    DeviceInterfaceModule CDI;     //Instance of DeviceInterfaceModule - for showing a red or blue LED
+
+    ColorSensor color_sensor;
+
+    @Override
+    public void init()  {
+
+        parker = hardwareMap.dcMotor.get("frontLeft");
+        louis = hardwareMap.dcMotor.get("frontRight");
+        maria = hardwareMap.dcMotor.get("rearLeft");
+        matthew = hardwareMap.dcMotor.get("rearRight");
+
+        toby = hardwareMap.dcMotor.get("buttonPusher");
+        //the below three lines set up the configuration file
+
+        colorSensor = hardwareMap.colorSensor.get("color");
+        //touch = hardwareMap.touchSensor.get("t");
+        //We named the CDI using the default name given by the FTC configuration file
+        CDI = hardwareMap.deviceInterfaceModule.get("Device Interface Module 1");
+
+
+        //boolean touchState = false;  //Tracks the last known state of the touch sensor
+    }
+    public void loop() {
+        while (color_sensor.alpha() < 20) {
+        telemetry.addData("No White Line", 1);
+        }
+        telemetry.addData("Saw White Line", 1);
+        telemetry.update();
+
+
+    }
+
+    }
