@@ -1,7 +1,9 @@
 # Scotbotics
 Main Area for All Code
 
-10/31/16 MecanumFIRST is our current TeleOp and MecanumAutonomous is our current Autonomous
+3/16/17 Season is Over:
+Current TeleOp - MechanumFTC (for maker faire)
+Current Autonomous - None (season over)
 
 Notes to anyone who might be on our shared github, this is also some sort of a tutorial -
 
