@@ -1,0 +1,112 @@
+/**
+ * Created by Sam on 4/3/2016.
+ */
+
+package org.firstinspires.ftc.teamcode;
+
+//Last Edited 9/17/17
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
+import android.media.MediaPlayer;
+import android.media. MediaPlayer;
+
+@TeleOp(name = "TankDrive", group = "TeleOp")
+
+public class Telemetry2017 extends OpMode {
+    DcMotor Right;
+    DcMotor Left;
+    //  Servo Arm;
+    float rightJoystickVal;
+    float leftJoystickVal;
+    //float servoVal;
+
+    MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger, RockyTheme;
+
+    public void init() {
+        //tells everything to start at what power
+        Right = hardwareMap.dcMotor.get("rightDrive"); //right motor
+        Left =  hardwareMap.dcMotor.get("leftDrive"); //left
+        Right.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
+        //Arm = hardwareMap.servo.get("testServo");
+
+        HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.HowCouldThisHappenToMe);
+        ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
+        TheSoundOfSilence = MediaPlayer.create(hardwareMap.appContext, R.raw.thesoundofsilence);
+        EyeOfTheTiger = MediaPlayer.create(hardwareMap.appContext, R.raw.eyeofthetiger);
+        RockyTheme = MediaPlayer.create(hardwareMap.appContext, R.raw.rockytheme);
+    }
+    public void loop() {
+        //Has the drive and servos loop
+        rightJoystickVal = gamepad1.right_stick_y;
+        leftJoystickVal = gamepad1.left_stick_y;
+        Right.setPower(rightJoystickVal);
+        Left.setPower(leftJoystickVal);
+        //servos don't use power, go to a position
+        //continous .5 is neutral, 1 is forward, 0 is backwards
+        //continous servo
+        /*
+        if(gamepad1.dpad_right) {
+            Arm.setPosition(1.0);
+        } else if(gamepad1.dpad_down) {
+            Arm.setPosition(0);
+        } else {
+            Arm.setPosition(0.5);
+        }
+        */
+        //yes I programmed Scotland The Brave and How could this happen to Me into the robot
+        if(gamepad2.y) {
+            ScotlandTheBrave.start();
+        }
+        //If the song is playing, you can stop it
+        if(gamepad2.dpad_up && ScotlandTheBrave.isPlaying()) {
+            ScotlandTheBrave.pause();
+        }
+
+        //How to start "How did this happen". Use when losing or everything is breaking
+        if(gamepad2.x) {
+            HowCouldThisHappen.start();
+        }
+
+        //If the song is playing, you can stop it
+        if(gamepad2.dpad_left && HowCouldThisHappen.isPlaying()) {
+            HowCouldThisHappen.pause();
+        }
+
+        //Use when wanting to listen to a good song, or everything is broken
+        if(gamepad2.b) {
+            RockyTheme.start();
+        }
+
+        //If the song is playing, you can stop it
+        if(gamepad2.dpad_right && RockyTheme.isPlaying()) {
+            RockyTheme.pause();
+        }
+
+        if(gamepad2.a) {
+            EyeOfTheTiger.start();
+        }
+        if(gamepad2.dpad_down && EyeOfTheTiger.isPlaying()) {
+            EyeOfTheTiger.pause();
+
+        }
+    }
+    public void stop() {
+        //tells all power to cut to 0, shouldn't be neccessary
+        Right.setPower(0);
+        Left.setPower(0);
+        //Arm.setPosition(0.5);
+    }
+}
