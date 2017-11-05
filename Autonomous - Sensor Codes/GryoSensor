@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.Gyro_Videos ;
+package org.firstinspires.ftc.teamcode;
 
 /*
-Modern Robotics Gyro Turn Example
+Modern Robotics Gyro Straight Example
 Updated 11/3/2016 by Colton Mehlhoff of Modern Robotics using FTC SDK 2.35
 Reuse permitted with credit where credit is due
 
@@ -16,24 +16,20 @@ Support is available by emailing support@modernroboticsinc.com.
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "4 Turn", group = "Gyro Video")
+@TeleOp(name = "Hetero", group = "Gyro Video")
 //@Disabled
-public class MRI_Gyro_Vid4_Turn extends LinearOpMode {   //Linear op mode is being used so the program does not get stuck in loop()
+public class MRI_Gyro_Vid5_Straight extends LinearOpMode {  //Linear op mode is being used so the program does not get stuck in loop()
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
 
-    DcMotor MLeft1;  //Left Drive Motor
-    DcMotor MRight1;  //Right Drive Motor
-    DcMotor MLeft2;
-    DcMotor MRight2;
+    DcMotor leftDrive;  //Left Drive Motor
+    DcMotor rightDrive;  //Right Drive Motor
 
     int zAccumulated;  //Total rotation left/right
     int target = 0;  //Desired angle to turn to
@@ -45,40 +41,59 @@ public class MRI_Gyro_Vid4_Turn extends LinearOpMode {   //Linear op mode is bei
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
 
-        MLeft1 = hardwareMap.dcMotor.get("MLeft1");  //Config File
-        MRight1 = hardwareMap.dcMotor.get("MRight1");
-        MLeft2 = hardwareMap.dcMotor.get("MLeft2");
-        MRight2 = hardwareMap.dcMotor.get("MRight2");
+        leftDrive = hardwareMap.dcMotor.get("MLeft1");  //Config File
+        rightDrive = hardwareMap.dcMotor.get("MRight1");
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);  //This robot has two gears between motors and wheels. If your robot does not, you will need to reverse only the opposite motor
 
-        MRight1.setDirection(DcMotor.Direction.REVERSE);  //This robot has two gears between motors and wheels. If your robot does not, you will need to reverse only the opposite motor
-        MRight2.setDirection(DcMotor.Direction.REVERSE);  //This robot has two gears between motors and wheels. If your robot does not, you will need to reverse only the opposite motor
-
-        MLeft1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  //Controls the speed of the motors to be consistent even at different battery levels
-        MRight1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        MLeft2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        MRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  //Controls the speed of the motors to be consistent even at different battery levels
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         sensorGyro = hardwareMap.gyroSensor.get("gyro");  //Point to the gyro in the configuration file
         mrGyro = (ModernRoboticsI2cGyro) sensorGyro;      //ModernRoboticsI2cGyro allows us to .getIntegratedZValue()
         mrGyro.calibrate();  //Calibrate the sensor so it knows where 0 is and what still is. DO NOT MOVE SENSOR WHILE BLUE LIGHT IS SOLID
-
+        telemetry.addData("Calibrated", "Calibrated");
+        telemetry.update();
         waitForStart();
         runtime.reset();
 
         while (mrGyro.isCalibrating()) { //Ensure calibration is complete (usually 2 seconds)
         }
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
             telemetry.addData("Status", "Running: " + runtime.toString());
 
-            if (gamepad1.a)
-                target = target + 45;
-            if (gamepad1.b)
-                target = target - 45;
-
-            turnAbsolute(target);
+            driveStraight(30000, 0.10); //Drive straight for 30,000 encoder ticks (basically forever)
         }
+    }
+
+
+    public void driveStraight(int duration, double power) {
+        double leftSpeed; //Power to feed the motors
+        double rightSpeed;
+
+        double target = mrGyro.getIntegratedZValue();  //Starting direction
+        double startPosition = leftDrive.getCurrentPosition();  //Starting position
+
+        while (leftDrive.getCurrentPosition() < duration + startPosition && opModeIsActive()) {  //While we have not passed out intended distance
+            zAccumulated = mrGyro.getIntegratedZValue();  //Current direction
+
+            leftSpeed = power + (zAccumulated - target) / 100;  //Calculate speed for each side
+            rightSpeed = power - (zAccumulated - target) / 100;  //See Gyro Straight video for detailed explanation
+
+            leftSpeed = Range.clip(leftSpeed, -1, 1);
+            rightSpeed = Range.clip(rightSpeed, -1, 1);
+
+            leftDrive.setPower(leftSpeed);
+            rightDrive.setPower(rightSpeed);
+
+            telemetry.addData("1. Left", leftDrive.getPower());
+            telemetry.addData("2. Right", rightDrive.getPower());
+            telemetry.addData("3. Distance to go", duration + startPosition - leftDrive.getCurrentPosition());
+            telemetry.update();
+        }
+
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
     }
 
     //This function turns a number of degrees compared to where the robot is. Positive numbers trn left.
@@ -91,19 +106,15 @@ public class MRI_Gyro_Vid4_Turn extends LinearOpMode {   //Linear op mode is bei
         zAccumulated = mrGyro.getIntegratedZValue();  //Set variables to gyro readings
         double turnSpeed = 0.15;
 
-        while (Math.abs(zAccumulated - target) > 3 && opModeIsActive()) {  //Continue while the robot direction is further than three degrees from the target
+        while (Math.abs(zAccumulated - target) > 3) {  //Continue while the robot direction is further than three degrees from the target
             if (zAccumulated > target) {  //if gyro is positive, we will turn right
-                MLeft1.setPower(turnSpeed);
-                MRight1.setPower(-turnSpeed);
-                MLeft2.setPower(turnSpeed);
-                MRight2.setPower(-turnSpeed);
+                leftDrive.setPower(turnSpeed);
+                rightDrive.setPower(-turnSpeed);
             }
 
             if (zAccumulated < target) {  //if gyro is positive, we will turn left
-                MLeft1.setPower(-turnSpeed);
-                MRight1.setPower(turnSpeed);
-                MLeft2.setPower(-turnSpeed);
-                MRight2.setPower(turnSpeed);
+                leftDrive.setPower(-turnSpeed);
+                rightDrive.setPower(turnSpeed);
             }
 
             zAccumulated = mrGyro.getIntegratedZValue();  //Set variables to gyro readings
@@ -111,11 +122,10 @@ public class MRI_Gyro_Vid4_Turn extends LinearOpMode {   //Linear op mode is bei
             telemetry.update();
         }
 
-        MLeft1.setPower(0);  //Stop the motors
-        MRight1.setPower(0);
-        MLeft2.setPower(0);
-        MRight2.setPower(0);
+        leftDrive.setPower(0);  //Stop the motors
+        rightDrive.setPower(0);
 
     }
 
 }
+
