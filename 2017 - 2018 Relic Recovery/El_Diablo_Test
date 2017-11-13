@@ -1,0 +1,74 @@
+/**
+ * Created by Sam on 4/3/2016.
+ */
+
+package org.firstinspires.ftc.teamcode;
+
+//Last Edited 9/17/17
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
+import android.media.MediaPlayer;
+import android.media. MediaPlayer;
+
+@TeleOp(name = "El_Diablo_Test", group = "TeleOp")
+
+public class El_Diablo_Test extends OpMode {
+    //DcMotor Right;
+    //DcMotor Left;
+    Servo Eldiablo;
+    float rightJoystickVal;
+    float leftJoystickVal;
+    //float servoVal;
+
+    MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger, RockyTheme;
+
+    public void init() {
+        //tells everything to start at what power
+        Eldiablo = hardwareMap.servo.get("Eldiablo");
+
+
+    }
+    public void loop() {
+        //Has the drive and servos loop
+        //servos don't use power, go to a position
+        //continous .5 is neutral, 1 is forward, 0 is backwards
+        //continous servo
+
+
+        if(gamepad1.dpad_right) {
+            Eldiablo.setPosition(1.0);
+        } else if(gamepad1.dpad_down) {
+            Eldiablo.setPosition(0);
+        } else {
+            Eldiablo.setPosition(0.5);
+        }
+
+        /*
+        boolean changed = false;
+        if(gamepad2.a && changed)
+        {
+            if(Eldiablo.getPosition() == 0) Eldiablo.setPosition(1);
+            else Eldiablo.setPosition(0);
+            changed = true;
+        }
+        else if(!gamepad2.a) changed = false;
+        */
+
+    }
+    public void stop() {
+
+    }
+}
