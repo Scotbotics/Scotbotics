@@ -1,0 +1,43 @@
+
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Servo;
+/* Created by wyatt.ross on 9/22/2015.
+*/
+@TeleOp(name = "continuous servo test", group = "TeleOp")
+
+public class cont_servo_test extends OpMode {
+    Servo servoswitch;
+    boolean pressleft;
+
+    public cont_servo_test() {
+    }
+    @Override
+    public void init() {
+        pressleft = gamepad2.left_bumper;
+        servoswitch = hardwareMap.servo.get("testServo");
+
+    }
+
+    @Override
+    public void loop() {
+        if (gamepad2.left_bumper) {
+            servoswitch.setPosition(0.00);
+
+        }
+        else if(gamepad2.right_bumper) {
+            servoswitch.setPosition(1.00);
+        }
+        else {
+            servoswitch.setPosition(0.50);
+
+        }
+
+
+
+
+    }
+}
