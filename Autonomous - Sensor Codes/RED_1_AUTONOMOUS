@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //      |
 //      |
 
-@Autonomous(name="Red Autonomous", group="Autononmous")
+@Autonomous(name="RED_1_AUTONOMOUS", group="Autononmous")
 
 public class RED_1_Autonomous extends LinearOpMode {
 
