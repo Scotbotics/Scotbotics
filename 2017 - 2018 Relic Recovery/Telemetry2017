@@ -1,10 +1,10 @@
 /**
- * Created by Sam on 4/3/2016.
+ * Created by Sam on 9/23/2017.
  */
 
 package org.firstinspires.ftc.teamcode;
 
-//Last Edited 9/17/17
+//Last Edited 11/19/17
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,18 +22,28 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import android.media.MediaPlayer;
 import android.media. MediaPlayer;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "TankDrive", group = "TeleOp")
+
+@TeleOp(name = "Telemetry2017", group = "TeleOp")
 
 public class Telemetry2017 extends OpMode {
     DcMotor Right;
     DcMotor Left;
     DcMotor Climber;
-   // Servo Arm;
-    float rightJoystickVal;
-    float leftJoystickVal;
 
-    float getRightJoystickVal_Cont2;
+    Servo El_Diablo;
+    Servo Final_Pusher;
+    Servo Klaw;
+    Servo Jewel_Knocker;
+
+
+    float rightJoystickVal_Cont1;
+    float leftJoystickVal_Cont1;
+
+    float RightJoystickVal_Cont2;
+    float LeftJoystickVal_Cont2;
+
     //float servoVal;
 
     MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger, RockyTheme;
@@ -43,6 +53,14 @@ public class Telemetry2017 extends OpMode {
         Right = hardwareMap.dcMotor.get("rightDrive"); //right motor
         Left =  hardwareMap.dcMotor.get("leftDrive"); //left
         Climber = hardwareMap.dcMotor.get("climber");
+
+        //servos for robot
+        El_Diablo = hardwareMap.servo.get("el_diablo");
+        El_Diablo = hardwareMap.servo.get("final_push");
+        El_Diablo = hardwareMap.servo.get("jewel_knocker");
+        Klaw = hardwareMap.servo.get("klaw");
+
+
         Right.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
         Climber.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
 
@@ -53,64 +71,109 @@ public class Telemetry2017 extends OpMode {
         TheSoundOfSilence = MediaPlayer.create(hardwareMap.appContext, R.raw.thesoundofsilence);
         EyeOfTheTiger = MediaPlayer.create(hardwareMap.appContext, R.raw.eyeofthetiger);
         RockyTheme = MediaPlayer.create(hardwareMap.appContext, R.raw.rockytheme);
+
+        telemetry.addData(">", "Robot Initialized" );
+        telemetry.update();
     }
     public void loop() {
         //Has the drive and servos loop
-        rightJoystickVal = gamepad1.right_stick_y;
-        leftJoystickVal = gamepad1.left_stick_y;
-        Right.setPower(rightJoystickVal/2);
-        Left.setPower(leftJoystickVal/2);
+        rightJoystickVal_Cont1 = gamepad1.right_stick_y;
+        leftJoystickVal_Cont1 = gamepad1.left_stick_y;
+        Right.setPower(rightJoystickVal_Cont1/2);
+        Left.setPower(leftJoystickVal_Cont1/2);
 
-        getRightJoystickVal_Cont2 = gamepad2.right_stick_y;
-        Climber.setPower(getRightJoystickVal_Cont2);
+        //Sets power for the climber
+
+        
         //servos don't use power, go to a position
         //continous .5 is neutral, 1 is forward, 0 is backwards
         //continous servo
 
-        /*
-        if(gamepad1.dpad_right) {
-            Arm.setPosition(1.0);
-        } else if(gamepad1.dpad_down) {
-            Arm.setPosition(0);
-        } else {
-            Arm.setPosition(0.5);
+        //Arm Extension (El_Diablo) is powered by this control system
+        if(gamepad2.dpad_up) {
+            El_Diablo.setPosition(1.0);
+            telemetry.addData(">", "El_Diablo Extending" );
+            telemetry.update();
+        } else if(gamepad2.dpad_down) {
+            El_Diablo.setPosition(0);
+            telemetry.addData(">", "El_Diablo Retracting" );
+            telemetry.update();
+        } else if(gamepad2.dpad_right || gamepad2.dpad_left){
+            El_Diablo.setPosition(0.5);
+            telemetry.addData(">", "El_Diablo Stopped" );
+            telemetry.update();
         }
-        */
+
+        //Final Pusher control sequence. If you push up, the servo goes up, if you push down the servo goes down
+        LeftJoystickVal_Cont2 = gamepad2.left_stick_y;
+        if(LeftJoystickVal_Cont2 > 1) {
+            Final_Pusher.setPosition(1);
+        } else if(LeftJoystickVal_Cont2 < 1) {
+            Final_Pusher.setPosition(0);
+        }
+        //Arm Claw (Klaw) runs as following. If you press right bumper on controller two. THen the klaw tightens.
+        //Press the left bumper and the klaw loosens
+       while(gamepad2.right_bumper == true) {
+           Klaw.setPosition(1.0);
+           telemetry.addData(">", "Klaw Tightening" );
+           telemetry.update();
+        }
+        while(gamepad2.left_bumper == true) {
+            Klaw.setPosition(1.0);
+            telemetry.addData(">", "Claw Loosening" );
+            telemetry.update();
+        }
 
         //yes I programmed Scotland The Brave and How could this happen to Me into the robot
         if(gamepad2.y) {
             ScotlandTheBrave.start();
+            telemetry.addData(">", "Scotland Playing" );
+            telemetry.update();
         }
         //If the song is playing, you can stop it
         if(gamepad2.dpad_up) {
             ScotlandTheBrave.stop();
+            telemetry.addData(">", "Scotland Stopped" );
+            telemetry.update();
         }
 
         //How to start "How did this happen". Use when losing or everything is breaking
         if(gamepad2.x) {
             HowCouldThisHappen.start();
+            telemetry.addData(">", "How Could This Happen Playing" );
+            telemetry.update();
         }
 
         //If the song is playing, you can stop it
         if(gamepad2.dpad_left) {
             HowCouldThisHappen.stop();
+            telemetry.addData(">", "How Could This Happened Stopped" );
+            telemetry.update();
         }
 
         //Use when wanting to listen to a good song, or everything is broken
         if(gamepad2.b) {
             TheSoundOfSilence.start();
+            telemetry.addData(">", "Sound of Silence Playing" );
+            telemetry.update();
         }
 
         //If the song is playing, you can stop it
         if(gamepad2.dpad_right) {
             TheSoundOfSilence.stop();
+            telemetry.addData(">", "Sound of Silence Stopped" );
+            telemetry.update();
         }
 
         if(gamepad2.a) {
             EyeOfTheTiger.start();
+            telemetry.addData(">", "Eye Of The Tiger Playing" );
+            telemetry.update();
         }
         if(gamepad2.dpad_down) {
             EyeOfTheTiger.stop();
+            telemetry.addData(">", "Eye of The Tiger Stopped" );
+            telemetry.update();
 
         }
     }
@@ -118,6 +181,11 @@ public class Telemetry2017 extends OpMode {
         //tells all power to cut to 0, shouldn't be neccessary
         Right.setPower(0);
         Left.setPower(0);
-        //Arm.setPosition(0.5);
+
+        Klaw.setPosition(0.5);
+        El_Diablo.setPosition(0.5);
+        telemetry.addData(">", "Everything Stopped" );
+        telemetry.update();
     }
 }
+1
