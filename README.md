@@ -1,9 +1,9 @@
 # Scotbotics
 Main Area for All Code
 
-3/16/17 Season is Over:
-Current TeleOp - MechanumFTC (for maker faire)
-Current Autonomous - None (season over)
+11/20/17 Pre-Qualifer Relic RecoverY:
+Current TeleOp - Telemetry2017
+Current Autonomous - The 4 capitalized Autonomouses in Relic Recovery
 
 Notes to anyone who might be on our shared github, this is also some sort of a tutorial -
 
