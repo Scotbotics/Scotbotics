@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="RED_2_Autonomous", group="Autononmous")
 
-public class RED_2_Autonomous extends LinearOpMode {
+public class RED_2_AUTONOMOUS extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
