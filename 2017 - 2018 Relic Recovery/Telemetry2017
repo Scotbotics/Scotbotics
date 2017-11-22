@@ -37,14 +37,11 @@ public class Telemetry2017 extends OpMode {
     Servo Klaw;
     Servo Jewel_Knocker;
 
-
     float rightJoystickVal_Cont1;
     float leftJoystickVal_Cont1;
 
     float RightJoystickVal_Cont2;
     float LeftJoystickVal_Cont2;
-
-    //float servoVal;
 
     MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger, RockyTheme;
 
@@ -60,12 +57,10 @@ public class Telemetry2017 extends OpMode {
         El_Diablo = hardwareMap.servo.get("jewel_knocker");
         Klaw = hardwareMap.servo.get("klaw");
 
-
         Right.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
-        Climber.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
+        Climber.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so the climber makes reasonable sense
 
-        // Arm = hardwareMap.servo.get("testServo");
-
+        //Set up the five songs we currently have
         HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappen);
         ScotlandTheBrave = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
         TheSoundOfSilence = MediaPlayer.create(hardwareMap.appContext, R.raw.thesoundofsilence);
@@ -81,15 +76,22 @@ public class Telemetry2017 extends OpMode {
         leftJoystickVal_Cont1 = gamepad1.left_stick_y;
         Right.setPower(rightJoystickVal_Cont1/2);
         Left.setPower(leftJoystickVal_Cont1/2);
+        telemetry.addData("right motor power", rightJoystickVal_Cont1 );
+        telemetry.addData("left motor power", leftJoystickVal_Cont1 );
 
-        //Sets power for the climber
 
-        
+        //Sets power for the climber, controlled by the functions controller right joy stick
+        RightJoystickVal_Cont2 = gamepad2.right_stick_y;
+        Climber.setPower(RightJoystickVal_Cont2);
+        telemetry.addData("climber power", RightJoystickVal_Cont2 );
+
+
         //servos don't use power, go to a position
         //continous .5 is neutral, 1 is forward, 0 is backwards
         //continous servo
 
         //Arm Extension (El_Diablo) is powered by this control system
+        //if you hit the up arrow on functions controller, then El_Diablo Extends, hit down it retracts and neutral keeps it still
         if(gamepad2.dpad_up) {
             El_Diablo.setPosition(1.0);
             telemetry.addData(">", "El_Diablo Extending" );
@@ -108,8 +110,12 @@ public class Telemetry2017 extends OpMode {
         LeftJoystickVal_Cont2 = gamepad2.left_stick_y;
         if(LeftJoystickVal_Cont2 > 1) {
             Final_Pusher.setPosition(1);
+            telemetry.addData(">", "Final Pusher Up" );
+            telemetry.update();
         } else if(LeftJoystickVal_Cont2 < 1) {
             Final_Pusher.setPosition(0);
+            telemetry.addData(">", "Final Pusher Down" );
+            telemetry.update();
         }
         //Arm Claw (Klaw) runs as following. If you press right bumper on controller two. THen the klaw tightens.
         //Press the left bumper and the klaw loosens
@@ -123,54 +129,68 @@ public class Telemetry2017 extends OpMode {
             telemetry.addData(">", "Claw Loosening" );
             telemetry.update();
         }
-
-        //yes I programmed Scotland The Brave and How could this happen to Me into the robot
-        if(gamepad2.y) {
+        //Jewel_Knocker Extension (jewel_knocker) is powered by this control system
+        //To bring the jewel knocker down, you hit a on the functions controller. To bring it up you hit y on the controller. b and x stop the controller
+        if(gamepad2.a) {
+            El_Diablo.setPosition(0);
+            telemetry.addData(">", "Jewel Knocker Down" );
+            telemetry.update();
+        } else if(gamepad2.y) {
+            El_Diablo.setPosition(1.0);
+            telemetry.addData(">", "Jewel Knocker Up" );
+            telemetry.update();
+        } else if(gamepad2.x || gamepad2.b){
+            El_Diablo.setPosition(0.5);
+            telemetry.addData(">", "Jewel Knocker Stopped" );
+            telemetry.update();
+        }
+        //Song system, if you
+        if(gamepad1.y) {
             ScotlandTheBrave.start();
             telemetry.addData(">", "Scotland Playing" );
             telemetry.update();
         }
         //If the song is playing, you can stop it
-        if(gamepad2.dpad_up) {
+        if(gamepad1.dpad_up) {
             ScotlandTheBrave.stop();
             telemetry.addData(">", "Scotland Stopped" );
             telemetry.update();
         }
 
         //How to start "How did this happen". Use when losing or everything is breaking
-        if(gamepad2.x) {
+        if(gamepad1.x) {
             HowCouldThisHappen.start();
             telemetry.addData(">", "How Could This Happen Playing" );
             telemetry.update();
         }
 
         //If the song is playing, you can stop it
-        if(gamepad2.dpad_left) {
+        if(gamepad1.dpad_left) {
             HowCouldThisHappen.stop();
             telemetry.addData(">", "How Could This Happened Stopped" );
             telemetry.update();
         }
 
         //Use when wanting to listen to a good song, or everything is broken
-        if(gamepad2.b) {
+        if(gamepad1.b) {
             TheSoundOfSilence.start();
             telemetry.addData(">", "Sound of Silence Playing" );
             telemetry.update();
         }
 
         //If the song is playing, you can stop it
-        if(gamepad2.dpad_right) {
+        if(gamepad1.dpad_right) {
             TheSoundOfSilence.stop();
             telemetry.addData(">", "Sound of Silence Stopped" );
             telemetry.update();
         }
 
-        if(gamepad2.a) {
+        if(gamepad1.a) {
             EyeOfTheTiger.start();
             telemetry.addData(">", "Eye Of The Tiger Playing" );
             telemetry.update();
         }
-        if(gamepad2.dpad_down) {
+        if(gamepad1.dpad_down) {
             EyeOfTheTiger.stop();
             telemetry.addData(">", "Eye of The Tiger Stopped" );
             telemetry.update();
@@ -184,8 +204,10 @@ public class Telemetry2017 extends OpMode {
 
         Klaw.setPosition(0.5);
         El_Diablo.setPosition(0.5);
+        Jewel_Knocker.setPosition(0.5);
+        Final_Pusher.setPosition(0.5);
+
         telemetry.addData(">", "Everything Stopped" );
         telemetry.update();
     }
 }
-1
