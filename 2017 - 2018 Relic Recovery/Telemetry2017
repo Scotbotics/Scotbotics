@@ -30,6 +30,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "Telemetry2017", group = "TeleOp")
 
 public class Telemetry2017 extends OpMode {
+
+    double left;
+    double right;
+    double drive;
+    double turn;
+    double max;
+
     DcMotor Right;
     DcMotor Left;
     DcMotor Climber;
@@ -96,43 +103,51 @@ public class Telemetry2017 extends OpMode {
 
         //Has the drive and servos loop
 
-        //Controls if the drive is reversed or not
-        if(gamepad1.right_bumper && DrivingReversed == false) {
+        // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
+        // In this mode the right stick moves the robot fwd and back, the left stick turns left and right.
+        // This way it's also easy to just drive straight, or just turn.
+        if (gamepad1.right_bumper && DrivingReversed == false) {
             DrivingReversed = true;
-        } else if(gamepad1.right_bumper && DrivingReversed == false) {
+        } else if (gamepad1.right_bumper && DrivingReversed == true) {
             DrivingReversed = false;
         }
 
         if(DrivingReversed == false) {
-            rightJoystickVal_Cont1 = gamepad1.right_stick_y;
+           drive = gamepad1.right_stick_y;
+        } else if (DrivingReversed == true) {
+            drive = -gamepad1.right_stick_y;
+        } else {
+            drive = gamepad1.right_stick_y;
         }
-        if(DrivingReversed == false) {
-            rightJoystickVal_Cont1 = -gamepad1.right_stick_y;
+
+        //drive = gamepad1.right_stick_y;
+
+        turn  =  -gamepad1.left_stick_y;
+
+        // Combine drive and turn for blended motion.
+        right  = drive + turn;
+        left = drive - turn;
+
+        // Normalize the values so neither exceed +/- 1.0
+        max = Math.max(Math.abs(left), Math.abs(right));
+        if (max > 1.0)
+        {
+            left /= max;
+            right /= max;
         }
+
+        // Output the safe vales to the motor drives.
+        Left.setPower(left);
+        Right.setPower(right);
+
+        /*
+        rightJoystickVal_Cont1 = gamepad1.right_stick_y;
+        leftJoystickVal_Cont1 = gamepad1.left_stick_y;
 
         //Controls the drive system motor power
-        Right.setPower(rightJoystickVal_Cont1/2);
-        Left.setPower(rightJoystickVal_Cont1/2);
-
-        //Controls Turning
-        leftJoystickVal_Cont1  = gamepad1.left_stick_x;
-
-        if(leftJoystickVal_Cont1 > 0) {
-            Right.setPower(1);
-            Left.setPower(-1);
-        }
-
-        if(leftJoystickVal_Cont1 < 0) {
-            Left.setPower(1);
-            Right.setPower(-1);
-        }
-
-        Right.setPower(leftJoystickVal_Cont1);
+        Right.setPower(rightJoystickVal_Cont1);
         Left.setPower(leftJoystickVal_Cont1);
-
-
-        Right.setPower(leftJoystickVal_Cont1);
-        Left.setPower(leftJoystickVal_Cont1);
+        */
 
         telemetry.addData("right motor power", rightJoystickVal_Cont1);
         telemetry.addData("left motor power", rightJoystickVal_Cont1);
@@ -160,18 +175,20 @@ public class Telemetry2017 extends OpMode {
         }
 
         //Final Pusher control sequence. If you push up, the servo goes up, if you push down the servo goes down
-        LeftJoystickVal_Cont2 = gamepad2.left_stick_y;
-        if(LeftJoystickVal_Cont2 == 1) {
+        if(gamepad2.y) {
             Final_Pusher.setPosition(1);
             telemetry.addData(">", "Final Pusher Up" );
             telemetry.update();
-        } else if(LeftJoystickVal_Cont2 == 1) {
+        } else if(gamepad2.a) {
             Final_Pusher.setPosition(0);
             telemetry.addData(">", "Final Pusher Down" );
             telemetry.update();
-        } else {
+        } else if(gamepad2.b || gamepad2.x) {
             Final_Pusher.setPosition(0.5);
+            telemetry.addData(">", "Final Pusher Stop" );
+            telemetry.update();
         }
+
         //Arm Claw (Klaw) runs as following. If you press right bumper on controller two. THen the klaw tightens.
         //Press the left bumper and the klaw loosens
 
@@ -182,30 +199,42 @@ public class Telemetry2017 extends OpMode {
         }
 
         if (gamepad2.left_bumper) {
-            Klaw.setPosition(1.0);
+            Klaw.setPosition(0);
             telemetry.addData(">", "Claw Loosening" );
             telemetry.update();
         }
 
         //Jewel_Knocker Extension (jewel_knocker) is powered by this control system
+        if(gamepad1.left_bumper) {
+            Jewel_Knocker.setPosition(1);
+        }
+
+        /*
         //To bring the jewel knocker down, you hit a on the functions controller. To bring it up you hit y on the controller. b and x stop the controller
         if(gamepad2.a) {
             El_Diablo.setPosition(0);
-            telemetry.addData(">", "Jewel Knocker Down" );
+            telemetry.addData(">", "El Diablo Down" );
             telemetry.update();
         } else if(gamepad2.y) {
             El_Diablo.setPosition(1.0);
-            telemetry.addData(">", "Jewel Knocker Up" );
+            telemetry.addData(">", "El DIablo Up" );
             telemetry.update();
         } else if(gamepad2.x || gamepad2.b){
             El_Diablo.setPosition(0.5);
-            telemetry.addData(">", "Jewel Knocker Stopped" );
+            telemetry.addData(">", "El Diablo Stopped" );
             telemetry.update();
         }
+        */
 
         //Controls the motor that moves El Diablo Out to grab the relic
-        if(gamepad2.y && gamepad2.b) {
+       LeftJoystickVal_Cont2 = gamepad2.left_stick_y;
+        Extender.setPower(LeftJoystickVal_Cont2);
+        /*
             extenderTime.reset();
+            telemetry.addData(">", "gamepad1.rightTrigger" );
+            telemetry.update();
+            Extender.setPower(1);
+
             while(runtime.milliseconds() < 10000) {
                 Extender.setPower(1);
             }
@@ -219,7 +248,7 @@ public class Telemetry2017 extends OpMode {
             telemetry.addData(">", "Extender Stopped");
             telemetry.update();
         }
-
+        */
         if (gamepad2.right_trigger == 1) {
             Right_Collector.setPosition(0);
             Left_Collector.setPosition(1);
