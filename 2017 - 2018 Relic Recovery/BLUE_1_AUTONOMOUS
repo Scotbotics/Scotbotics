@@ -12,40 +12,43 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//GO BACKWARDS AND TURN LEFT AND THEN BACKWARDS, THEN TURN RIGHT AND GO BACKWARDS AGAIN AFTER KNOCKING THE JEWEL
+//GO FORWARD AND TURN LEFT AND THEN FORWARD, THEN TURN RIGHT AND GO FORWARD AGAIN AFTER KNOCKING THE JEWEL
 
 //      ^
 //      |
 //      |
 //      |
 
-@Autonomous(name="BLUE_1_AUTONOMOUS", group="Autononmous")
+@Autonomous(name="BLUE_1_Autonomous", group="Autononmous")
 
-public class BLUE_1_AUTONOMOUS extends LinearOpMode {
+public class BLUE_1_Autonomous extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
     static final int KNOCK_JEWEL = 1;
     static final int SERVO_DOWN = 0;
     static final int DRIVE_TO_BOX = 2;
-
-
+    static final int STOPROBOT = 4;
+    static final int DRIVE_TO_BOX2 = 3;
 
 
 
     int state = SERVO_DOWN;
     View relativeLayout;
 
+    Servo El_Diablo;
+    Servo Final_Pusher;
+    Servo Right_Collector;
+    Servo Left_Collector;
+    Servo Klaw;
 
     Servo jewel_knocker;
     ColorSensor colorSensor;
     DcMotor leftDrive;
-    DcMotor RightDrive;
+    DcMotor rightDrive;
     float hsvValues[] = {0F, 0F, 0F};
-    //boolean bPrevState = true;
-    //boolean bCurrState = true;
-    //boolean bLedOn = true;
-    double hold = 0.22;
+    double hold = 0.5;
+    double turn = 0.3;
     boolean LEDState = true;
 
     final float values[] = hsvValues;
@@ -57,9 +60,24 @@ public class BLUE_1_AUTONOMOUS extends LinearOpMode {
         telemetry.update();
         colorSensor = hardwareMap.colorSensor.get("sensor_color");
         jewel_knocker = hardwareMap.servo.get("jewel_knocker");
+        rightDrive = hardwareMap.dcMotor.get("rightDrive"); //right motor
+        leftDrive =  hardwareMap.dcMotor.get("leftDrive");
+
+        El_Diablo       = hardwareMap.servo.get("el_diablo");
+        Final_Pusher    = hardwareMap.servo.get("final_push");
+        Klaw            = hardwareMap.servo.get("claw");
+        Right_Collector = hardwareMap.servo.get("right_collector");
+        Left_Collector  = hardwareMap.servo.get("left_collector");
+
         colorSensor.enableLed(LEDState);
         waitForStart();
         while (opModeIsActive()) {
+
+            El_Diablo.setPosition(0.5);
+            Klaw.setPosition(0.5);
+            Left_Collector.setPosition(0.5);
+            Right_Collector.setPosition(0.5);
+            Final_Pusher.setPosition(0.5);
 
             switch (state) {
                 case SERVO_DOWN:
@@ -71,6 +89,13 @@ public class BLUE_1_AUTONOMOUS extends LinearOpMode {
                 case DRIVE_TO_BOX:
                     drive_to_box();
                     break;
+                case DRIVE_TO_BOX2:
+                    drive_to_box2();
+                    break;
+                case STOPROBOT:
+                    stoprobot();
+                    break;
+
             }
 
         }
@@ -100,107 +125,139 @@ public class BLUE_1_AUTONOMOUS extends LinearOpMode {
         telemetry.update();
         Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
 
-        // send the info back to driver station using telemetry function.
-        /** telemetry.addLine("Button Hitting");
-         telemetry.addData("LED", bLedOn ? "On" : "Off");
-         telemetry.addData("Clear", colorSensor.alpha());
-         telemetry.addData("Red  ", colorSensor.red());
-         telemetry.addData("Green", colorSensor.green());
-         telemetry.addData("Blue ", colorSensor.blue());
-         **/
-        // change the background color to match the color detected by the RGB sensor.
-        // pass a reference to the hue, saturation, and value array as an argument
-        // to the HSVToColor method.
-        /** relativeLayout.post(new Runnable() {
-         public void run() {
-         relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
-         }
-         });
-         **/
-        telemetry.update();
+        //    relativeLayout.post(new Runnable() {
+        //   public void run() {
+        //    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
+        //   }
+        //   });
 
-
+        //   telemetry.update();
+        sleep(1000);
         if (colorSensor.blue() > colorSensor.red()) {
 
             telemetry.addLine("Color blue scanned");
             telemetry.update();
 
-            drive_forward(1000);
+            turn_left(100);
+            sleep(100);
+
+            jewel_knocker.setPosition(1);
+            sleep(200);
 
             runtime.reset();
 
-            while(runtime.milliseconds() < 500) {
+            turn_right(100);
+            sleep(100);
 
-                jewel_knocker.setPosition(1);
-            }
-
-            jewel_knocker.setPosition(0.5);
-            sleep(10000);
-
+            state = DRIVE_TO_BOX2;
         }
         else {
 
             telemetry.addLine("Color red scanned");
             telemetry.update();
 
-            drive_backward(1000);
+            turn_right(100);
+            sleep(100);
+
+            jewel_knocker.setPosition(1);
+            sleep(200);
 
             runtime.reset();
 
-            while(runtime.milliseconds() < 500) {
+            turn_left(300);
+            sleep(300);
 
-                jewel_knocker.setPosition(1);
-            }
-
-            jewel_knocker.setPosition(0.5);
-            sleep(10000);
+            state = DRIVE_TO_BOX;
 
         }
 
+
+        stop_drive(100);
+        sleep(1000);
         state = DRIVE_TO_BOX;
 
     }
 
     public void drive_to_box() {
 
-        drive_backward(1000);
+        drive_backward(200);
+        sleep(200);
+        stop_drive(200);
+        telemetry.addLine("Driving Forward");
+        telemetry.update();
 
-        turn_left(1000);
 
-        drive_backward(1000);
+        turn_right(400);
+        sleep(400);
+        telemetry.addLine("turn");
+        telemetry.update();
 
-        turn_right(1000);
+        drive_backward(1200);
+        sleep(1200);
+        stop_drive(200);
+        telemetry.addLine("Driving Forward");
+        telemetry.update();
 
-        drive_backward(1000);
+        state = STOPROBOT;
 
     }
 
+    public void drive_to_box2() {
 
-    void drive_forward(double time) {
-        leftDrive.setPower(hold);
-        RightDrive.setPower(hold);
+        drive_backward(200);
+        sleep(200);
+        stop_drive(200);
+        telemetry.addLine("Driving Forward");
+        telemetry.update();
+
+
+        turn_right(1500);
+        sleep(1500);
+        telemetry.addLine("turn");
+        telemetry.update();
+
+        drive_backward(1200);
+        sleep(1200);
+        stop_drive(200);
+        telemetry.addLine("Driving Forward");
+        telemetry.update();
+
+        state = STOPROBOT;
+    }
+
+
+    public void stoprobot() {
+
+        stop_drive(1000000000);
+
+        sleep(1000000000);
+
     }
 
     void drive_backward(double time) {
+        leftDrive.setPower(hold);
+        rightDrive.setPower(hold);
+    }
+
+    void drive_forward(double time) {
         leftDrive.setPower(-hold);
-        RightDrive.setPower(-hold);
+        rightDrive.setPower(-hold);
     }
 
     void turn_left(double time) {
-        leftDrive.setPower(-hold);
-        RightDrive.setPower(hold);
+        leftDrive.setPower(turn);
+        rightDrive.setPower(-turn);
     }
 
     void turn_right(double time) {
-        leftDrive.setPower(hold);
-        RightDrive.setPower(-hold);
+        leftDrive.setPower(-turn);
+        rightDrive.setPower(turn);
     }
 
     void stop_drive(double time) {
         leftDrive.setPower(0.0);
-        RightDrive.setPower(0.0);
+        rightDrive.setPower(0.0);
     }
 }
-
 
 
