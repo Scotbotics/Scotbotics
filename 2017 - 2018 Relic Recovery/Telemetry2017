@@ -97,38 +97,39 @@ public class Telemetry2017 extends OpMode {
         telemetry.addData(">", "Robot Initialized" );
         telemetry.update();
 
+        Final_Pusher.setPosition(1);
 
     }
     public void loop() {
 
         //Has the drive and servos loop
-
-        // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
-        // In this mode the right stick moves the robot fwd and back, the left stick turns left and right.
-        // This way it's also easy to just drive straight, or just turn.
-        if (gamepad1.right_bumper && DrivingReversed == false) {
+        if(gamepad1.right_bumper && DrivingReversed == false) {
             DrivingReversed = true;
         } else if (gamepad1.right_bumper && DrivingReversed == true) {
             DrivingReversed = false;
         }
 
         if(DrivingReversed == false) {
-           drive = gamepad1.right_stick_y;
-        } else if (DrivingReversed == true) {
+            drive = gamepad1.right_stick_y;
+        } else if(DrivingReversed == true) {
             drive = -gamepad1.right_stick_y;
         } else {
             drive = gamepad1.right_stick_y;
         }
 
-        //drive = gamepad1.right_stick_y;
-
-        turn  =  -gamepad1.left_stick_y;
-
-        // Combine drive and turn for blended motion.
-        right  = drive + turn;
-        left = drive - turn;
+        // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
+        // In this mode the right stick moves the robot fwd and back, the left stick turns left and right.
+        // This way it's also easy to just drive straight, or just turn.
 
         // Normalize the values so neither exceed +/- 1.0
+        drive = -gamepad1.right_stick_x;
+
+        turn  =  gamepad1.left_stick_y;
+
+        // Combine drive and turn for blended motion.
+        left  = drive + turn;
+        right = drive - turn;
+
         max = Math.max(Math.abs(left), Math.abs(right));
         if (max > 1.0)
         {
@@ -136,7 +137,7 @@ public class Telemetry2017 extends OpMode {
             right /= max;
         }
 
-        // Output the safe vales to the motor drives.
+        // Output the safe vales to the mot   or drives.
         Left.setPower(left);
         Right.setPower(right);
 
@@ -155,16 +156,16 @@ public class Telemetry2017 extends OpMode {
 
         //Sets power for the climber, controlled by the functions controller right joy stick
         RightJoystickVal_Cont2 = gamepad2.right_stick_y;
-        Climber.setPower(RightJoystickVal_Cont2);
+        Climber.setPower(LeftJoystickVal_Cont2);
         telemetry.addData("climber power", RightJoystickVal_Cont2 );
 
         //Arm Extension (El_Diablo) is powered by this control system
         //if you hit the up arrow on functions controller, then El_Diablo Extends, hit down it retracts and neutral keeps it still
-        if(gamepad2.dpad_up) {
+        if(gamepad1.right_trigger == 1) {
             El_Diablo.setPosition(1.0);
             telemetry.addData(">", "El Diablo Extending" );
             telemetry.update();
-        } else if(gamepad2.dpad_down) {
+        } else if(gamepad2.right_trigger == 1) {
             El_Diablo.setPosition(0);
             telemetry.addData(">", "El Diablo Retracting" );
             telemetry.update();
@@ -196,16 +197,14 @@ public class Telemetry2017 extends OpMode {
            Klaw.setPosition(1.0);
            telemetry.addData(">", "Claw Tightening" );
            telemetry.update();
-        }
-
-        if (gamepad2.left_bumper) {
+        } else if (gamepad2.left_bumper) {
             Klaw.setPosition(0);
             telemetry.addData(">", "Claw Loosening" );
             telemetry.update();
         }
 
         //Jewel_Knocker Extension (jewel_knocker) is powered by this control system
-        if(gamepad1.left_bumper) {
+        if(gamepad1.dpad_up) {
             Jewel_Knocker.setPosition(1);
         }
 
@@ -228,41 +227,21 @@ public class Telemetry2017 extends OpMode {
 
         //Controls the motor that moves El Diablo Out to grab the relic
        LeftJoystickVal_Cont2 = gamepad2.left_stick_y;
-        Extender.setPower(LeftJoystickVal_Cont2);
-        /*
-            extenderTime.reset();
-            telemetry.addData(">", "gamepad1.rightTrigger" );
-            telemetry.update();
-            Extender.setPower(1);
-
-            while(runtime.milliseconds() < 10000) {
-                Extender.setPower(1);
-            }
-            Extender.setPower(0);
-
+        Extender.setPower(RightJoystickVal_Cont2);
             telemetry.addData(">", "Extender extending" );
             telemetry.update();
 
-        } else if(gamepad2.a) {
-            Extender.setPower(0);
-            telemetry.addData(">", "Extender Stopped");
-            telemetry.update();
-        }
-        */
-        if (gamepad2.right_trigger == 1) {
-            Right_Collector.setPosition(0);
-            Left_Collector.setPosition(1);
+        if (gamepad1.b) {
+            Right_Collector.setPosition(1);
+            //Left_Collector.setPosition(1);
 
             telemetry.addData(">", "Collectors Wax On" );
             telemetry.update();
 
-           // collectorReset.reset();
-           // collectorReset.startTime();
         }
-        if (gamepad2.right_trigger == 0) {
-            Right_Collector.setPosition(0.5);
-            Left_Collector.setPosition(0.5);
 
+        if (gamepad1.x) {
+            Right_Collector.setPosition(0);
 
             telemetry.addData(">", "Collectors Wax On" );
             telemetry.update();
@@ -270,8 +249,8 @@ public class Telemetry2017 extends OpMode {
             // collectorReset.reset();
             // collectorReset.startTime();
         }
-        if(gamepad2.left_trigger == 1) {
-            Right_Collector.setPosition(1);
+
+        if(gamepad1.dpad_left) {
             Left_Collector.setPosition(0);
 
             telemetry.addData(">", "Collectors Wax Off" );
@@ -280,9 +259,9 @@ public class Telemetry2017 extends OpMode {
            // collectorReset.reset();
            // collectorReset.startTime();
         }
-        if(gamepad2.left_trigger == 0) {
-            Right_Collector.setPosition(0.5);
-            Left_Collector.setPosition(0.5);
+
+        if(gamepad1.dpad_right) {
+            Left_Collector.setPosition(1);
 
             telemetry.addData(">", "Collectors Wax Off" );
             telemetry.update();
@@ -290,8 +269,17 @@ public class Telemetry2017 extends OpMode {
             // collectorReset.reset();
             // collectorReset.startTime();
         }
+        if(gamepad1.a) {
+            Right_Collector.setPosition(0.5);
+            telemetry.addData(">", "Eye Of The Tiger Playing" );
+            telemetry.update();
+        }
+        if(gamepad1.dpad_down) {
+            Left_Collector.setPosition(0.5);
+            telemetry.addData(">", "Eye of The Tiger Stopped" );
+            telemetry.update();
 
-
+        }
         //emergency stop system programmed into the driver's start button
         if(gamepad1.start) {
             Right.setPower(0);
@@ -320,6 +308,7 @@ public class Telemetry2017 extends OpMode {
             telemetry.update();
         }
 
+        /*
         //How to start "How did this happen". Use when losing or everything is breaking
         if(gamepad1.x) {
             HowCouldThisHappen.start();
@@ -333,13 +322,16 @@ public class Telemetry2017 extends OpMode {
             telemetry.addData(">", "How Could This Happened Stopped" );
             telemetry.update();
         }
+        */
 
         //Use when wanting to listen to a good song, or everything is broken
+        /*
         if(gamepad1.b) {
             TheSoundOfSilence.start();
             telemetry.addData(">", "Sound of Silence Playing" );
             telemetry.update();
         }
+        */
 
         //If the song is playing, you can stop it
         if(gamepad1.dpad_right) {
@@ -348,17 +340,6 @@ public class Telemetry2017 extends OpMode {
             telemetry.update();
         }
 
-        if(gamepad1.a) {
-            EyeOfTheTiger.start();
-            telemetry.addData(">", "Eye Of The Tiger Playing" );
-            telemetry.update();
-        }
-        if(gamepad1.dpad_down) {
-            EyeOfTheTiger.stop();
-            telemetry.addData(">", "Eye of The Tiger Stopped" );
-            telemetry.update();
-
-        }
     }
     public void stop() {
         //tells all power to cut to 0, shouldn't be neccessary
