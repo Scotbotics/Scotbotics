@@ -1,0 +1,352 @@
+//Created by Nathan Chin
+//EL DIABLO WORKS!! ESKETIT!!!!!!
+
+package org.firstinspires.ftc.teamcode;
+
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
+import android.media.MediaPlayer;
+import android.media. MediaPlayer;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+@TeleOp(name = "TeleTest", group = "TeleOp")
+
+public class TeleTest extends OpMode {
+
+    double left;
+    double right;
+    double drive;
+    double turn;
+    double max;
+
+    DcMotor Right;
+    DcMotor Left;
+    DcMotor Climber;
+    DcMotor Extender;
+
+    Servo El_Diablo;
+    Servo Final_Pusher;
+    Servo Right_Collector;
+    Servo Left_Collector;
+    Servo Klaw;
+    Servo Jewel_Knocker;
+
+    float rightJoystickVal_Cont1;
+    float leftJoystickVal_Cont1;
+
+    float RightJoystickVal_Cont2;
+    float LeftJoystickVal_Cont2;
+
+    boolean DrivingReversed = false;
+
+    public ElapsedTime runtime = new ElapsedTime();
+    public ElapsedTime extenderTime = new ElapsedTime();
+    public ElapsedTime collectorReset = new ElapsedTime();
+
+    //static final double MAX_POS     =  1.0;     // Maximum rotational position
+    //static final double MIN_POS     =  0.0;     // Minimum rotational position
+
+
+    MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger, RockyTheme;
+
+    public void init() {
+
+        //tells everything to start at what power
+        Right    = hardwareMap.dcMotor.get("rightDrive"); //right motor
+        Left     =  hardwareMap.dcMotor.get("leftDrive"); //left
+        Climber  = hardwareMap.dcMotor.get("climber");
+        Extender = hardwareMap.dcMotor.get("extender");
+
+        //servos for robot
+        El_Diablo       = hardwareMap.servo.get("el_diablo");
+        Final_Pusher    = hardwareMap.servo.get("final_push");
+        Jewel_Knocker   = hardwareMap.servo.get("jewel_knocker");
+        Klaw            = hardwareMap.servo.get("claw");
+        Right_Collector = hardwareMap.servo.get("right_collector");
+        Left_Collector  = hardwareMap.servo.get("left_collector");
+
+
+        Right.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
+        Climber.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so the climber makes reasonable sense
+
+        //Set up the five songs we currently have
+        HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappen);
+        ScotlandTheBrave   = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
+        TheSoundOfSilence  = MediaPlayer.create(hardwareMap.appContext, R.raw.thesoundofsilence);
+        EyeOfTheTiger      = MediaPlayer.create(hardwareMap.appContext, R.raw.eyeofthetiger);
+        RockyTheme         = MediaPlayer.create(hardwareMap.appContext, R.raw.rockytheme);
+
+        telemetry.addData(">", "Robot Initialized" );
+        telemetry.update();
+
+        Final_Pusher.setPosition(1);
+
+        El_Diablo.setPosition(128  );
+    }
+    public void loop() {
+
+        //Has the drive and servos loop
+        if(gamepad1.start && DrivingReversed == false) {
+            DrivingReversed = true;
+        } else if (gamepad1.right_bumper && DrivingReversed == true) {
+            DrivingReversed = false;
+        }
+
+        if(DrivingReversed == false) {
+            drive = gamepad1.right_stick_y;
+        } else if(DrivingReversed == true) {
+            drive = -gamepad1.right_stick_y;
+        } else {
+            drive = gamepad1.right_stick_y;
+        }
+
+        // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
+        // In this mode the right stick moves the robot fwd and back, the left stick turns left and right.
+        // This way it's also easy to just drive straight, or just turn.
+
+        // Normalize the values so neither exceed +/- 1.0
+        drive = -gamepad1.right_stick_x;
+
+        turn  =  gamepad1.left_stick_y;
+
+        // Combine drive and turn for blended motion.
+        left  = drive + turn;
+        right = drive - turn;
+
+        max = Math.max(Math.abs(left), Math.abs(right));
+        if (max > 1.0)
+        {
+            left /= max;
+            right /= max;
+        }
+
+        // Output the safe vales to the mot   or drives.
+        Left.setPower(left);
+        Right.setPower(right);
+
+        /*
+        rightJoystickVal_Cont1 = gamepad1.right_stick_y;
+        leftJoystickVal_Cont1 = gamepad1.left_stick_y;
+
+        //Controls the drive system motor power
+        Right.setPower(rightJoystickVal_Cont1);
+        Left.setPower(leftJoystickVal_Cont1);
+        */
+
+        telemetry.addData("right motor power", rightJoystickVal_Cont1);
+        telemetry.addData("left motor power", rightJoystickVal_Cont1);
+
+
+        //Sets power for the climber, controlled by the functions controller right joy stick
+        RightJoystickVal_Cont2 = gamepad2.right_stick_y;
+        Climber.setPower(LeftJoystickVal_Cont2*.75);
+        telemetry.addData("climber power", RightJoystickVal_Cont2 );
+
+        //Arm Extension (El_Diablo) is powered by this control system
+        //if you hit the up arrow on functions controller, then El_Diablo Extends, hit down it retracts and neutral keeps it still
+        if(gamepad1.left_bumper) {
+            El_Diablo.setPosition(1);
+            telemetry.addData(">", "El Diablo Extending" );
+            telemetry.update();
+        } else if(gamepad1.right_bumper) {
+            El_Diablo.setPosition(0);
+            telemetry.addData(">", "El Diablo Retracting" );
+            telemetry.update();
+        }
+
+        //Final Pusher control sequence. If you push up, the servo goes up, if you push down the servo goes down
+        if(gamepad2.y) {
+            Final_Pusher.setPosition(1);
+            telemetry.addData(">", "Final Pusher Up" );
+            telemetry.update();
+        } else if(gamepad2.a) {
+            Final_Pusher.setPosition(0);
+            telemetry.addData(">", "Final Pusher Down" );
+            telemetry.update();
+        } else if(gamepad2.b || gamepad2.x) {
+            Final_Pusher.setPosition(0.5);
+            telemetry.addData(">", "Final Pusher Stop" );
+            telemetry.update();
+        }
+
+        //Arm Claw (Klaw) runs as following. If you press right bumper on controller two. THen the klaw tightens.
+        //Press the left bumper and the klaw loosens
+
+        if(gamepad2.right_bumper) {
+            Klaw.setPosition(1.0);
+            telemetry.addData(">", "Claw Tightening" );
+            telemetry.update();
+        } else if (gamepad2.left_bumper) {
+            Klaw.setPosition(0);
+            telemetry.addData(">", "Claw Loosening" );
+            telemetry.update();
+        }
+
+        //Jewel_Knocker Extension (jewel_knocker) is powered by this control system
+        if(gamepad1.dpad_up) {
+            Jewel_Knocker.setPosition(1);
+        }
+
+        /*
+        //To bring the jewel knocker down, you hit a on the functions controller. To bring it up you hit y on the controller. b and x stop the controller
+        if(gamepad2.a) {
+            El_Diablo.setPosition(0);
+            telemetry.addData(">", "El Diablo Down" );
+            telemetry.update();
+        } else if(gamepad2.y) {
+            El_Diablo.setPosition(1.0);
+            telemetry.addData(">", "El DIablo Up" );
+            telemetry.update();
+        } else if(gamepad2.x || gamepad2.b){
+            El_Diablo.setPosition(0.5);
+            telemetry.addData(">", "El Diablo Stopped" );
+            telemetry.update();
+        }
+        */
+
+        //Controls the motor that moves El Diablo Out to grab the relic
+        LeftJoystickVal_Cont2 = gamepad2.left_stick_y;
+        Extender.setPower(RightJoystickVal_Cont2);
+        telemetry.addData(">", "Extender extending" );
+        telemetry.update();
+
+        if (gamepad1.b) {
+            Right_Collector.setPosition(1);
+            //Left_Collector.setPosition(1);
+
+            telemetry.addData(">", "Collectors Wax On" );
+            telemetry.update();
+
+        }
+
+        if (gamepad1.x) {
+            Right_Collector.setPosition(0);
+
+            telemetry.addData(">", "Collectors Wax On" );
+            telemetry.update();
+
+            // collectorReset.reset();
+            // collectorReset.startTime();
+        }
+
+        if(gamepad1.dpad_left) {
+            Left_Collector.setPosition(0);
+
+            telemetry.addData(">", "Collectors Wax Off" );
+            telemetry.update();
+
+            // collectorReset.reset();
+            // collectorReset.startTime();
+        }
+
+        if(gamepad1.dpad_right) {
+            Left_Collector.setPosition(1);
+
+            telemetry.addData(">", "Collectors Wax Off" );
+            telemetry.update();
+
+            // collectorReset.reset();
+            // collectorReset.startTime();
+        }
+        if(gamepad1.a) {
+            Right_Collector.setPosition(0.5);
+            telemetry.addData(">", "Eye Of The Tiger Playing" );
+            telemetry.update();
+        }
+        if(gamepad1.dpad_down) {
+            Left_Collector.setPosition(0.5);
+            telemetry.addData(">", "Eye of The Tiger Stopped" );
+            telemetry.update();
+
+        }
+        //emergency stop system programmed into the driver's start button
+        if(gamepad1.start) {
+            Right.setPower(0);
+            Left.setPower(0);
+            Climber.setPower(0);
+
+            //Sets all servos to stop
+            Klaw.setPosition(0.5);
+            El_Diablo.setPosition(0.5);
+            Jewel_Knocker.setPosition(0.5);
+            Final_Pusher.setPosition(0.5);
+
+            telemetry.addData(">", "Emergency Stop Complete, Cry Now" );
+            telemetry.update();
+        }
+        //Song system, if you
+        if(gamepad1.y) {
+            ScotlandTheBrave.start();
+            telemetry.addData(">", "Scotland Playing" );
+            telemetry.update();
+        }
+        //If the song is playing, you can stop it
+        if(gamepad1.dpad_up) {
+            ScotlandTheBrave.stop();
+            telemetry.addData(">", "Scotland Stopped" );
+            telemetry.update();
+        }
+
+        /*
+        //How to start "How did this happen". Use when losing or everything is breaking
+        if(gamepad1.x) {
+            HowCouldThisHappen.start();
+            telemetry.addData(">", "How Could This Happen Playing" );
+            telemetry.update();
+        }
+
+        //If the song is playing, you can stop it
+        if(gamepad1.dpad_left) {
+            HowCouldThisHappen.stop();
+            telemetry.addData(">", "How Could This Happened Stopped" );
+            telemetry.update();
+        }
+        */
+
+        //Use when wanting to listen to a good song, or everything is broken
+        /*
+        if(gamepad1.b) {
+            TheSoundOfSilence.start();
+            telemetry.addData(">", "Sound of Silence Playing" );
+            telemetry.update();
+        }
+        */
+
+        //If the song is playing, you can stop it
+        if(gamepad1.dpad_right) {
+            TheSoundOfSilence.stop();
+            telemetry.addData(">", "Sound of Silence Stopped" );
+            telemetry.update();
+        }
+
+    }
+    public void stop() {
+        //tells all power to cut to 0, shouldn't be neccessary
+        Right.setPower(0);
+        Left.setPower(0);
+        Climber.setPower(0);
+
+        //Sets all servos to stop
+        Klaw.setPosition(0.5);
+        El_Diablo.setPosition(0.5);
+        Jewel_Knocker.setPosition(0.5);
+        Final_Pusher.setPosition(0.5);
+
+        telemetry.addData(">", "Everything Stopped" );
+        telemetry.update();
+    }
+}
