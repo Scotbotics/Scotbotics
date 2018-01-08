@@ -1,0 +1,174 @@
+/**
+ * Created by Sam on 12/10/2017.
+ */
+
+//Extension takes 10 seconds
+
+package org.firstinspires.ftc.teamcode;
+
+//Last Edited 12/10/17
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
+import android.media.MediaPlayer;
+import android.media. MediaPlayer;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+@TeleOp(name = "PlagarizedMecanumDrive", group = "TeleOp")
+
+public class PlagarizedMecanumDrive extends OpMode {
+
+    //Variables for the Robot
+    double left;
+    double right;
+    double drive;
+    double turn;
+    double max;
+    double LeftGrabber;
+    double RightGrabber;
+
+    //Motors for the program
+    DcMotor Right;
+    DcMotor Left;
+    DcMotor leftGrabber;
+    DcMotor rightGrabber;
+    DcMotor Climber;
+    DcMotor Extender;
+
+    Servo El_Diablo;
+    //Servo Final_Pusher;
+    //Servo Right_Collector;
+    //Servo Left_Collector;
+    Servo Klaw;
+    //Servo Jewel_Knocker;
+
+
+    float rightJoystickVal_Cont1;
+    float leftJoystickVal_Cont1;
+
+    float RightJoystickVal_Cont2;
+    float LeftJoystickVal_Cont2;
+
+
+    //static final double MAX_POS     =  1.0;     // Maximum rotational position
+    //static final double MIN_POS     =  0.0;     // Minimum rotational position
+
+    public void init() {
+
+        //tells everything to start at what power
+        Right        = hardwareMap.dcMotor.get("rightDrive"); //right motor
+        Left         =  hardwareMap.dcMotor.get("leftDrive"); //left
+        Climber      = hardwareMap.dcMotor.get("climber");
+        leftGrabber  = hardwareMap.dcMotor.get("left_grabber");
+        rightGrabber = hardwareMap.dcMotor.get("right_grabber");
+        Extender     = hardwareMap.dcMotor.get("extender");
+
+        Klaw         = hardwareMap.servo.get("claw");
+        El_Diablo    = hardwareMap.servo.get("el_diablo");
+
+
+        //  Right.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
+        Climber.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so the climber makes reasonable sense
+
+        telemetry.addData(">", "Robot Initialized" );
+        telemetry.update();
+
+    }
+    public void loop() {
+
+        //Has the drive and servos loop
+        // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
+        // In this mode the right stick moves the robot fwd and back, the left stick turns left and right.
+        // This way it's also easy to just drive straight, or just turn.
+
+        // Normalize the values so neither exceed +/- 1.0
+        drive = -gamepad1.right_stick_x;
+        turn  =  gamepad1.left_stick_y;
+
+        // Combine drive and turn for blended motion.
+        left  = drive + turn;
+        right = drive - turn;
+
+        max = Math.max(Math.abs(left), Math.abs(right));
+        if (max > 1.0)
+        {
+            left /= max;
+            right /= max;
+        }
+
+        // Output the safe vales to the mot   or drives.
+        Left.setPower(left);
+        Right.setPower(right);
+
+        //Grabber arms
+        RightGrabber = -gamepad2.right_stick_y;
+        LeftGrabber  =  gamepad2.left_stick_y;
+
+        leftGrabber.setPower(LeftGrabber);
+        rightGrabber.setPower(RightGrabber);
+
+        if(gamepad2.a) {
+            Climber.setPower(1);
+        }
+        if(gamepad2.y) {
+            Climber.setPower(-1);
+        }
+        if(gamepad2.b || gamepad2.x) {
+            Climber.setPower(0);
+        }
+        if(gamepad1.left_bumper) {
+            El_Diablo.setPosition(1);
+            telemetry.addData(">", "El Diablo Extending" );
+            telemetry.update();
+        } else if(gamepad1.right_bumper) {
+            El_Diablo.setPosition(0);
+            telemetry.addData(">", "El Diablo Retracting" );
+            telemetry.update();
+        }
+
+        if(gamepad2.right_bumper) {
+            Klaw.setPosition(1.0);
+            telemetry.addData(">", "Claw Tightening" );
+            telemetry.update();
+        } else if (gamepad2.left_bumper) {
+            Klaw.setPosition(0);
+            telemetry.addData(">", "Claw Loosening" );
+            telemetry.update();
+        }
+
+        //Controls the motor that moves El Diablo Out to grab the relic
+        LeftJoystickVal_Cont2 = -gamepad2.left_stick_y;
+        Extender.setPower(RightJoystickVal_Cont2);
+        telemetry.addData(">", "Extender extending" );
+        telemetry.update();
+
+    }
+    public void stop() {
+        //tells all power to cut to 0, shouldn't be neccessary
+        Right.setPower(0);
+        Left.setPower(0);
+        Climber.setPower(0);
+        leftGrabber.setPower(0);
+        rightGrabber.setPower(0);
+        Extender.setPower(0);
+
+        Klaw.setPosition(0.5);
+        El_Diablo.setPosition(0.5);
+
+        telemetry.addData(">", "Everything Stopped" );
+        telemetry.update();
+    }
+}
