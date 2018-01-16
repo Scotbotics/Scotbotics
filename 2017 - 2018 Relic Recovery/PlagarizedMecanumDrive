@@ -44,7 +44,7 @@ public class PlagarizedMecanumDrive extends OpMode {
     DcMotor Right;
     DcMotor Left;
     DcMotor leftGrabber;
-    DcMotor rightGrabber;
+    //DcMotor rightGrabber;
     DcMotor Climber;
     DcMotor Extender;
 
@@ -73,7 +73,7 @@ public class PlagarizedMecanumDrive extends OpMode {
         Left         =  hardwareMap.dcMotor.get("leftDrive"); //left
         Climber      = hardwareMap.dcMotor.get("climber");
         leftGrabber  = hardwareMap.dcMotor.get("left_grabber");
-        rightGrabber = hardwareMap.dcMotor.get("right_grabber");
+        //rightGrabber = hardwareMap.dcMotor.get("right_grabber");
         Extender     = hardwareMap.dcMotor.get("extender");
 
         Klaw         = hardwareMap.servo.get("claw");
@@ -118,7 +118,7 @@ public class PlagarizedMecanumDrive extends OpMode {
         LeftGrabber  =  gamepad2.left_stick_y;
 
         leftGrabber.setPower(LeftGrabber);
-        rightGrabber.setPower(RightGrabber);
+        //rightGrabber.setPower(RightGrabber);
 
         if(gamepad2.a) {
             Climber.setPower(1);
@@ -162,7 +162,7 @@ public class PlagarizedMecanumDrive extends OpMode {
         Left.setPower(0);
         Climber.setPower(0);
         leftGrabber.setPower(0);
-        rightGrabber.setPower(0);
+        //rightGrabber.setPower(0);
         Extender.setPower(0);
 
         Klaw.setPosition(0.5);
