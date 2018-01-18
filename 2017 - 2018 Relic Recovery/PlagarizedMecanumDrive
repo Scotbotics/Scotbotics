@@ -30,7 +30,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "PlagarizedMecanumDrive", group = "TeleOp")
 
-public class Teleop2017 extends OpMode {
+public class PlagarizedMecanumDrive extends OpMode {
 
     //Variables for the Robot
     double left;
@@ -52,12 +52,11 @@ public class Teleop2017 extends OpMode {
     DcMotor arm;
 
     Servo El_Diablo;
+    Servo Klaw;
+    //Servo Jewel_Knocker;
     //Servo Final_Pusher;
     //Servo Right_Collector;
     //Servo Left_Collector;
-    Servo Klaw;
-    //Servo Jewel_Knocker;
-
 
     float rightJoystickVal_Cont1;
     float leftJoystickVal_Cont1;
@@ -71,7 +70,10 @@ public class Teleop2017 extends OpMode {
 
     public void init() {
 
-        //tells everything to start at what power
+        //connection of motorized parts between control system and software
+        //The stuff in green is what the configuration on the phone uses
+        
+        //The first seven declarations are motors
         Right        = hardwareMap.dcMotor.get("rightDrive"); //right motor
         Left         =  hardwareMap.dcMotor.get("leftDrive"); //left
         Climber      = hardwareMap.dcMotor.get("climber");
@@ -80,11 +82,12 @@ public class Teleop2017 extends OpMode {
         Extender     = hardwareMap.dcMotor.get("extender");
         arm          = hardwareMap.dcMotor.get("arm");
 
+        //The next two are the servos
         Klaw         = hardwareMap.servo.get("claw");
         El_Diablo    = hardwareMap.servo.get("el_diablo");
 
 
-        //  Right.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
+        //Right.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
         Climber.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so the climber makes reasonable sense
 
         telemetry.addData(">", "Robot Initialized" );
@@ -93,24 +96,19 @@ public class Teleop2017 extends OpMode {
     }
     public void loop() {
 
-        //Has the drive and servos loop
-        // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
-        // In this mode the right stick moves the robot fwd and back, the left stick turns left and right.
-        // This way it's also easy to just drive straight, or just turn.
-
-        // Normalize the values so neither exceed +/- 1.0
+        //Drive loop
+        //Tank drive (Henry's preference)
+        //Left joystick Y values controls the left drive motor
+        //Right joystick Y vales controls the right drive motor
         left     = gamepad1.left_stick_y;
         right    = gamepad1.right_stick_y;
 
-        // Output the safe vales to the motor or drives.
+        //Power the motors according to the joystick values
         Left.setPower(left);
         Right.setPower(right);
 
         //Grabber arms
-
-
-
-
+        //When you hold down functions right trigger, the grabber goes up
         if(gamepad2.right_trigger == 1)
         {
             leftGrabber.setPower(0.75);
@@ -123,6 +121,7 @@ public class Teleop2017 extends OpMode {
 
         }
 
+        //When you hold down functions left trigger, the grabber goes down
         if(gamepad2.left_trigger == 1)
         {
             leftGrabber.setPower(-0.75);
@@ -135,6 +134,8 @@ public class Teleop2017 extends OpMode {
 
         }
 
+        //When left bumper is pressed, El Diablo goes up
+        //When right bumper is pressed, El Diablo goes down
         if(gamepad1.left_bumper) {
             El_Diablo.setPosition(1);
             telemetry.addData(">", "El Diablo Extending" );
@@ -145,6 +146,8 @@ public class Teleop2017 extends OpMode {
             telemetry.update();
         }
 
+        //When left bumper is pressed, El Diablo goes up
+        //When right bumper is pressed, El Diablo goes down
         if(gamepad2.right_bumper) {
             Klaw.setPosition(1.0);
             telemetry.addData(">", "Claw Tightening" );
@@ -155,13 +158,13 @@ public class Teleop2017 extends OpMode {
             telemetry.update();
         }
 
-        
-        //Controls the motor that moves El Diablo Out to grab the relic
+        //Functions Left Joystick Y controls the arm that collects the cubes
         LeftJoystickVal_Cont2 = -gamepad2.left_stick_y;
         arm.setPower(LeftJoystickVal_Cont2);
         telemetry.addData(">", "arm moving" );
         telemetry.update();
 
+        //Functions Right Joystick Y  moves El Diablo out to grab the relic
         RightJoystickVal_Cont2 = -gamepad2.right_stick_y;
         Extender.setPower(RightJoystickVal_Cont2);
         telemetry.addData(">", "extender moving" );
@@ -177,9 +180,11 @@ public class Teleop2017 extends OpMode {
         rightGrabber.setPower(0);
         Extender.setPower(0);
 
+        //servos
         Klaw.setPosition(0.5);
         El_Diablo.setPosition(0.5);
 
+        
         telemetry.addData(">", "Everything Stopped" );
         telemetry.update();
     }
