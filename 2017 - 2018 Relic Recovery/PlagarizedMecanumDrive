@@ -1,3 +1,4 @@
+
 /**
  * Created by Sam on 12/10/2017.
  */
@@ -29,7 +30,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "PlagarizedMecanumDrive", group = "TeleOp")
 
-public class PlagarizedMecanumDrive extends OpMode {
+public class Teleop2017 extends OpMode {
 
     //Variables for the Robot
     double left;
@@ -39,14 +40,16 @@ public class PlagarizedMecanumDrive extends OpMode {
     double max;
     double LeftGrabber;
     double RightGrabber;
+    double Arm;
 
     //Motors for the program
     DcMotor Right;
     DcMotor Left;
     DcMotor leftGrabber;
-    //DcMotor rightGrabber;
+    DcMotor rightGrabber;
     DcMotor Climber;
     DcMotor Extender;
+    DcMotor arm;
 
     Servo El_Diablo;
     //Servo Final_Pusher;
@@ -73,8 +76,9 @@ public class PlagarizedMecanumDrive extends OpMode {
         Left         =  hardwareMap.dcMotor.get("leftDrive"); //left
         Climber      = hardwareMap.dcMotor.get("climber");
         leftGrabber  = hardwareMap.dcMotor.get("left_grabber");
-        //rightGrabber = hardwareMap.dcMotor.get("right_grabber");
+        rightGrabber = hardwareMap.dcMotor.get("right_grabber");
         Extender     = hardwareMap.dcMotor.get("extender");
+        arm          = hardwareMap.dcMotor.get("arm");
 
         Klaw         = hardwareMap.servo.get("claw");
         El_Diablo    = hardwareMap.servo.get("el_diablo");
@@ -95,40 +99,42 @@ public class PlagarizedMecanumDrive extends OpMode {
         // This way it's also easy to just drive straight, or just turn.
 
         // Normalize the values so neither exceed +/- 1.0
-        drive = -gamepad1.right_stick_x;
-        turn  =  gamepad1.left_stick_y;
+        left     = gamepad1.left_stick_y;
+        right    = gamepad1.right_stick_y;
 
-        // Combine drive and turn for blended motion.
-        left  = drive + turn;
-        right = drive - turn;
-
-        max = Math.max(Math.abs(left), Math.abs(right));
-        if (max > 1.0)
-        {
-            left /= max;
-            right /= max;
-        }
-
-        // Output the safe vales to the mot   or drives.
+        // Output the safe vales to the motor or drives.
         Left.setPower(left);
         Right.setPower(right);
 
         //Grabber arms
-        RightGrabber = -gamepad2.right_stick_y;
-        LeftGrabber  =  gamepad2.left_stick_y;
 
-        leftGrabber.setPower(LeftGrabber);
-        //rightGrabber.setPower(RightGrabber);
 
-        if(gamepad2.a) {
-            Climber.setPower(1);
+
+
+        if(gamepad2.right_trigger == 1)
+        {
+            leftGrabber.setPower(0.75);
+            rightGrabber.setPower(0.75);
         }
-        if(gamepad2.y) {
-            Climber.setPower(-1);
+        else {
+
+            leftGrabber.setPower(0);
+            rightGrabber.setPower(0);
+
         }
-        if(gamepad2.b || gamepad2.x) {
-            Climber.setPower(0);
+
+        if(gamepad2.left_trigger == 1)
+        {
+            leftGrabber.setPower(-0.75);
+            rightGrabber.setPower(-0.75);
         }
+        else {
+
+            leftGrabber.setPower(0);
+            rightGrabber.setPower(0);
+
+        }
+
         if(gamepad1.left_bumper) {
             El_Diablo.setPosition(1);
             telemetry.addData(">", "El Diablo Extending" );
@@ -149,20 +155,26 @@ public class PlagarizedMecanumDrive extends OpMode {
             telemetry.update();
         }
 
+        
         //Controls the motor that moves El Diablo Out to grab the relic
         LeftJoystickVal_Cont2 = -gamepad2.left_stick_y;
+        arm.setPower(LeftJoystickVal_Cont2);
+        telemetry.addData(">", "arm moving" );
+        telemetry.update();
+
+        RightJoystickVal_Cont2 = -gamepad2.right_stick_y;
         Extender.setPower(RightJoystickVal_Cont2);
-        telemetry.addData(">", "Extender extending" );
+        telemetry.addData(">", "extender moving" );
         telemetry.update();
 
     }
     public void stop() {
-        //tells all power to cut to 0, shouldn't be neccessary
+        //tells all power to cut to 0, shouldn't be necessary
         Right.setPower(0);
         Left.setPower(0);
         Climber.setPower(0);
         leftGrabber.setPower(0);
-        //rightGrabber.setPower(0);
+        rightGrabber.setPower(0);
         Extender.setPower(0);
 
         Klaw.setPosition(0.5);
