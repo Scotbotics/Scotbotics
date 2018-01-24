@@ -50,7 +50,7 @@ public class RED_1_Autonomous extends LinearOpMode {
 
     Servo jewel_knocker;
     ColorSensor colorSensor;
-   // ColorSensor colorSensor2;
+    // ColorSensor colorSensor2;
     DcMotor Left;
     DcMotor Right;
     float hsvValues[] = {0F, 0F, 0F};
@@ -78,11 +78,11 @@ public class RED_1_Autonomous extends LinearOpMode {
         Left         =  hardwareMap.dcMotor.get("leftDrive"); //left
         jewel_knocker   = hardwareMap.servo.get("jewel_knocker");//jewel knocker arm
         colorSensor     = hardwareMap.colorSensor.get("color sensor");//color sensor
-     //   colorSensor2    = hardwareMap.colorSensor.get("color sensor2");//color sensor2
+        //   colorSensor2    = hardwareMap.colorSensor.get("color sensor2");//color sensor2
         Klaw         = hardwareMap.servo.get("claw");
         El_Diablo    = hardwareMap.servo.get("el_diablo");
         colorSensor.enableLed(LEDState);//turns color sensor led on
-      //  colorSensor2.enableLed(LEDState);//turns color sensor led on
+        //  colorSensor2.enableLed(LEDState);//turns color sensor led on
 
         waitForStart();
         while (opModeIsActive()) {
@@ -95,9 +95,9 @@ public class RED_1_Autonomous extends LinearOpMode {
                 case SERVO_DOWN:
                     servo_down();
                     break;
-              //  case VUFORIA:
+                //  case VUFORIA:
                 //    vuforia();
-                  //  break;
+                //  break;
                 case KNOCK_JEWEL:
                     knock_jewel();
                     break;
@@ -250,10 +250,10 @@ public class RED_1_Autonomous extends LinearOpMode {
         //   telemetry.update();
         sleep(1000);
         if (colorSensor.blue() > colorSensor.red() ) {
-/*
+
             telemetry.addLine("Color blue scanned");
             telemetry.update();
-
+            /*
             sleep(500);
 
 
@@ -271,10 +271,10 @@ public class RED_1_Autonomous extends LinearOpMode {
             state = DRIVE_TO_BOX;
         }
         else if (colorSensor.red() > colorSensor.blue()) {
-/*
+
             telemetry.addLine("Color red scanned");
             telemetry.update();
-
+        /*
             turn_left(100);
             sleep(100);
 
