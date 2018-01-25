@@ -43,18 +43,20 @@ public class RED_1_Autonomous extends LinearOpMode {
     int state = SERVO_DOWN;
 
     Servo El_Diablo;
-    Servo Final_Pusher;
-    Servo Right_Collector;
-    Servo Left_Collector;
     Servo Klaw;
+
 
     Servo jewel_knocker;
     ColorSensor colorSensor;
     // ColorSensor colorSensor2;
     DcMotor Left;
     DcMotor Right;
+    DcMotor leftGrabber;
+    DcMotor rightGrabber;
+    DcMotor arm;
+
     float hsvValues[] = {0F, 0F, 0F};
-    double hold = 0.9;
+    double hold = 0.8;
     double turn = 1;
     boolean LEDState = true;
 
@@ -81,12 +83,18 @@ public class RED_1_Autonomous extends LinearOpMode {
         //   colorSensor2    = hardwareMap.colorSensor.get("color sensor2");//color sensor2
         Klaw         = hardwareMap.servo.get("claw");
         El_Diablo    = hardwareMap.servo.get("el_diablo");
+        leftGrabber  = hardwareMap.dcMotor.get("left_grabber");
+        rightGrabber = hardwareMap.dcMotor.get("right_grabber");
+        arm          = hardwareMap.dcMotor.get("arm");
+
         colorSensor.enableLed(LEDState);//turns color sensor led on
         //  colorSensor2.enableLed(LEDState);//turns color sensor led on
 
         waitForStart();
         while (opModeIsActive()) {
 
+
+            arm.setPower(-0.75);
             El_Diablo.setPosition(0.0);
             Klaw.setPosition(0.5);
 
@@ -217,7 +225,11 @@ public class RED_1_Autonomous extends LinearOpMode {
 
     public void servo_down() {
 
-
+leftGrabber.setPower(-1);
+rightGrabber.setPower(1);
+sleep(1100);
+        leftGrabber.setPower(0);
+        rightGrabber.setPower(0);
 
         runtime.reset();
 
@@ -253,15 +265,15 @@ public class RED_1_Autonomous extends LinearOpMode {
 
             telemetry.addLine("Color blue scanned");
             telemetry.update();
-            /*
+
             sleep(500);
 
 
 
-            drive_forward(200);
-            sleep(200);
+            drive_forward(75);
+            sleep(75);
 
-            */
+
 
             jewel_knocker.setPosition(1);
             sleep(200);
@@ -274,14 +286,17 @@ public class RED_1_Autonomous extends LinearOpMode {
 
             telemetry.addLine("Color red scanned");
             telemetry.update();
-        /*
-            turn_left(100);
-            sleep(100);
+
+            turn_right(75);
+            sleep(75);
 
             jewel_knocker.setPosition(1);
-            sleep(200);
 
-            */
+
+
+
+            turn_left(25);
+            sleep(25);
 
             state = DRIVE_TO_BOX;
 
@@ -309,17 +324,42 @@ public class RED_1_Autonomous extends LinearOpMode {
 
     public void drive_to_box() {
 
-        drive_backward(450);
-        sleep(450);
+        drive_backward(850);
+        sleep(850);
+        stop_drive(200);
+        telemetry.addLine("Driving Backward");
+        telemetry.update();
+
+
+        turn_left(1600);
+        sleep(1600);
+        telemetry.addLine("turn");
+        telemetry.update();
+
+
+
+        drive_backward(1000);
+        sleep(1000);
         stop_drive(200);
         telemetry.addLine("Driving Forward");
         telemetry.update();
+        turn_right(1100);
+        sleep(1100);
+
+        //Right.setPower(hold);
+        //Left.setPower(hold);
+
+        sleep(1000);
 
 
-        turn_left(1500);
-        sleep(1500);
-        telemetry.addLine("turn");
-        telemetry.update();
+        leftGrabber.setPower(1);
+        rightGrabber.setPower(1);
+        sleep(500);
+        leftGrabber.setPower(0);
+        rightGrabber.setPower(0);
+        arm.setPower(1);
+        sleep(2000);
+        arm.setPower(0);
 
       /*  VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         VuforiaTrackable relicTemplate = relicTrackables.get(0);
