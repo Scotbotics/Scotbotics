@@ -73,19 +73,16 @@ public class Teleop2017 extends OpMode {
     public void init() {
 
         //tells everything to start at what power
-        Right        = hardwareMap.dcMotor.get("rightDrive"); //right motor
-        Left         =  hardwareMap.dcMotor.get("leftDrive"); //left
-        Climber      = hardwareMap.dcMotor.get("climber");
-        leftGrabber  = hardwareMap.dcMotor.get("left_grabber");
-        rightGrabber = hardwareMap.dcMotor.get("right_grabber");
-        Extender     = hardwareMap.dcMotor.get("extender");
-        arm          = hardwareMap.dcMotor.get("arm");
-
-
-        jewel_knocker   = hardwareMap.servo.get("jewel_knocker");//jewel knocker arm
-
-        Klaw         = hardwareMap.servo.get("claw");
-        El_Diablo    = hardwareMap.servo.get("el_diablo");
+        Right            = hardwareMap.dcMotor.get("rightDrive"); //right motor
+        Left             = hardwareMap.dcMotor.get("leftDrive"); //left
+        Climber          = hardwareMap.dcMotor.get("climber");
+        leftGrabber      = hardwareMap.dcMotor.get("left_grabber");
+        rightGrabber     = hardwareMap.dcMotor.get("right_grabber");
+        Extender         = hardwareMap.dcMotor.get("extender");
+        arm              = hardwareMap.dcMotor.get("arm");
+        jewel_knocker    = hardwareMap.servo.get("jewel_knocker");//jewel knocker arm
+        Klaw             = hardwareMap.servo.get("claw");
+        El_Diablo        = hardwareMap.servo.get("el_diablo");
 
 
         //  Right.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
@@ -106,15 +103,14 @@ public class Teleop2017 extends OpMode {
         // Normalize the values so neither exceed +/- 1.0
         drive = -gamepad1.right_stick_x;
 
-        turn  =  gamepad1.left_stick_y;
+        turn = gamepad1.left_stick_y;
 
         // Combine drive and turn for blended motion.
-        left  = drive + turn;
+        left = drive + turn;
         right = drive - turn;
 
         max = Math.max(Math.abs(left), Math.abs(right));
-        if (max > 1.0)
-        {
+        if (max > 1.0) {
             left /= max;
             right /= max;
         }
@@ -122,79 +118,48 @@ public class Teleop2017 extends OpMode {
         // Output the safe vales to the mot   or drives.
         Left.setPower(left);
         Right.setPower(right);
-
-
-
-        //Grabber arms
-
-
-/*
-
-        if(gamepad2.right_trigger == 1)
-        {
-            leftGrabber.setPower(0.75);
-            rightGrabber.setPower(0.75);
-        }
-        else {
-
-            leftGrabber.setPower(0);
-            rightGrabber.setPower(0);
-
-        }
-
-        if(gamepad2.left_trigger == 1)
-        {
-            leftGrabber.setPower(-0.75);
-            rightGrabber.setPower(-0.75);
-        }
-        else {
-
-            leftGrabber.setPower(0);
-            rightGrabber.setPower(0);
-
-        }
-        */
+        
 
         //Jewel_Knocker Extension (jewel_knocker) is powered by this control system
-        if(gamepad1.dpad_up) {
+        if (gamepad1.dpad_up) {
             jewel_knocker.setPosition(1);
         }
 
 
-        if(gamepad1.left_bumper) {
+        if (gamepad1.left_bumper) {
             El_Diablo.setPosition(1);
-            telemetry.addData(">", "El Diablo Extending" );
+            telemetry.addData(">", "El Diablo up");
             telemetry.update();
-        } else if(gamepad1.right_bumper) {
+        } else if (gamepad1.right_bumper) {
             El_Diablo.setPosition(0);
-            telemetry.addData(">", "El Diablo Retracting" );
+            telemetry.addData(">", "El Diablo down");
             telemetry.update();
         }
 
-        if(gamepad2.right_bumper) {
+        if (gamepad2.right_bumper) {
             Klaw.setPosition(1.0);
-            telemetry.addData(">", "Claw Tightening" );
+            telemetry.addData(">", "Claw Tightening");
             telemetry.update();
         } else if (gamepad2.left_bumper) {
             Klaw.setPosition(0);
-            telemetry.addData(">", "Claw Loosening" );
+            telemetry.addData(">", "Claw Loosening");
             telemetry.update();
         }
 
-        
+
         //Controls the motor that moves El Diablo Out to grab the relic
         LeftJoystickVal_Cont2 = -gamepad2.left_stick_y;
         arm.setPower(LeftJoystickVal_Cont2);
-        telemetry.addData(">", "arm moving" );
+        telemetry.addData(">", "arm moving");
         telemetry.update();
 
-       RightJoystickVal_Cont2 = -gamepad2.right_stick_y;
+        RightJoystickVal_Cont2 = -gamepad2.right_stick_y;
         rightGrabber.setPower(-RightJoystickVal_Cont2);
         leftGrabber.setPower(RightJoystickVal_Cont2);
-        telemetry.addData(">", "extender moving" );
+        telemetry.addData(">", "extender moving");
         telemetry.update();
 
-        //Climber is really extender for some reason
+
         if (gamepad2.y) {
             Climber.setPower(1);
         } else if (gamepad2.a) {
@@ -202,8 +167,8 @@ public class Teleop2017 extends OpMode {
         } else if (gamepad2.b) {
             Climber.setPower(0);
         }
-        //Extender is really the climber for some reason
-        if (gamepad2.dpad_up)  {
+
+        if (gamepad2.dpad_up) {
             Extender.setPower(-1);
         } else if (gamepad2.dpad_down) {
             Extender.setPower(1);
@@ -211,8 +176,20 @@ public class Teleop2017 extends OpMode {
             Extender.setPower(0);
         }
 
+        if (gamepad1.start) {
+            Right.setPower(0);
+            Left.setPower(0);
+            Climber.setPower(0);
+            leftGrabber.setPower(0);
+            rightGrabber.setPower(0);
+            Extender.setPower(0);
 
+            Klaw.setPosition(0.5);
+            El_Diablo.setPosition(0.5);
 
+            telemetry.addData(">", "Everything Stopped");
+            telemetry.update();
+        }
 
 
     }
@@ -231,4 +208,3 @@ public class Teleop2017 extends OpMode {
         telemetry.addData(">", "Everything Stopped" );
         telemetry.update();
     }
-}
