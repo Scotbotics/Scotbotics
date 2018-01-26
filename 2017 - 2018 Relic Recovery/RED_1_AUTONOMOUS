@@ -38,14 +38,13 @@ public class RED_1_Autonomous extends LinearOpMode {
     static final int SERVO_DOWN = 0;
     static final int DRIVE_TO_BOX = 3;
     static final int STOPROBOT = 4;
-    static final int VUFORIA = 1;
+    static final int DRIVE_TO_BOX2 = 1;
 
     int state = SERVO_DOWN;
 
     Servo El_Diablo;
     Servo Klaw;
-
-
+    
     Servo jewel_knocker;
     ColorSensor colorSensor;
     // ColorSensor colorSensor2;
@@ -56,7 +55,7 @@ public class RED_1_Autonomous extends LinearOpMode {
     DcMotor arm;
 
     float hsvValues[] = {0F, 0F, 0F};
-    double hold = 0.8;
+    double hold = 0.7;
     double turn = 1;
     boolean LEDState = true;
 
@@ -110,6 +109,9 @@ public class RED_1_Autonomous extends LinearOpMode {
                     knock_jewel();
                     break;
                 case DRIVE_TO_BOX:
+                    drive_to_box();
+                    break;
+                case DRIVE_TO_BOX2:
                     drive_to_box();
                     break;
                 case STOPROBOT:
@@ -222,7 +224,6 @@ public class RED_1_Autonomous extends LinearOpMode {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
 
-
     public void servo_down() {
 
 leftGrabber.setPower(-1);
@@ -243,7 +244,7 @@ sleep(1100);
         jewel_knocker.setPosition(0.5);
         telemetry.addLine("jewel_knocker stopped");
         telemetry.update();
-        sleep(2000);
+        sleep(500);
         state = KNOCK_JEWEL;
 
     }
@@ -268,19 +269,19 @@ sleep(1100);
 
             sleep(500);
 
-
-
-            drive_forward(75);
-            sleep(75);
-
-
+            drive_backward(700);
+            sleep(700);
+            stop_drive(200);
+            sleep(500);
+            telemetry.addLine("Driving Backward");
+            telemetry.update();
 
             jewel_knocker.setPosition(1);
             sleep(200);
 
             runtime.reset();
 
-            state = DRIVE_TO_BOX;
+            state = DRIVE_TO_BOX2;
         }
         else if (colorSensor.red() > colorSensor.blue()) {
 
@@ -291,9 +292,8 @@ sleep(1100);
             sleep(75);
 
             jewel_knocker.setPosition(1);
-
-
-
+            stop_drive(500);
+            sleep(500);
 
             turn_left(25);
             sleep(25);
@@ -306,8 +306,6 @@ sleep(1100);
 
             telemetry.addLine("no color");
             telemetry.update();
-
-
 
             jewel_knocker.setPosition(1);
             sleep(200);
@@ -324,73 +322,101 @@ sleep(1100);
 
     public void drive_to_box() {
 
-        drive_backward(850);
-        sleep(850);
+        drive_backward(700);
+        sleep(700);
         stop_drive(200);
+        sleep(500);
         telemetry.addLine("Driving Backward");
         telemetry.update();
 
-
-        turn_left(1600);
-        sleep(1600);
+        turn_left(1000);
+        sleep(1000);
         telemetry.addLine("turn");
         telemetry.update();
 
-
-
-        drive_backward(1000);
-        sleep(1000);
+        drive_backward(500);
+        sleep(500);
         stop_drive(200);
         telemetry.addLine("Driving Forward");
         telemetry.update();
-        turn_right(1100);
-        sleep(1100);
-
-        //Right.setPower(hold);
-        //Left.setPower(hold);
-
+        
+        turn_right(1000);
         sleep(1000);
+        
+        drive_backward(700);
+        sleep(700);
+        
+        stop_drive(200);
+        sleep(200);
+        
+        leftGrabber.setPower(1);
+        rightGrabber.setPower(1);
+        sleep(500);
+
+        leftGrabber.setPower(0);
+        rightGrabber.setPower(0);
+
+        arm.setPower(1);
+        drive_forward(200);
+        sleep(500);
+        arm.setPower(0);
+        drive_backward(700);
+        sleep(700);
 
 
         leftGrabber.setPower(1);
         rightGrabber.setPower(1);
         sleep(500);
+
         leftGrabber.setPower(0);
         rightGrabber.setPower(0);
+
+        state = STOPROBOT;
+
+    }
+    public void drive_to_box2() {
+
+        turn_left(1000);
+        sleep(1000);
+        telemetry.addLine("turn");
+        telemetry.update();
+
+        drive_backward(500);
+        sleep(500);
+        stop_drive(200);
+        telemetry.addLine("Driving Forward");
+        telemetry.update();
+
+        turn_right(1000);
+        sleep(1000);
+
+        drive_backward(700);
+        sleep(700);
+
+        stop_drive(200);
+        sleep(200);
+
+        leftGrabber.setPower(1);
+        rightGrabber.setPower(1);
+        sleep(500);
+
+        leftGrabber.setPower(0);
+        rightGrabber.setPower(0);
+
         arm.setPower(1);
-        sleep(2000);
+        drive_forward(200);
+        sleep(500);
         arm.setPower(0);
+        drive_backward(700);
+        sleep(700);
 
-      /*  VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
-        relicTrackables.activate();
+        leftGrabber.setPower(1);
+        rightGrabber.setPower(1);
+        sleep(500);
 
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-
-        if (vuMark != RelicRecoveryVuMark.RIGHT) {
-            drive_backward(800);
-            sleep(800);
-            stop_drive(200);
-            telemetry.addLine("Driving Forward");
-            telemetry.update();
-        }
-        else if (vuMark != RelicRecoveryVuMark.CENTER) {
-            drive_backward(1000);
-            sleep(1000);
-            stop_drive(200);
-            telemetry.addLine("Driving Forward");
-            telemetry.update();
-        }
-        else if (vuMark != RelicRecoveryVuMark.LEFT) {
-            drive_backward(1200);
-            sleep(1200);
-            stop_drive(200);
-            telemetry.addLine("Driving Forward");
-            telemetry.update();
-        }
-        */
+        leftGrabber.setPower(0);
+        rightGrabber.setPower(0);
 
         state = STOPROBOT;
 
