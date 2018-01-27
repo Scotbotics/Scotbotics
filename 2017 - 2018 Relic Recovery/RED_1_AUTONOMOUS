@@ -269,8 +269,11 @@ sleep(1100);
 
             sleep(500);
 
-            drive_backward(700);
-            sleep(700);
+            drive_backward(200);
+            sleep(200);
+            jewel_knocker.setPosition(1);
+
+
             stop_drive(200);
             sleep(500);
             telemetry.addLine("Driving Backward");
@@ -339,16 +342,16 @@ sleep(1100);
         stop_drive(200);
         telemetry.addLine("Driving Forward");
         telemetry.update();
-        
+
         turn_right(1000);
         sleep(1000);
-        
+
         drive_backward(700);
         sleep(700);
-        
+
         stop_drive(200);
         sleep(200);
-        
+
         leftGrabber.setPower(1);
         rightGrabber.setPower(1);
         sleep(500);
@@ -364,18 +367,28 @@ sleep(1100);
         sleep(700);
 
 
+
         leftGrabber.setPower(1);
         rightGrabber.setPower(1);
         sleep(500);
-
+        arm.setPower(1);
+        drive_forward(200);
+        sleep(200);
+        stop_drive(10);
         leftGrabber.setPower(0);
         rightGrabber.setPower(0);
-
         state = STOPROBOT;
 
     }
     public void drive_to_box2() {
 
+
+        drive_backward(400);
+        sleep(400);
+        stop_drive(200);
+        sleep(500);
+        telemetry.addLine("Driving Backward");
+        telemetry.update();
         turn_left(1000);
         sleep(1000);
         telemetry.addLine("turn");
@@ -414,7 +427,10 @@ sleep(1100);
         leftGrabber.setPower(1);
         rightGrabber.setPower(1);
         sleep(500);
-
+        arm.setPower(1);
+        drive_forward(200);
+        sleep(200);
+        stop_drive(10);
         leftGrabber.setPower(0);
         rightGrabber.setPower(0);
 
