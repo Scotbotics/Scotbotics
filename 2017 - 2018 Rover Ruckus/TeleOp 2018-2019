@@ -1,0 +1,240 @@
+//Created by Henry Lambert
+
+package org.firstinspires.ftc.teamcode;
+
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
+import android.media.MediaPlayer;
+import android.media. MediaPlayer;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+@TeleOp(name = "TeleTest", group = "TeleOp")
+
+public class TeleOP extends OpMode {
+
+    double left;
+    double right;
+    double drive;
+    double turn;
+    double max;
+
+    DcMotor Right;
+    DcMotor Left;
+    DcMotor Arm;
+
+
+    Servo Bucket;
+    Servo Cover;
+
+
+    float rightJoystickVal_Cont1;
+    float leftJoystickVal_Cont1;
+
+    float RightJoystickVal_Cont2;
+    float LeftJoystickVal_Cont2;
+
+
+
+
+    public ElapsedTime runtime = new ElapsedTime();
+    public ElapsedTime extenderTime = new ElapsedTime();
+    public ElapsedTime collectorReset = new ElapsedTime();
+
+    //static final double MAX_POS     =  1.0;     // Maximum rotational position
+    //static final double MIN_POS     =  0.0;     // Minimum rotational position
+
+
+    //  MediaPlayer ScotlandTheBrave, HowCouldThisHappen, TheSoundOfSilence, EyeOfTheTiger, RockyTheme;
+
+    public void init() {
+
+        //tells everything to start at what power
+        Right = hardwareMap.dcMotor.get("rightDrive"); //right motor
+        Left = hardwareMap.dcMotor.get("leftDrive"); //left motor
+        Arm = hardwareMap.dcMotor.get("armlift"); //arm lift
+
+
+        //servos for robot
+        Bucket = hardwareMap.servo.get("bucket");
+        Cover = hardwareMap.servo.get("cover");
+
+
+        Right.setDirection(DcMotor.Direction.REVERSE); //Tells the motors to be different, so we can drive
+
+        //Set up the five songs we currently have
+        //  HowCouldThisHappen = MediaPlayer.create(hardwareMap.appContext, R.raw.howcouldthishappen);
+        //  ScotlandTheBrave   = MediaPlayer.create(hardwareMap.appContext, R.raw.scotlandthebrave);
+        //  TheSoundOfSilence  = MediaPlayer.create(hardwareMap.appContext, R.raw.thesoundofsilence);
+        //  EyeOfTheTiger      = MediaPlayer.create(hardwareMap.appContext, R.raw.eyeofthetiger);
+        //  RockyTheme         = MediaPlayer.create(hardwareMap.appContext, R.raw.rockytheme);
+
+        telemetry.addData(">", "Robot Initialized");
+        telemetry.update();
+
+
+    }
+
+    public void loop() {
+
+        //Has the drive and servos loop
+
+
+        // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
+        // In this mode the right stick moves the robot fwd and back, the left stick turns left and right.
+        // This way it's also easy to just drive straight, or just turn.
+
+        // Normalize the values so neither exceed +/- 1.0
+        drive = -gamepad1.right_stick_x;
+
+        turn = gamepad1.left_stick_y;
+
+        // Combine drive and turn for blended motion.
+        left = drive + turn;
+        right = drive - turn;
+
+        max = Math.max(Math.abs(left), Math.abs(right));
+        if (max > 1.0) {
+            left /= max;
+            right /= max;
+        }
+
+        // Output the safe vales to the motor drives.
+        Left.setPower(left);
+        Right.setPower(right);
+
+
+        //Controls arm power
+        if(gamepad2.y == true) {
+            Arm.setPower(0.50);
+            telemetry.addData(">", "Arming Rising");
+            telemetry.update();
+        }
+        if(gamepad2.a == true) {
+            Arm.setPower(-0.50);
+            telemetry.addData(">", "Arm Lowering");
+            telemetry.update();
+        }
+
+        /*
+        rightJoystickVal_Cont1 = gamepad1.right_stick_y;
+        leftJoystickVal_Cont1 = gamepad1.left_stick_y;
+
+        //Controls the drive system motor power
+        Right.setPower(rightJoystickVal_Cont1);
+        Left.setPower(leftJoystickVal_Cont1);
+        */
+
+        telemetry.addData("right motor power", rightJoystickVal_Cont1);
+        telemetry.addData("left motor power", rightJoystickVal_Cont1);
+
+
+
+        //Mineral Bucket controls
+        if (gamepad2.left_bumper) {
+            Bucket.setPosition(1);
+            telemetry.addData(">", "Bucket Lowering");
+            telemetry.update();
+        } else if (gamepad2.right_bumper) {
+            Bucket.setPosition(0);
+            telemetry.addData(">", "Bucket Rising");
+            telemetry.update();
+        }
+
+        //Bucket Cover Controls
+        if (gamepad2.dpad_down) {
+            Bucket.setPosition(1);
+            telemetry.addData(">", "Cover Lowering");
+            telemetry.update();
+        } else if (gamepad2.dpad_up) {
+            Bucket.setPosition(0);
+            telemetry.addData(">", "Cover Rising");
+            telemetry.update();
+        }
+
+        Bucket.setPosition(0.5);
+
+        telemetry.addData(">","Emergency Stop Complete, Cry Now");
+        telemetry.update();
+
+
+    }
+
+
+
+
+      /*
+        //Song system, if you
+        if(gamepad1.y) {
+            ScotlandTheBrave.start();
+            telemetry.addData(">", "Scotland Playing" );
+            telemetry.update();
+        }
+        //If the song is playing, you can stop it
+        if(gamepad1.dpad_up) {
+            ScotlandTheBrave.stop();
+            telemetry.addData(">", "Scotland Stopped" );
+            telemetry.update();
+        }
+
+        /*
+        //How to start "How did this happen". Use when losing or everything is breaking
+        if(gamepad1.x) {
+            HowCouldThisHappen.start();
+            telemetry.addData(">", "How Could This Happen Playing" );
+            telemetry.update();
+        }
+
+        //If the song is playing, you can stop it
+        if(gamepad1.dpad_left) {
+            HowCouldThisHappen.stop();
+            telemetry.addData(">", "How Could This Happened Stopped" );
+            telemetry.update();
+        }
+        */
+
+        //Use when wanting to listen to a good song, or everything is broken
+        /*
+        if(gamepad1.b) {
+            TheSoundOfSilence.start();
+            telemetry.addData(">", "Sound of Silence Playing" );
+            telemetry.update();
+        }
+
+
+        //If the song is playing, you can stop it
+        if(gamepad1.dpad_right) {
+            TheSoundOfSilence.stop();
+            telemetry.addData(">", "Sound of Silence Stopped" );
+            telemetry.update();
+        }
+        */
+
+
+    public void stop() {
+        //tells all power to cut to 0, shouldn't be neccessary
+        Right.setPower(0);
+        Left.setPower(0);
+
+
+        //Sets all servos to stop
+        Bucket.setPosition(0.5);
+
+
+        telemetry.addData(">", "Everything Stopped" );
+        telemetry.update();
+    }
+}
