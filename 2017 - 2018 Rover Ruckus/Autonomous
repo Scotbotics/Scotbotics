@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import android.graphics.Color;
 import android.view.View;
 
@@ -25,7 +24,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-
 @Autonomous(name="Auto Rover Drive", group="Autononmous")
 
 public class AutoRoverDrive extends LinearOpMode {
@@ -49,10 +47,8 @@ public class AutoRoverDrive extends LinearOpMode {
     ColorSensor colorSensorFront;
     ColorSensor colorSensorBack;
 
-
     Servo Bucket1;
     Servo Bucket2;
-
 
     float hsvValues[] = {0F, 0F, 0F};
     double hold = 0.25;
@@ -77,37 +73,34 @@ public class AutoRoverDrive extends LinearOpMode {
 
         Right        = hardwareMap.dcMotor.get("rightDrive"); //right motor
         Left         =  hardwareMap.dcMotor.get("leftDrive"); //left
-
         colorSensorFront = hardwareMap.colorSensor.get("sensor_color_front");
         colorSensorBack = hardwareMap.colorSensor.get("sensor_color_back");
-
 
         Bucket1 = hardwareMap.servo.get("Bucket1");//Bucket lift
         Bucket2 = hardwareMap.servo.get("Bucket2");//Bucket lift
 
         colorSensorFront.enableLed(LEDState);
 
-
         waitForStart();
         while (opModeIsActive()) {
-
-
-
-
 
             switch (state) {
                 case Land:
                     land();
                     break;
+                    
                 //  case VUFORIA:
                 //    vuforia();
                 //  break;
+                
                 case Sample:
                     sample();
                     break;
+                    
                 case DRIVE_TO_BOX:
                     drive_to_box();
                     break;
+                    
                 case STOPROBOT:
                     stoprobot();
                     break;
@@ -115,6 +108,7 @@ public class AutoRoverDrive extends LinearOpMode {
             }
 
         }
+        
     }
 
     public void vuforia() {
@@ -236,10 +230,8 @@ public class AutoRoverDrive extends LinearOpMode {
         Color.RGBToHSV(colorSensorBack.red() * 8, colorSensorBack.green() * 8, colorSensorBack.blue() * 8, hsvValues2);
         float hue2 = hsvValues2[0];
 
-
         boolean seeingBlueDepotBack = hue2 > 120 && hue2 < 260;
         boolean seeingBlueDepot = hue > 10 && hue < 150;
-
 
         while(seeingBlueDepot == false) {
             drive_forward(1000);
@@ -267,23 +259,18 @@ public class AutoRoverDrive extends LinearOpMode {
         Color.RGBToHSV(colorSensorBack.red() * 8, colorSensorBack.green() * 8, colorSensorBack.blue() * 8, hsvValues2);
         float hue2 = hsvValues2[0];
 
-
         boolean seeingBlueDepotBack = hue2 > 10 && hue2 < 150;
         boolean seeingBlueDepot = hue > 120 && hue < 260;
-
 
         while(seeingBlueDepotBack == false) {
             turn_left(1000);
         }
-
 
         state = DRIVE_TO_BOX;
 
     }
 
     public void drive_to_box() {
-
-
 
             Bucket1.setPosition(1);
             Bucket2.setPosition(-1);
