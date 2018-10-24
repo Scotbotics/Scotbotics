@@ -230,14 +230,14 @@ public class AutoRoverDrive extends LinearOpMode {
         float hue = hsvValues[0];
         float hsvValues2[] = {0F,0F,0F};
         // values is a reference to the hsvValues array.
-        final float values2[] = hsvValues;
+        final float values2[] = hsvValues2;
 
         // convert the RGB values to HSV values.
         Color.RGBToHSV(colorSensorBack.red() * 8, colorSensorBack.green() * 8, colorSensorBack.blue() * 8, hsvValues2);
         float hue2 = hsvValues2[0];
 
 
-        boolean seeingBlueDepotBack = hue > 120 && hue < 260;
+        boolean seeingBlueDepotBack = hue2 > 120 && hue2 < 260;
         boolean seeingBlueDepot = hue > 10 && hue < 150;
 
 
@@ -261,27 +261,20 @@ public class AutoRoverDrive extends LinearOpMode {
         float hue = hsvValues[0];
         float hsvValues2[] = {0F,0F,0F};
         // values is a reference to the hsvValues array.
-        final float values2[] = hsvValues;
+        final float values2[] = hsvValues2;
 
         // convert the RGB values to HSV values.
         Color.RGBToHSV(colorSensorBack.red() * 8, colorSensorBack.green() * 8, colorSensorBack.blue() * 8, hsvValues2);
         float hue2 = hsvValues2[0];
 
 
-        boolean seeingBlueDepotBack = hue > 10 && hue < 150;
+        boolean seeingBlueDepotBack = hue2 > 10 && hue2 < 150;
         boolean seeingBlueDepot = hue > 120 && hue < 260;
-
-
-
 
 
         while(seeingBlueDepotBack == false) {
             turn_left(1000);
         }
-
-
-
-
 
 
         state = DRIVE_TO_BOX;
