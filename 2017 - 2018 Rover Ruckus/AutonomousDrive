@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,9 +22,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Autonomous(name="Auto Rover Drive", group="Autononmous")
 
-public class AutoRoverDrive extends LinearOpMode {
+@Autonomous(name="Auto Rover Drive Longer", group="Autononmous")
+
+public class AutoRoverDriveLong extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -47,13 +46,20 @@ public class AutoRoverDrive extends LinearOpMode {
     ColorSensor colorSensorFront;
     ColorSensor colorSensorBack;
 
+
     Servo Bucket1;
     Servo Bucket2;
+    Servo Hold;
 
     float hsvValues[] = {0F, 0F, 0F};
-    double hold = 0.25;
+    double hold = 1;
     double turn = 1;
     boolean LEDState = true;
+
+
+    long drive_time = 1800;
+    long turn_time = 3500;
+
 
     final float values[] = hsvValues;
 
@@ -73,13 +79,17 @@ public class AutoRoverDrive extends LinearOpMode {
 
         Right        = hardwareMap.dcMotor.get("rightDrive"); //right motor
         Left         =  hardwareMap.dcMotor.get("leftDrive"); //left
+        Lift = hardwareMap.dcMotor.get("lift"); //up lift
+
         colorSensorFront = hardwareMap.colorSensor.get("sensor_color_front");
         colorSensorBack = hardwareMap.colorSensor.get("sensor_color_back");
 
         Bucket1 = hardwareMap.servo.get("Bucket1");//Bucket lift
         Bucket2 = hardwareMap.servo.get("Bucket2");//Bucket lift
+        Hold = hardwareMap.servo.get("hold");//stops lift
 
         colorSensorFront.enableLed(LEDState);
+
 
         waitForStart();
         while (opModeIsActive()) {
@@ -88,19 +98,15 @@ public class AutoRoverDrive extends LinearOpMode {
                 case Land:
                     land();
                     break;
-                    
                 //  case VUFORIA:
                 //    vuforia();
                 //  break;
-                
                 case Sample:
                     sample();
                     break;
-                    
                 case DRIVE_TO_BOX:
                     drive_to_box();
                     break;
-                    
                 case STOPROBOT:
                     stoprobot();
                     break;
@@ -108,7 +114,6 @@ public class AutoRoverDrive extends LinearOpMode {
             }
 
         }
-        
     }
 
     public void vuforia() {
@@ -214,28 +219,30 @@ public class AutoRoverDrive extends LinearOpMode {
 
     public void land() {
 
-        // hsvValues is an array that will hold the hue, saturation, and value information.
-        float hsvValues[] = {0F,0F,0F};
-        // values is a reference to the hsvValues array.
-        final float values[] = hsvValues;
+        /*
 
-        // convert the RGB values to HSV values.
-        Color.RGBToHSV(colorSensorFront.red() * 8, colorSensorFront.green() * 8, colorSensorFront.blue() * 8, hsvValues);
-        float hue = hsvValues[0];
-        float hsvValues2[] = {0F,0F,0F};
-        // values is a reference to the hsvValues array.
-        final float values2[] = hsvValues2;
+        Hold.setPosition(0);
+        sleep(1000);
 
-        // convert the RGB values to HSV values.
-        Color.RGBToHSV(colorSensorBack.red() * 8, colorSensorBack.green() * 8, colorSensorBack.blue() * 8, hsvValues2);
-        float hue2 = hsvValues2[0];
+        stop_drive(100);
+        sleep(100);
 
-        boolean seeingBlueDepotBack = hue2 > 120 && hue2 < 260;
-        boolean seeingBlueDepot = hue > 10 && hue < 150;
+        Lift.setPower(-1);
+        sleep(1000);
 
-        while(seeingBlueDepot == false) {
-            drive_forward(1000);
-        }
+        stop_drive(500);
+        sleep(500);
+
+        Lift.setPower(1);
+        sleep(100);
+
+        turn_right(1000);
+        sleep(1000);
+
+        stop_drive(100);
+        sleep(100);
+
+        */
 
         state = Sample;
 
@@ -243,29 +250,35 @@ public class AutoRoverDrive extends LinearOpMode {
 
     public void sample() {
 
-        // hsvValues is an array that will hold the hue, saturation, and value information.
-        float hsvValues[] = {0F,0F,0F};
-        // values is a reference to the hsvValues array.
-        final float values[] = hsvValues;
+        drive_forward(450);
+        sleep(450);
 
-        // convert the RGB values to HSV values.
-        Color.RGBToHSV(colorSensorFront.red() * 8, colorSensorFront.green() * 8, colorSensorFront.blue() * 8, hsvValues);
-        float hue = hsvValues[0];
-        float hsvValues2[] = {0F,0F,0F};
-        // values is a reference to the hsvValues array.
-        final float values2[] = hsvValues2;
+        stop_drive(300);
+        sleep(300);
 
-        // convert the RGB values to HSV values.
-        Color.RGBToHSV(colorSensorBack.red() * 8, colorSensorBack.green() * 8, colorSensorBack.blue() * 8, hsvValues2);
-        float hue2 = hsvValues2[0];
+        turn_right(1600);
+        sleep(1600);
 
-        boolean seeingBlueDepotBack = hue2 > 10 && hue2 < 150;
-        boolean seeingBlueDepot = hue > 120 && hue < 260;
+        stop_drive(300);
+        sleep(300);
 
-        while(seeingBlueDepotBack == false) {
-            turn_left(1000);
-        }
+        drive_forward(500);
+        sleep(500);
 
+        stop_drive(300);
+        sleep(300);
+
+        turn_right(850);
+        sleep(850);
+
+        stop_drive(100);
+        sleep(100);
+
+        drive_forward(1700);
+        sleep(1700);
+
+        stop_drive(1000);
+        sleep(1000);
         state = DRIVE_TO_BOX;
 
     }
@@ -274,6 +287,11 @@ public class AutoRoverDrive extends LinearOpMode {
 
             Bucket1.setPosition(1);
             Bucket2.setPosition(-1);
+
+            sleep(2000);
+
+            Bucket1.setPosition(0);
+            Bucket2.setPosition(0);
 
             state = STOPROBOT;
 
