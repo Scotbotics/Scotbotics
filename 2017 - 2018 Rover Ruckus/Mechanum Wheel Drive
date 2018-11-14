@@ -14,7 +14,80 @@ public class MechDrive2 extends OpMode {
     public DcMotor Henry;
     public DcMotor Shouldnt;
     public DcMotor Be;
-    public DcMotor President;
+    public DcMotor President;//package that allows importing into the phone
+package org.firstinspires.ftc.teamcode;
+
+//import a lot of different functions, methods and commands for the ftc hardware
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
+
+@TeleOp(name="MechDrive2", group="TeleOp")
+public class MechDrive2 extends OpMode {
+
+    public DcMotor Henry;
+    public DcMotor Should;
+    public DcMotor Take;
+    public DcMotor Sams;
+    public DcMotor Job;
+
+    public void init() {
+        //list of the all the motors and connect themselves to the actual motors
+        //the things in parantheses ex. "frontLeft" are what the motors are named in the configuration on the robot controller phone
+        Henry = hardwareMap.dcMotor.get("frontLeft");
+        Should = hardwareMap.dcMotor.get("frontRight");
+        Take = hardwareMap.dcMotor.get("rearLeft");
+        Sams = hardwareMap.dcMotor.get("rearRight");
+        Job = hardwareMap.dcMotor.get("Hook");
+
+        Sams.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+    @Override
+    public void loop() {
+        //Set Jot stick values
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+        double rightX = gamepad1.right_stick_x;
+        //Set variables to motor power
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
+        //Give motors power
+        Henry.setPower(v1);
+        Should.setPower(v2);
+        Take.setPower(v3);
+        Sams.setPower(v4);
+
+        if(gamepad1.x) {
+            Job.setPower(1);
+        }
+        if(gamepad1.a) {
+            Job.setPower(-1);
+        }
+        if(gamepad1.y) {
+            Job.setPower(0);
+        }
+    }
+
+    public void stop() {
+        //nothing here? probably gotta call garbage collection at some point
+        //tells everything to cut all power
+        //All motors go to 0 power when cut, servos stop moving at 0.5 power (Mochi)
+        Henry.setPower(0);
+        Should.setPower(0);
+        Take.setPower(0);
+        Sams.setPower(0);
+        Job.setPower(0);
+
+
+    }
+
+}
+
     public DcMotor Ever;
 
     public void init() {
