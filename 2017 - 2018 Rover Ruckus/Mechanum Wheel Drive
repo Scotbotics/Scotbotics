@@ -1,0 +1,61 @@
+//package that allows importing into the phone
+package org.firstinspires.ftc.teamcode;
+
+//import a lot of different functions, methods and commands for the ftc hardware
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
+
+@TeleOp(name="MechDrive2", group="TeleOp")
+public class MechDrive2 extends OpMode {
+
+    public DcMotor matthew;
+    public DcMotor maria;
+    public DcMotor parker;
+    public DcMotor louis;
+    
+    public void init() {
+        //list of the all the motors and connect themselves to the actual motors
+        //the things in parantheses ex. "frontLeft" are what the motors are named in the configuration on the robot controller phone
+        parker = hardwareMap.dcMotor.get("frontLeft");
+        louis = hardwareMap.dcMotor.get("frontRight");
+        maria = hardwareMap.dcMotor.get("rearLeft");
+        matthew = hardwareMap.dcMotor.get("rearRight");
+
+        maria.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
+    @Override
+    public void loop() {
+        //Set Jot stick values
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+        double rightX = gamepad1.right_stick_x;
+        //Set variables to motor power
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
+        //Give motors power
+        parker.setPower(v1);
+        louis.setPower(v2);
+        maria.setPower(v3);
+        matthew.setPower(v4);
+    }
+    
+    public void stop() {
+        //nothing here? probably gotta call garbage collection at some point
+        //tells everything to cut all power
+        //All motors go to 0 power when cut, servos stop moving at 0.5 power (Mochi)
+        parker.setPower(0);
+        louis.setPower(0);
+        matthew.setPower(0);
+        maria.setPower(0);
+
+
+    }
+
+}
