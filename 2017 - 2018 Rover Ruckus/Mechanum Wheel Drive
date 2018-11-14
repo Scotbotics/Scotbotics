@@ -15,6 +15,7 @@ public class MechDrive2 extends OpMode {
     public DcMotor Shouldnt;
     public DcMotor Be;
     public DcMotor President;
+    public DcMotor Ever;
 
     public void init() {
         //list of the all the motors and connect themselves to the actual motors
@@ -23,7 +24,7 @@ public class MechDrive2 extends OpMode {
         Shouldnt = hardwareMap.dcMotor.get("frontRight");
         Be = hardwareMap.dcMotor.get("rearLeft");
         President = hardwareMap.dcMotor.get("rearRight");
-        Ever = hardwareMap.dcMotor.get("Hook")
+        Ever = hardwareMap.dcMotor.get("Hook");
 
         President.setDirection(DcMotor.Direction.REVERSE);
     }
