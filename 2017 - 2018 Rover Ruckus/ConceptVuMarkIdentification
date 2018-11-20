@@ -28,10 +28,11 @@
  */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -66,6 +67,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 
 @TeleOp(name="Concept: VuMark Id", group ="Concept")
+
 public class ConceptVuMarkIdentification extends LinearOpMode {
 
     public static final String TAG = "Vuforia VuMark Sample";
@@ -87,7 +89,7 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View, to save power
-        //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         /*
          * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -101,7 +103,8 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
          * Once you've obtained a license key, copy the string from the Vuforia web site
          * and paste it in to your code on the next line, between the double quotes.
          */
-        params.vuforiaLicenseKey = "Aaxlc6z/////AAABmTKpbnwRK0hfoREOA7t1rylzWJDF0O2Oi7HQVjBTEyTOAV6WK4yJpZNJVKQOgxX9MiCLCsZegXG5Qbto513kkIKonv1eaOIkw60f+g3li+E/4fp2KEm1h8Dx5xk0KGIDrpJQDs4I9ApSy+0mllKgi1eFfK1VyNJm/dqjRnxD3JyFUKKVjMYWWjEsdgvXT9SpdFcGLjas8WFb9f8kHlVsGfSR6d7e+OvF5eIrWRZ9gyQdiGjpH3HxWthGTl41Y1wEiG8a2xF9OugQ7uiB1kkL9EDMW2k8klUDeRTjK7jDlEqke76qjyGRXbsJ82Zg1jFErLiT5C7Uk+hJLNRPiDhXt6dEb5IzNzIdResgV9A7f+Zk\n";
+        parameters.vuforiaLicenseKey = "Aaxlc6z/////AAABmTKpbnwRK0hfoREOA7t1rylzWJDF0O2Oi7HQVjBTEyTOAV6WK4yJpZNJVKQOgxX9MiCLCsZegXG5Qbto513kkIKonv1eaOIkw60f+g3li+E/4fp2KEm1h8Dx5xk0KGIDrpJQDs4I9ApSy+0mllKgi1eFfK1VyNJm/dqjRnxD3JyFUKKVjMYWWjEsdgvXT9SpdFcGLjas8WFb9f8kHlVsGfSR6d7e+OvF5eIrWRZ9gyQdiGjpH3HxWthGTl41Y1wEiG8a2xF9OugQ7uiB1kkL9EDMW2k8klUDeRTjK7jDlEqke76qjyGRXbsJ82Zg1jFErLiT5C7Uk+hJLNRPiDhXt6dEb5IzNzIdResgV9A7f+Zk\n";
+
         /*
          * We also indicate which camera on the RC that we wish to use.
          * Here we chose the back (HiRes) camera (for greater range), but
