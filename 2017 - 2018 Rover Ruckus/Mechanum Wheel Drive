@@ -31,6 +31,9 @@ public class MechDrive21 extends OpMode {
 
     @Override
     public void loop() {
+    
+        // Driving controls
+        
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
         double rightX = gamepad1.right_stick_x;
@@ -43,6 +46,8 @@ public class MechDrive21 extends OpMode {
         cDrive.setPower(v2);
         bDrive.setPower(v3);
         dDrive.setPower(v4);
+
+        // Lifter controls
 
         if (gamepad1.a == true) {
             Job.setPower(1);
