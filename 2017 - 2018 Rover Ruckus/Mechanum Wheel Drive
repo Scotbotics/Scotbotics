@@ -49,13 +49,13 @@ public class MechDrive21 extends OpMode {
 
         // Lifter controls
 
-        if (gamepad1.a == true) {
+        if (gamepad1.b == true) {
             Job.setPower(1);
         }
-        if (gamepad1.b == true) {
+        if (gamepad1.a == true) {
             Job.setPower(-1);
         }
-        if (gamepad1.a == false && gamepad1.b == false) {
+        if (gamepad1.b == false && gamepad1.a == false) {
             Job.setPower(0);
         }
 
