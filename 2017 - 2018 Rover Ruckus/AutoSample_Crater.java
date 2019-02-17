@@ -7,6 +7,7 @@ import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -15,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class AutoSample_Crater extends LinearOpMode {
 
     /* Declare OpMode members. */
-    
+
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 0.66;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
@@ -35,14 +36,17 @@ public class AutoSample_Crater extends LinearOpMode {
     public DcMotor Lift;                        //Gets the robot on and off the lander
 
     //SERVOS
-    public Servo Cover;                         //Covers the box that the minerals are in
+    public Servo Servo;                         //Covers the box that the minerals are in
 
     //VUFORIA STUFF
     private GoldAlignDetector detector;         //Makes the phone look for the gold
     double goldPos = 0;                         //The angle the gold is away from the robot
 
     //TIMERS
-    private ElapsedTime runtime = new ElapsedTime();        //Tells us when the 30 seconds is up
+    private ElapsedTime runtime = new ElapsedTime();
+
+    //TIMERS
+    private ElapsedTime runtime1 = new ElapsedTime(); //Tells us when the 30 seconds is up
 
     @Override
     public void runOpMode() {
@@ -57,25 +61,16 @@ public class AutoSample_Crater extends LinearOpMode {
         cDrive.setDirection(DcMotor.Direction.REVERSE);
         dDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        aDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        cDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        dDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        aDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        bDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        cDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        dDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
         //FUNCTIONS Motors
         Arm = hardwareMap.get(DcMotor.class, "Arm");
         ArmExtender = hardwareMap.get(DcMotor.class, "ArmExtender");
         Spindle = hardwareMap.get(DcMotor.class, "Spindle");
         Lift = hardwareMap.get(DcMotor.class, "Lift");
 
+        Lift.setDirection(DcMotor.Direction.REVERSE);
+
         //SERVOS
-        Cover = hardwareMap.get(Servo.class, "Cover");
+        Servo = hardwareMap.get(Servo.class, "Servo");
 
         //Vuforia
         telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
@@ -98,50 +93,55 @@ public class AutoSample_Crater extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        //encoderLift(0.5, 8, 3);
-        //encoderDrive(0.5, -2, -2, -2, -2 ,1);
-        //Lift.setPower(0.5);
-        //sleep(1800);
-        //backward(0.25,200);
-        //stop(1000);
-        driftright(0.25, 600); // might take a bit longer or shorter?
-        stop(1000);
-        //forward(0.25, 200); // might take a bit longer or shorter?
+
+        Servo.setPosition(1);
+
+        encoderLift(0.5, 8.5);
+
+        sleep(500);
+
+        encoderDrive(0.5, 5, 5, 5,5);
+
+        sleep(500);
+
+        encoderDrive(0.5, 11, -11, -11, 11);
+
+        sleep(500);
+
+        encoderDrive(0.5, -6, -6, -6,-6);
+
+        sleep(500);
+
 
         telemetry.addData("IsAligned", detector.getAligned()); // Is the bot aligned with the gold mineral
 
-        goldPos = detector.getXPosition();  // Gets gold block posistion
-
-        if(goldPos > 50 && goldPos < 600) {
-            turnLeft(0.25, 650);
-            stop(1000);
-            backward(0.25, 700);
-            sleep(100000000);
-        }
-        turnLeft(0.25,400);
-        stop(1000);
+        encoderDrive(0.5, -12, -12, 12, 12);
+        sleep(500);
         goldPos = detector.getXPosition();
-        stop(1000);
         if(goldPos >  50 && goldPos < 600) {
-            turnLeft(0.25, 100);
-            stop(500);
-            driftright(0.25, 700);
-            sleep(100000000);
+            encoderDrive(0.5, 35, -35, -35, 35);
+            sleep(50000);
         }
-        turnRight(0.25, 700);
-        stop(1000);
+        encoderDrive(0.5, 25, 25, -25, -25);
+        sleep(500);
         goldPos = detector.getXPosition();
-        stop(1000);
         if(goldPos >  50 && goldPos < 550) {
-            turnLeft(0.25, 100);
-            stop(500);
-            driftright(0.25, 700);
-            sleep(100000000);
+            encoderDrive(0.5, 35, -35, -35, 35);
+            sleep(50000);
+
+        }
+        encoderDrive(0.5, -12, -12, 12, 12);
+        sleep(500);
+        goldPos = detector.getXPosition();
+        if(goldPos > 50 && goldPos < 600) {
+            encoderDrive(0.5, 35, -35, -35, 35);
+            sleep(50000);
+
         }
 
     }
 
-        //Mechanum Wheel Commands
+    //Mechanum Wheel Commands
 
     public void stop (long time)
     {
@@ -156,204 +156,131 @@ public class AutoSample_Crater extends LinearOpMode {
 
     }
     public void turnLeft (double speed, long time) {
-            telemetry.addData("status", "turnLeft");
-            telemetry.update();
+        telemetry.addData("status", "turnLeft");
+        telemetry.update();
 
-            aDrive.setPower(-speed);
-            bDrive.setPower(-speed);
-            cDrive.setPower(speed);
-            dDrive.setPower(speed);
-            sleep(time);
+        aDrive.setPower(-speed);
+        bDrive.setPower(-speed);
+        cDrive.setPower(speed);
+        dDrive.setPower(speed);
+        sleep(time);
 
-        }
-
-        public void turnRight (double speed, long time) {
-            telemetry.addData("status", "turnRight");
-            telemetry.update();
-
-            aDrive.setPower(speed);
-            bDrive.setPower(speed);
-            cDrive.setPower(-speed);
-            dDrive.setPower(-speed);
-            sleep(time);
-
-        }
-
-        public void forward (double speed, long time) {
-            telemetry.addData("status", "forward");
-            telemetry.update();
-
-            aDrive.setPower(speed);
-            bDrive.setPower(speed);
-            cDrive.setPower(speed);
-            dDrive.setPower(speed);
-            sleep(time);
-
-        }
-
-        public void backward (double speed, long time) {
-            telemetry.addData("status", "forward");
-            telemetry.update();
-
-            aDrive.setPower(-speed);
-            bDrive.setPower(-speed);
-            cDrive.setPower(-speed);
-            dDrive.setPower(-speed);
-            sleep(time);
-
-        }
-
-        public void driftleft (double speed, long time) {
-            telemetry.addData("status", "forward");
-            telemetry.update();
-
-            aDrive.setPower(-speed);
-            bDrive.setPower(speed);
-            cDrive.setPower(speed);
-            dDrive.setPower(-speed);
-            sleep(time);
-
-        }
-
-        public void driftright (double speed, long time) {
-            telemetry.addData("status", "forward");
-            telemetry.update();
-
-            aDrive.setPower(speed);
-            bDrive.setPower(-speed);
-            cDrive.setPower(-speed);
-            dDrive.setPower(speed);
-            sleep(time);
-
-        }
-
-    public void encoderDrive(double speed,
-                             double leftFront, double rightFront, double rightRear, double leftRear,
-                             double timeoutS) {
-        int newFrontLeftTarget;
-        int newRearLeftTarget;
-        int newFrontRightTarget;
-        int newRearRightTarget;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-            //parker = hardwareMap.dcMotor.get("frontLeft");
-            //louis = hardwareMap.dcMotor.get("frontRight");
-            //maria = hardwareMap.dcMotor.get("rearLeft");
-            //matthew = hardwareMap.dcMotor.get("rearRight");
-            // Determine new target position, and pass to motor controller
-            newFrontLeftTarget = aDrive.getCurrentPosition() + (int) (leftFront * COUNTS_PER_INCH);
-            newRearLeftTarget = bDrive.getCurrentPosition() + (int) (leftRear * COUNTS_PER_INCH);
-            newFrontRightTarget = cDrive.getCurrentPosition() + (int) (rightFront * COUNTS_PER_INCH);
-            newRearRightTarget = dDrive.getCurrentPosition() + (int) (rightRear * COUNTS_PER_INCH);
-
-            bDrive.setTargetPosition(newRearLeftTarget);
-            aDrive.setTargetPosition(newFrontLeftTarget);
-            dDrive.setTargetPosition(newRearRightTarget);
-            cDrive.setTargetPosition(newFrontRightTarget);
-
-
-            // Turn On RUN_TO_POSITION
-            dDrive.setPower(rightRear / Math.abs(rightRear));
-            bDrive.setPower(leftRear / Math.abs(leftRear));
-            cDrive.setPower(rightFront / Math.abs(rightFront));
-            aDrive.setPower(leftFront / Math.abs(leftFront));
-
-            sleep(250);
-            runtime.reset();
-
-            /*
-            aDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            bDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            cDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            dDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            */
-
-
-            // reset the timeout time and start motion.
-
-            // keep looping while we are still active, and there is time left, and all motors are running.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (cDrive.isBusy() && aDrive.isBusy() && bDrive.isBusy() && dDrive.isBusy())) {
-                // Display it for the driver.
-                //telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d", newFrontLeftTarget, newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
-                //telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
-                //aDrive.getCurrentPosition(),
-                //cDrive.getCurrentPosition(),
-                //dDrive.getCurrentPosition(),
-                //bDrive.getCurrentPosition());
-
-                //telemetry.update();
-
-                // Allow time for other processes to run.
-                //sleep(1000);
-            }
-
-
-            // Turn off RUN_TO_POSITION
-            /*
-            if((bDrive.getCurrentPosition() == newRearLeftTarget) && (dDrive.getCurrentPosition() == newRearRightTarget)) {
-                bDrive.setPower(0);
-                aDrive.setPower(0);
-                dDrive.setPower(0);
-                cDrive.setPower(0);
-            }
-            */
-
-            bDrive.setPower(0);
-            aDrive.setPower(0);
-            dDrive.setPower(0);
-            cDrive.setPower(0);
-
-            /*
-            bDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            dDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            cDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            aDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            */
-
-            sleep(250);   // optional pause after each move
-
-        }
     }
 
-        public void encoderLift(double speed, double move, double timeoutS) {
-            int newMove;
+    public void turnRight (double speed, long time) {
+        telemetry.addData("status", "turnRight");
+        telemetry.update();
 
-            // Ensure that the opmode is still active
-            if (opModeIsActive()) {
+        aDrive.setPower(speed);
+        bDrive.setPower(speed);
+        cDrive.setPower(-speed);
+        dDrive.setPower(-speed);
+        sleep(time);
 
-                // Determine new target position, and pass to motor controller
-                newMove = Lift.getCurrentPosition() + (int) (move * COUNTS_PER_INCH);
-
-
-                Lift.setTargetPosition(newMove);
-                // Turn On RUN_TO_POSITION
-                Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                // reset the timeout time and start motion.
-                runtime.reset();
-                Lift.setPower(Math.abs(speed));
-
-                // keep looping while we are still active, and there is time left, and all motors are running.
-                while (opModeIsActive() && (runtime.seconds() < timeoutS) && (Lift.isBusy())) {
-                    // Display it for the driver.
-                    telemetry.addData("Toby", "Actually Running",
-                            Lift.getCurrentPosition());
-
-                    telemetry.update();
-
-                    // Allow time for other processes to run.
-                    sleep(250);
-                }
-                Lift.setPower(0);
-
-                // Turn off RUN_TO_POSITION
-                Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                sleep(250);   // optional pause after each move
-            }
     }
+
+    public void forward (double speed, long time) {
+        telemetry.addData("status", "forward");
+        telemetry.update();
+
+        aDrive.setPower(speed);
+        bDrive.setPower(speed);
+        cDrive.setPower(speed);
+        dDrive.setPower(speed);
+        sleep(time);
+
+    }
+
+    public void backward (double speed, long time) {
+        telemetry.addData("status", "forward");
+        telemetry.update();
+
+        aDrive.setPower(-speed);
+        bDrive.setPower(-speed);
+        cDrive.setPower(-speed);
+        dDrive.setPower(-speed);
+        sleep(time);
+
+    }
+
+    public void driftleft (double speed, long time) {
+        telemetry.addData("status", "forward");
+        telemetry.update();
+
+        aDrive.setPower(-speed);
+        bDrive.setPower(speed);
+        cDrive.setPower(speed);
+        dDrive.setPower(-speed);
+        sleep(time);
+
+    }
+
+    public void driftright (double speed, long time) {
+        telemetry.addData("status", "forward");
+        telemetry.update();
+
+        aDrive.setPower(speed);
+        bDrive.setPower(-speed);
+        cDrive.setPower(-speed);
+        dDrive.setPower(speed);
+        sleep(time);
+
+    }
+
+    public void encoderLift(double speed, double inches) {
+        // 4 inch pinion diameter
+        double d = 1440 * (inches / 2.51);
+        int distance = (int) d;
+
+        Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Lift.setTargetPosition(distance);
+        Lift.setPower(speed);
+        while (Lift.isBusy() && opModeIsActive()) {
+            telemetry.addData("Lift", "Running at %7d",
+                    Lift.getCurrentPosition());
+            telemetry.update();
+            idle();
+        }
+        Lift.setPower(0);
+    }
+
+    public void encoderDrive(double speed, double aInches, double bInches, double cInches, double dInches) {
+        // 4 inch pinion diameter
+        double ad = 720 * (aInches / 12.57);
+        int aDistance = (int) ad;
+        double bd = 720 * (bInches / 12.57);
+        int bDistance = (int) bd;
+        double cd = 720 * (cInches / 12.57);
+        int cDistance = (int) cd;
+        double dd = 720 * (dInches / 12.57);
+        int dDistance = (int) dd;
+
+        aDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        aDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        cDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        cDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        dDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        dDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        aDrive.setTargetPosition(aDistance);
+        bDrive.setTargetPosition(bDistance);
+        cDrive.setTargetPosition(cDistance);
+        dDrive.setTargetPosition(dDistance);
+        aDrive.setPower(speed);
+        bDrive.setPower(speed);
+        cDrive.setPower(speed);
+        dDrive.setPower(speed);
+
+        while (aDrive.isBusy() && bDrive.isBusy() && cDrive.isBusy() && dDrive.isBusy() && opModeIsActive()) {
+            idle();
+        }
+        aDrive.setPower(0);
+        bDrive.setPower(0);
+        cDrive.setPower(0);
+        dDrive.setPower(0);
+    }
+
 }
 
