@@ -98,45 +98,56 @@ public class AutoSample_Crater extends LinearOpMode {
 
         encoderLift(0.5, 8.5);
 
-        sleep(500);
+        sleep(250);
 
-        encoderDrive(0.5, 5, 5, 5,5);
+        encoderDrive(0.25, 4.5, 4.5, 4.5,4.5);
 
-        sleep(500);
+        encoderDrive(0.25, 13, -13, -13, 13);
 
-        encoderDrive(0.5, 11, -11, -11, 11);
-
-        sleep(500);
-
-        encoderDrive(0.5, -6, -6, -6,-6);
+        encoderDrive(0.25, -6, -6, -6,-6);
 
         sleep(500);
-
 
         telemetry.addData("IsAligned", detector.getAligned()); // Is the bot aligned with the gold mineral
 
-        encoderDrive(0.5, -12, -12, 12, 12);
+        goldPos = detector.getXPosition();  // Gets gold block posistion
+
+        if(goldPos > 50 && goldPos < 600) {
+            encoderDrive(0.5, 25, -25, -25, 25);
+            encoderDrive(0.5, -20, 20, 20, -20);
+            encoderDrive(0.5, -60, -60, -60, -60);
+            encoderDrive(0.25, 16, 16, -16, -16);
+            encoderDrive(0.5, 8, -8, -8, 8);
+            encoderDrive(0.5, 40, 40, 40, 40);
+            sleep(100000);
+
+        }
+        encoderDrive(0.25, 6, -6, -6, 6);
+        encoderDrive(0.25, 15, 15, 15, 15);
         sleep(500);
         goldPos = detector.getXPosition();
         if(goldPos >  50 && goldPos < 600) {
-            encoderDrive(0.5, 35, -35, -35, 35);
-            sleep(50000);
+            encoderDrive(0.5, 25, -25, -25, 25);
+            encoderDrive(0.5, -22, 22, 22, -22);
+            encoderDrive(0.5, -73, -73, -73, -73);
+            encoderDrive(0.25, 16, 16, -16, -16);
+            encoderDrive(0.5, 8, -8, -8, 8);
+            encoderDrive(0.5, 40, 40, 40, 40);
+            sleep(100000);
+
         }
-        encoderDrive(0.5, 25, 25, -25, -25);
+        encoderDrive(0.25, -40, -40, -40, -40);
         sleep(500);
         goldPos = detector.getXPosition();
         if(goldPos >  50 && goldPos < 550) {
-            encoderDrive(0.5, 35, -35, -35, 35);
-            sleep(50000);
-
-        }
-        encoderDrive(0.5, -12, -12, 12, 12);
-        sleep(500);
-        goldPos = detector.getXPosition();
-        if(goldPos > 50 && goldPos < 600) {
-            encoderDrive(0.5, 35, -35, -35, 35);
-            sleep(50000);
-
+            encoderDrive(0.25, -4, 4, 4, -4);
+            encoderDrive(0.5, 25, -25, -25, 25);
+            encoderDrive(0.5, -20, 20, 20, -20);
+            encoderDrive(0.5, -42, -42, -42, -42);
+            encoderDrive(0.25, 16, 16, -16, -16);
+            encoderDrive(0.5, 8, -8, -8, 8);
+            encoderDrive(0.5, 40, 40, 40, 40);
+            sleep(100000);
         }
 
     }
@@ -145,7 +156,7 @@ public class AutoSample_Crater extends LinearOpMode {
 
     public void stop (long time)
     {
-        telemetry.addData("status", "turnLeft");
+        telemetry.addData("status", "stopping");
         telemetry.update();
 
         aDrive.setPower(0);
@@ -192,7 +203,7 @@ public class AutoSample_Crater extends LinearOpMode {
     }
 
     public void backward (double speed, long time) {
-        telemetry.addData("status", "forward");
+        telemetry.addData("status", "backward");
         telemetry.update();
 
         aDrive.setPower(-speed);
@@ -204,7 +215,7 @@ public class AutoSample_Crater extends LinearOpMode {
     }
 
     public void driftleft (double speed, long time) {
-        telemetry.addData("status", "forward");
+        telemetry.addData("status", "drfitleft");
         telemetry.update();
 
         aDrive.setPower(-speed);
@@ -216,7 +227,7 @@ public class AutoSample_Crater extends LinearOpMode {
     }
 
     public void driftright (double speed, long time) {
-        telemetry.addData("status", "forward");
+        telemetry.addData("status", "driftright");
         telemetry.update();
 
         aDrive.setPower(speed);
@@ -237,9 +248,6 @@ public class AutoSample_Crater extends LinearOpMode {
         Lift.setTargetPosition(distance);
         Lift.setPower(speed);
         while (Lift.isBusy() && opModeIsActive()) {
-            telemetry.addData("Lift", "Running at %7d",
-                    Lift.getCurrentPosition());
-            telemetry.update();
             idle();
         }
         Lift.setPower(0);
@@ -283,4 +291,3 @@ public class AutoSample_Crater extends LinearOpMode {
     }
 
 }
-
