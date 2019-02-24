@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
@@ -98,70 +97,96 @@ public class AutoSample_Depot extends LinearOpMode {
 
         encoderLift(0.5, 8.5);
 
-        sleep(500);
+        sleep(250);
 
-        encoderDrive(0.5, 5, 5, 5,5);
+        encoderDrive(0.25, 4.5, 4.5, 4.5,4.5);
 
-        sleep(500);
+        encoderDrive(0.25, 13, -13, -13, 13);
 
-        encoderDrive(0.5, 11, -11, -11, 11);
-
-        sleep(500);
-
-        encoderDrive(0.5, -6, -6, -6,-6);
+        encoderDrive(0.25, -6, -6, -6,-6);
 
         sleep(500);
-
 
         telemetry.addData("IsAligned", detector.getAligned()); // Is the bot aligned with the gold mineral
 
         goldPos = detector.getXPosition();  // Gets gold block posistion
 
         if(goldPos > 50 && goldPos < 600) {
-            encoderDrive(0.5, 45, -45, -45, 45);
-            sleep(500);
-            encoderDrive(0.5, 25, 25, -25, -25);
-            sleep(500);
+            encoderDrive(0.5, 25, -25, -25, 25);
+            encoderDrive(0.5, -20, 20, 20, -20);
+            encoderDrive(0.5, -60, -60, -60, -60);
+            encoderDrive(0.25, 16, 16, -16, -16);
+            encoderDrive(0.5, 8, -8, -8, 8);
+            encoderDrive(0.5, 50, 50, 50, 50);
             Servo.setPosition(0);
-            encoderDrive(0.5, 12, 12, 12,12);
+            sleep(500);
+            encoderDrive(0.5, 15, 15, 15,15);
+            sleep(500);
+            Servo.setPosition(1);
             sleep(500);
             Spindle.setPower(-1);
             sleep(1000);
             Spindle.setPower(0);
+            sleep(100);
+            encoderDrive(0.5, 5, -5, -5, 5);
+            encoderDrive(1, -75, -75, -75, -75);
+            encoderDrive(0.5, 5, -5, -5, 5);
+            encoderDrive(0.5, -10, -10, -10, -10);
             sleep(10000);
+
         }
-        encoderDrive(0.5, -12, -12, 12, 12);
+        encoderDrive(0.25, 6, -6, -6, 6);
+        encoderDrive(0.25, 15, 15, 15, 15);
         sleep(500);
         goldPos = detector.getXPosition();
         if(goldPos >  50 && goldPos < 600) {
-            encoderDrive(0.5, 55, -55, -55, 55);
+            encoderDrive(0.5, 25, -25, -25, 25);
+            encoderDrive(0.5, -22, 22, 22, -22);
+            encoderDrive(0.5, -73, -73, -73, -73);
+            encoderDrive(0.25, 16, 16, -16, -16);
+            encoderDrive(0.5, 8, -8, -8, 8);
+            encoderDrive(0.5, 50, 50, 50, 50);
             sleep(500);
-            encoderDrive(0.5, 50, 50, -50, -50);
+            encoderDrive(0.5, 15, 15, 15,15);
             sleep(500);
-            Servo.setPosition(0);
-            encoderDrive(0.5, 25, 25, 25,25);
+            Servo.setPosition(1);
             sleep(500);
             Spindle.setPower(-1);
             sleep(1000);
             Spindle.setPower(0);
-            sleep(500);
-            encoderDrive(0.5, 5, 5, -5, -5);
-            sleep(500);
-            encoderDrive(0.5, -85, -85, -85, -85);
+            sleep(100);
+            encoderDrive(0.5, 2, -2, -2, 2);
+            encoderDrive(1, -75, -75, -75, -75);
+            encoderDrive(0.5, 5, -5, -5, 5);
+            encoderDrive(0.5, -10, -10, -10, -10);
+            sleep(10000);
+
         }
-        encoderDrive(0.5, 25, 25, -25, -25);
+        encoderDrive(0.25, -40, -40, -40, -40);
         sleep(500);
         goldPos = detector.getXPosition();
         if(goldPos >  50 && goldPos < 550) {
-            encoderDrive(0.5, 45, -45, -45, 45);
+            encoderDrive(0.25, -4, 4, 4, -4);
+            encoderDrive(0.5, 25, -25, -25, 25);
+            encoderDrive(0.5, -20, 20, 20, -20);
+            encoderDrive(0.5, -42, -42, -42, -42);
+            encoderDrive(0.25, 16, 16, -16, -16);
+            encoderDrive(0.5, 8, -8, -8, 8);
+            encoderDrive(0.5, 50, 50, 50, 50);
             sleep(500);
-            Servo.setPosition(0);
-            encoderDrive(0.5, 25, 25, 25,25);
+            encoderDrive(0.5, 15, 15, 15,15);
+            sleep(500);
+            Servo.setPosition(1);
             sleep(500);
             Spindle.setPower(-1);
             sleep(1000);
             Spindle.setPower(0);
-            sleep(500000);
+            sleep(100);
+            encoderDrive(0.5, 2, -2, -2, 2);
+            encoderDrive(1, -75, -75, -75, -75);
+            encoderDrive(0.5, 5, -5, -5, 5);
+            encoderDrive(0.5, -10, -10, -10, -10);
+            sleep(10000);
         }
 
     }
@@ -262,9 +287,6 @@ public class AutoSample_Depot extends LinearOpMode {
         Lift.setTargetPosition(distance);
         Lift.setPower(speed);
         while (Lift.isBusy() && opModeIsActive()) {
-            telemetry.addData("Lift", "Running at %7d",
-                    Lift.getCurrentPosition());
-            telemetry.update();
             idle();
         }
         Lift.setPower(0);
