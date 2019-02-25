@@ -18,6 +18,8 @@ public class TeleOpRoverRuckus extends OpMode
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
+    int encoderArm = 300;
+
     public DcMotor aDrive; // front left
     public DcMotor bDrive; // back left
     public DcMotor cDrive; // front right
@@ -45,9 +47,8 @@ public class TeleOpRoverRuckus extends OpMode
         Arm = hardwareMap.get(DcMotor.class, "Arm");
         ArmExtender = hardwareMap.get(DcMotor.class, "ArmExtender");
         Spindle = hardwareMap.get(DcMotor.class, "Spindle");
-        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Servo = hardwareMap.get(Servo.class, "Servo");
     }
@@ -89,22 +90,29 @@ public class TeleOpRoverRuckus extends OpMode
 
         // Arm
 
-        if(gamepad2.left_bumper) {
-            Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if(gamepad2.right_bumper){
+            //leftFlipMotor.setTargetPosition(-300);
+            Arm.setTargetPosition(encoderArm);
+
+            // Turn On RUN_TO_POSITION
+            // leftFlipMotor.setMode(DcMotor.RunMode.RUN_TO_POSIT ION);
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Arm.setTargetPosition(288);
-            while(Arm.getCurrentPosition() < Arm.getTargetPosition()) {
-                Arm.setPower(1);
-            }
+
+            //leftFlipMotor.setPower(0.25);
+            Arm.setPower(0.20);
+        }
+        if(gamepad2.x) {
+            Arm.setTargetPosition(encoderArm+300);
+
+            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm.setPower(0.20);
         }
 
-        if(gamepad2.right_bumper) {
-            Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if(gamepad2.a ) {
+            Arm.setTargetPosition(encoderArm+750);
+
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Arm.setTargetPosition(-288);
-            while(Arm.getCurrentPosition() > Arm.getTargetPosition()) {
-                Arm.setPower(0.25);
-            }
+            Arm.setPower(0.20);
         }
 
         ArmExtender.setPower(gamepad2.right_stick_y);
@@ -141,19 +149,4 @@ public class TeleOpRoverRuckus extends OpMode
         Servo.setPosition(0.5);
     }
 
-    public void encoderArm(double speed, double inches) {
-        // 4 inch pinion diameter
-        double d = 2880 * (inches / 0.74);
-        int distance = (int) d;
-
-        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Arm.setTargetPosition(distance);
-        Arm.setPower(speed);
-       // while (Arm.isBusy())
-      //  {
-
-       // }
-        Arm.setPower(0);
-    }
 }
