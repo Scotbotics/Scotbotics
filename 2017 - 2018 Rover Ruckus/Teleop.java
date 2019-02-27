@@ -33,6 +33,12 @@ public class TeleOpRoverRuckus extends OpMode
     public Servo Servo;
 
     private ElapsedTime runtime = new ElapsedTime();        //Tells us when the 30 seconds is up
+    ElapsedTime mStateTime = new ElapsedTime();
+    int down_state = 0;
+    int up_state = 0;
+    int crater_state = 0;
+
+    boolean hasRun = false;
 
     public void init()
     {
@@ -51,6 +57,7 @@ public class TeleOpRoverRuckus extends OpMode
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Servo = hardwareMap.get(Servo.class, "Servo");
+
     }
     @Override
     public void loop()
@@ -90,30 +97,114 @@ public class TeleOpRoverRuckus extends OpMode
 
         // Arm
 
-        if(gamepad2.right_bumper){
-            //leftFlipMotor.setTargetPosition(-300);
-            Arm.setTargetPosition(encoderArm);
+        if(gamepad2.left_bumper) {
+            switch (down_state) {
+                case 0:
+                    // se the arm servo to the up position.
+                    Arm.setTargetPosition(300);
 
-            // Turn On RUN_TO_POSITION
-            // leftFlipMotor.setMode(DcMotor.RunMode.RUN_TO_POSIT ION);
-            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    // Turn On RUN_TO_POSITION
+                    // leftFlipMotor.setMode(DcMotor.RunMode.RUN_TO_POSIT ION);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            //leftFlipMotor.setPower(0.25);
-            Arm.setPower(0.20);
+                    //leftFlipMotor.setPower(0.25);
+                    Arm.setPower(0.10);
+                    // The servo needs 2 seconds to be in the UP position.
+                    // So set up the timer and move to the next state.
+                    mStateTime.reset();
+                    down_state++;
+                    break;
+                case 1:
+                    // check if 2 seconds has past and move on
+                    if (mStateTime.time() >= 2.0) {
+                        // do whatever you want to do when times up.
+                        Arm.setPower(0);
+                        down_state++;
+                        //hasRun = true;
+                    }
+                    break;
+            }
+        }
+        if(gamepad2.right_bumper) {
+            switch (up_state) {
+                case 0:
+                    // se the arm servo to the up position.
+                    Arm.setTargetPosition(1250);
+
+                    // Turn On RUN_TO_POSITION
+                    // leftFlipMotor.setMode(DcMotor.RunMode.RUN_TO_POSIT ION);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    //leftFlipMotor.setPower(0.25);
+                    Arm.setPower(0.10);
+                    // The servo needs 2 seconds to be in the UP position.
+                    // So set up the timer and move to the next state.
+                    mStateTime.reset();
+                    up_state++;
+                    break;
+                case 1:
+                    // check if 2 seconds has past and move on
+                    if (mStateTime.time() >= 2.0) {
+                        // do whatever you want to do when times up.
+                        Arm.setPower(0);
+                        up_state++;
+                        //hasRun = true;
+                    }
+                    break;
+            }
+
         }
         if(gamepad2.x) {
-            Arm.setTargetPosition(encoderArm+300);
+            switch (crater_state) {
+                case 0:
+                    // se the arm servo to the up position.
+                    Arm.setTargetPosition(600);
 
-            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Arm.setPower(0.20);
+                    // Turn On RUN_TO_POSITION
+                    // leftFlipMotor.setMode(DcMotor.RunMode.RUN_TO_POSIT ION);
+                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    //leftFlipMotor.setPower(0.25);
+                    Arm.setPower(0.10);
+                    // The servo needs 2 seconds to be in the UP position.
+                    // So set up the timer and move to the next state.
+                    mStateTime.reset();
+                    crater_state++;
+                    break;
+                case 1:
+                    // check if 2 seconds has past and move on
+                    if (mStateTime.time() >= 2.0) {
+                        Arm.setTargetPosition(300);
+
+                        // Turn On RUN_TO_POSITION
+                        // leftFlipMotor.setMode(DcMotor.RunMode.RUN_TO_POSIT ION);
+                        Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                        //leftFlipMotor.setPower(0.25);
+                        Arm.setPower(0.10);
+                        // The servo needs 2 seconds to be in the UP position.
+                        // So set up the timer and move to the next state.
+                        mStateTime.reset();
+                        crater_state++;
+                    }
+                    break;
+                case 2:
+                    // check if 2 seconds has past and move on
+                    if (mStateTime.time() >= 2.0) {
+                        // do whatever you want to do when times up.
+                        Arm.setPower(0);
+                        crater_state++;
+                        //hasRun = true;
+                    }
+                    break;
+            }
+        }
+        if(gamepad2.a) {
+            up_state = 0;
+            down_state = 0;
+            crater_state = 0;
         }
 
-        if(gamepad2.a ) {
-            Arm.setTargetPosition(encoderArm+750);
-
-            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Arm.setPower(0.20);
-        }
 
         ArmExtender.setPower(gamepad2.right_stick_y);
 
