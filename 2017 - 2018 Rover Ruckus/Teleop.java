@@ -108,7 +108,7 @@ public class TeleOpRoverRuckus extends OpMode
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                     //leftFlipMotor.setPower(0.25);
-                    Arm.setPower(0.10);
+                    Arm.setPower(0.25);
                     // The servo needs 2 seconds to be in the UP position.
                     // So set up the timer and move to the next state.
                     mStateTime.reset();
@@ -136,7 +136,7 @@ public class TeleOpRoverRuckus extends OpMode
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                     //leftFlipMotor.setPower(0.25);
-                    Arm.setPower(0.10);
+                    Arm.setPower(0.25);
                     // The servo needs 2 seconds to be in the UP position.
                     // So set up the timer and move to the next state.
                     mStateTime.reset();
@@ -165,7 +165,7 @@ public class TeleOpRoverRuckus extends OpMode
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                     //leftFlipMotor.setPower(0.25);
-                    Arm.setPower(0.10);
+                    Arm.setPower(0.25);
                     // The servo needs 2 seconds to be in the UP position.
                     // So set up the timer and move to the next state.
                     mStateTime.reset();
@@ -181,7 +181,7 @@ public class TeleOpRoverRuckus extends OpMode
                         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                         //leftFlipMotor.setPower(0.25);
-                        Arm.setPower(0.10);
+                        Arm.setPower(0.25);
                         // The servo needs 2 seconds to be in the UP position.
                         // So set up the timer and move to the next state.
                         mStateTime.reset();
